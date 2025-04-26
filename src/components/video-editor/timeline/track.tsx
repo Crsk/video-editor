@@ -21,7 +21,6 @@ export const Track: FC<TrackProps> = ({
   trackIndex,
   pixelsPerSecond,
   videoEndPosition,
-  nonPlayableWidth,
   selectedItem,
   originalVideoDuration,
   onItemSelect,

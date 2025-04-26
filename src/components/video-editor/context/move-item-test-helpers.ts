@@ -1,4 +1,4 @@
-import { Item, Track } from '../types'
+import { Track } from '../types'
 import { applyGravityToTrack } from './gravity'
 
 // Pure function for test: mimics moveItemToTrack logic but returns new tracks array

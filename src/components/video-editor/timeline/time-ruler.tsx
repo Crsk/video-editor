@@ -9,13 +9,7 @@ interface TimeRulerProps {
   hasVideoTracks: boolean
 }
 
-export const TimeRuler: FC<TimeRulerProps> = ({
-  timeMarkers,
-  pixelsPerSecond,
-  videoEndPosition,
-  nonPlayableWidth,
-  hasVideoTracks
-}) => {
+export const TimeRuler: FC<TimeRulerProps> = ({ timeMarkers, pixelsPerSecond, videoEndPosition, hasVideoTracks }) => {
   return (
     <div className="mb-2 text-muted-foreground text-xs cursor-pointer select-none bg-muted">
       <div className="flex relative h-5">

@@ -172,7 +172,7 @@ describe('VideoComposer', () => {
 
     it('should initialize FFmpeg with correct parameters', async () => {
       const mockFFmpegInstance = new FFmpeg()
-      const loadSpy = vi.spyOn(mockFFmpegInstance, 'load')
+      vi.spyOn(mockFFmpegInstance, 'load')
 
       render(<VideoComposer timelineData={mockTimelineData} />)
 

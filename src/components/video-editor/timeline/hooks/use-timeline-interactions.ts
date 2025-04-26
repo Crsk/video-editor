@@ -2,7 +2,6 @@ import { useEditor } from '../../context/editor-context'
 import { getResizeOverlayRect } from '../overlay-utils'
 import { calculateResizedWidth } from '../calculate-resized-width'
 import type { TimelineState } from './use-timeline'
-import { Item } from '../../types'
 
 const FPS = 30
 

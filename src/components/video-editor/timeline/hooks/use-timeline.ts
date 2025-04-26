@@ -35,7 +35,7 @@ const ZOOM_LEVELS: ZoomLevel[] = [
   { secondsPerMarker: 10, markersOnScreen: 13, label: '' }
 ]
 const MINIMUM_TIMELINE_SECONDS = 10
-const MIN_DURATION_SECONDS = 0.5
+// const MIN_DURATION_SECONDS = 0.5 TODO limit min duration
 
 export interface TimelineState {
   containerRef: React.RefObject<HTMLDivElement | null>

@@ -4,12 +4,11 @@ import { Slider } from '~/components/ui/slider'
 import { Volume1Icon, Volume2Icon, VolumeIcon, VolumeXIcon } from 'lucide-react'
 
 interface VolumeControlProps {
-  trackIndex: number
   initialVolume: number
   onVolumeChange: (volume: number) => void
 }
 
-export const VolumeControl: FC<VolumeControlProps> = ({ trackIndex, initialVolume, onVolumeChange }) => {
+export const VolumeControl: FC<VolumeControlProps> = ({ initialVolume, onVolumeChange }) => {
   const [volume, setVolume] = useState(initialVolume)
   const [isOpen, setIsOpen] = useState(false)
 

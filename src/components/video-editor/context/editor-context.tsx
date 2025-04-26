@@ -266,18 +266,6 @@ export const EditorProvider: FC<EditorProviderProps> = ({
     return Math.max(maxEndFrame, 1)
   })()
 
-  // Helper to check for collision in a track
-  function hasCollision(items: Item[], movingItem: Item, newStartFrame: number, ignoreIndex?: number): boolean {
-    const movingEnd = newStartFrame + movingItem.durationInFrames
-    return items.some((item, idx) => {
-      if (ignoreIndex !== undefined && idx === ignoreIndex) return false
-      const itemStart = item.from
-      const itemEnd = item.from + item.durationInFrames
-      // Overlap if not (end before start or start after end)
-      return !(movingEnd <= itemStart || newStartFrame >= itemEnd)
-    })
-  }
-
   // Move item between tracks with collision detection
   function moveItemToTrack(
     sourceTrackIndex: number,

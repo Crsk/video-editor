@@ -27,7 +27,6 @@ export const TrackItem: FC<TrackItemProps> = ({
   pixelsPerSecond,
   isSelected,
   showResizeControls,
-  maxDurationSeconds,
   onItemSelect,
   onResizeStart,
   videoEndPosition
@@ -37,7 +36,7 @@ export const TrackItem: FC<TrackItemProps> = ({
   const leftPosition = itemStartSeconds * pixelsPerSecond
 
   // Setup draggable with dnd-kit
-  const { listeners, setNodeRef, transform, isDragging } = useDraggable({
+  const { listeners, setNodeRef, isDragging } = useDraggable({
     id: `item-${item.id}`,
     data: {
       item,

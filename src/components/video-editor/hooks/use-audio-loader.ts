@@ -9,7 +9,7 @@ const FPS = 30
  * @param tracks - The current tracks state
  * @param setTracks - Function to update tracks state
  */
-export const useAudioLoader = (tracks: Track[], setTracks: React.Dispatch<React.SetStateAction<Track[]>>) => {
+export const useAudioLoader = (_: Track[], setTracks: React.Dispatch<React.SetStateAction<Track[]>>) => {
   useEffect(() => {
     // Function to load audio and update duration
     const loadAudioAndUpdateDuration = (audioSrc: string) => {
