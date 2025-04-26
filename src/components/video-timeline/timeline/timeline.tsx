@@ -10,7 +10,6 @@ import { FC, useMemo } from 'react'
 import { RemotionTimelineProvider } from './context/remotion-timeline-context'
 import { useRemotionTimeline } from './context/remotion-timeline-context'
 import { VideoComposer } from './video-composer'
-import { staticFile } from 'remotion'
 
 const TimelineComponent: FC = () => (
   <RemotionTimelineProvider>
