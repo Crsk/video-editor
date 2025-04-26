@@ -4,10 +4,10 @@ import { Timeline } from './timeline/timeline'
 import { VideoPlayer } from './player'
 import { Track } from './types'
 
-type EditorProps = { initialTracks?: Track[] }
-export const Editor: FC<EditorProps> = ({ initialTracks = [] }) => {
+type EditorProps = { tracks: Track[] }
+export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
   return (
-    <EditorProvider initialTracks={initialTracks}>
+    <EditorProvider initialTracks={tracks}>
       <VideoPlayer />
       <Timeline />
     </EditorProvider>
