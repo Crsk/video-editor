@@ -8,7 +8,7 @@ interface LoaderProps {
 }
 
 export const Loader = ({ phases, duration = 5000, updateSpeed = 60 }: LoaderProps) => {
-  const [progress, setProgress] = useState(0)
+  const [_, setProgress] = useState(0)
   const [currentPhase, setCurrentPhase] = useState(0)
 
   useEffect(() => {
