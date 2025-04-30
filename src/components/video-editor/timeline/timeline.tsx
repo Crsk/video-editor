@@ -1,4 +1,3 @@
-import { TimelineControls } from './timeline-controls'
 import { TimeRuler } from './time-ruler'
 import { TimeMarker } from './time-marker'
 import { Track } from './track'
@@ -6,22 +5,11 @@ import '../styles/timeline.css'
 import { useEditor } from '../context/editor-context'
 import { DndContext, DragOverlay, pointerWithin } from '@dnd-kit/core'
 import { FC, useMemo } from 'react'
-
-import { RemotionTimelineProvider } from './context/remotion-timeline-context'
 import { useRemotionTimeline } from './context/remotion-timeline-context'
 import { VideoComposer } from './video-composer'
 
-const TimelineComponent: FC = () => (
-  <RemotionTimelineProvider>
-    <TimelineInner />
-  </RemotionTimelineProvider>
-)
-
-// Create the Timeline namespace with all components
-export const Timeline = TimelineComponent
-
-const TimelineInner: FC = () => {
-  const { tracks, currentTime, isPlaying, isLooping, durationInFrames, togglePlayPause, toggleLoop } = useEditor()
+export const Timeline: FC = () => {
+  const { tracks, currentTime, durationInFrames } = useEditor()
   const { timelineState, timelineInteractions, timelineDnd } = useRemotionTimeline()
 
   const ffmpegData = useMemo(
@@ -55,8 +43,6 @@ const TimelineInner: FC = () => {
     containerRef,
     timelineContainerRef,
     trackRefs,
-    zoomIn,
-    zoomOut,
     timeMarkers,
     totalTimelineWidth,
     videoEndPosition,
@@ -66,14 +52,11 @@ const TimelineInner: FC = () => {
     isDragging,
     resizeMode,
     resizeOverlay,
-    zoomLevelIndex,
-    originalVideoDurationInSeconds,
     FPS
   } = timelineState
 
   const { handleTimelineClick, handleMarkerDrag, handleItemSelect, handleResizeStart } = timelineInteractions
   const { sensors, activeItem, handleDragStart, handleDragMove, handleDragEnd, modifiers } = timelineDnd
-  const durationInSeconds = durationInFrames / FPS
 
   return (
     <div>
@@ -86,18 +69,6 @@ const TimelineInner: FC = () => {
         collisionDetection={pointerWithin}
       >
         <div ref={containerRef} className="bg-background p-4 rounded-lg mt-6">
-          <TimelineControls
-            currentTime={currentTime}
-            durationInSeconds={durationInSeconds}
-            isPlaying={isPlaying}
-            isLooping={isLooping}
-            onPlayPause={togglePlayPause}
-            onLoopToggle={toggleLoop}
-            zoomIn={zoomIn}
-            zoomOut={zoomOut}
-            zoomLevelIndex={zoomLevelIndex}
-            maxZoomLevel={20}
-          />
           <div
             ref={timelineContainerRef}
             className="overflow-x-auto timeline-scroll-container relative select-none"
@@ -129,7 +100,7 @@ const TimelineInner: FC = () => {
                     videoEndPosition={videoEndPosition}
                     nonPlayableWidth={nonPlayableWidth}
                     selectedItem={selectedItem}
-                    originalVideoDuration={originalVideoDurationInSeconds}
+                    originalVideoDuration={timelineState.originalVideoDurationInSeconds}
                     onItemSelect={handleItemSelect}
                     onResizeStart={handleResizeStart}
                     trackRef={el => (trackRefs.current[trackIndex] = el)}

@@ -6,34 +6,16 @@ import { formatTimeDisplay } from '../utils/format-time'
 import { FC } from 'react'
 import { TimelineVolumeControl } from './timeline-volume-control'
 import { useRemotionTimeline } from './context/remotion-timeline-context'
+import { useEditor } from '../context/editor-context'
 
-interface TimelineControlsProps {
-  currentTime: number
-  durationInSeconds: number
-  isPlaying: boolean
-  isLooping: boolean
-  onPlayPause?: () => void
-  onLoopToggle?: () => void
-  zoomIn: () => void
-  zoomOut: () => void
-  zoomLevelIndex: number
-  maxZoomLevel: number
-}
+export const TimelineControls: FC = () => {
+  const { currentTime, isPlaying, isLooping, durationInFrames, togglePlayPause, toggleLoop } = useEditor()
 
-export const TimelineControls: FC<TimelineControlsProps> = ({
-  currentTime,
-  durationInSeconds,
-  isPlaying,
-  isLooping,
-  onPlayPause,
-  onLoopToggle,
-  zoomIn,
-  zoomOut,
-  zoomLevelIndex,
-  maxZoomLevel
-}) => {
   const { timelineState } = useRemotionTimeline()
-  const { selectedItem } = timelineState
+  const { zoomIn, zoomOut, zoomLevelIndex, selectedItem, FPS } = timelineState
+
+  const durationInSeconds = durationInFrames / FPS
+  const maxZoomLevel = 20 // This constant should ideally be in a shared config
 
   return (
     <div className="flex justify-between mb-3">
@@ -50,23 +32,19 @@ export const TimelineControls: FC<TimelineControlsProps> = ({
           </div>
         </div>
 
-        {onPlayPause && (
-          <Button variant="secondary" size="icon" onClick={onPlayPause} className="rounded-full">
-            {isPlaying ? <PauseIcon className="text-primary" /> : <PlayIcon className="text-primary" />}
-          </Button>
-        )}
+        <Button variant="secondary" size="icon" onClick={togglePlayPause} className="rounded-full">
+          {isPlaying ? <PauseIcon className="text-primary" /> : <PlayIcon className="text-primary" />}
+        </Button>
 
-        {onLoopToggle && (
-          <Button
-            variant="secondary"
-            size="icon"
-            onClick={onLoopToggle}
-            className="rounded-full"
-            title={isLooping ? 'Loop enabled' : 'Loop disabled'}
-          >
-            {isLooping ? <RepeatIcon className="text-chart-2" /> : <RepeatIcon className="text-muted-foreground" />}
-          </Button>
-        )}
+        <Button
+          variant="secondary"
+          size="icon"
+          onClick={toggleLoop}
+          className="rounded-full"
+          title={isLooping ? 'Loop enabled' : 'Loop disabled'}
+        >
+          {isLooping ? <RepeatIcon className="text-chart-2" /> : <RepeatIcon className="text-muted-foreground" />}
+        </Button>
       </div>
 
       {/* Right Section - Zoom Controls */}
