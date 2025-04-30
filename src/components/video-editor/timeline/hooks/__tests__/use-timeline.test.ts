@@ -64,13 +64,13 @@ describe('useTimeline', () => {
     expect(result.current).toHaveProperty('videoEndPosition')
     expect(result.current).toHaveProperty('nonPlayableWidth')
     expect(result.current).toHaveProperty('pixelsPerSecond')
-    expect(result.current).toHaveProperty('selectedItem')
+    expect(result.current).toHaveProperty('selectedClip')
     expect(result.current).toHaveProperty('isDragging')
     expect(result.current).toHaveProperty('resizeMode')
     expect(result.current).toHaveProperty('resizeOverlay')
 
     expect(result.current.isDragging).toBe(false)
-    expect(result.current.selectedItem).toBe(null)
+    expect(result.current.selectedClip).toBe(null)
     expect(result.current.resizeMode).toBe(null)
     expect(result.current.resizeOverlay).toBe(null)
     expect(result.current.zoomLevelIndex).toBe(15) // Default zoom level
@@ -137,14 +137,14 @@ describe('useTimeline', () => {
     expect(result.current.isDragging).toBe(true)
   })
 
-  it('should update selectedItem state', () => {
+  it('should update selectedClip state', () => {
     const { result } = renderHook(() => useTimeline())
 
-    expect(result.current.selectedItem).toBeNull()
+    expect(result.current.selectedClip).toBeNull()
 
-    const newSelectedItem = { trackIndex: 1, itemIndex: 2 }
-    act(() => void result.current.setSelectedItem(newSelectedItem))
+    const newSelectedClip = { clipIndex: 1, itemIndex: 2 }
+    act(() => void result.current.setSelectedClip(newSelectedClip))
 
-    expect(result.current.selectedItem).toEqual(newSelectedItem)
+    expect(result.current.selectedClip).toEqual(newSelectedClip)
   })
 })

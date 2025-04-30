@@ -8,7 +8,7 @@ const FPS = 30
 export interface TimelineInteractions {
   handleTimelineClick: (e: React.MouseEvent) => void
   handleMarkerDrag: (startEvent: React.MouseEvent) => void
-  handleItemSelect: (trackIndex: number, itemIndex: number) => void
+  handleItemSelect: (clipIndex: number, itemIndex: number) => void
   handleResizeStart: (e: React.MouseEvent, mode: 'left' | 'right') => void
 }
 
@@ -19,8 +19,8 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
     calculateTimeFromClick,
     isDragging,
     setIsDragging,
-    setSelectedItem,
-    selectedItem,
+    setSelectedClip,
+    selectedClip,
     timelineContainerRef,
     trackRefs,
     pixelsPerSecond,
@@ -37,7 +37,7 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
     const isResizeHandle = target.closest('.resize-handle') !== null
 
     if (!isItem && !isResizeHandle) {
-      setSelectedItem(null)
+      setSelectedClip(null)
       e.preventDefault()
 
       setIsDragging(true)
@@ -86,8 +86,8 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
     document.addEventListener('mouseup', handleMouseUp)
   }
 
-  const handleItemSelect = (trackIndex: number, itemIndex: number) => {
-    setSelectedItem({ trackIndex, itemIndex })
+  const handleItemSelect = (clipIndex: number, itemIndex: number) => {
+    setSelectedClip({ clipIndex, itemIndex })
   }
 
   const handleResizeStart = (e: React.MouseEvent, mode: 'left' | 'right') => {
@@ -97,11 +97,11 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
     const MIN_DURATION_SECONDS = 0.5
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      if (!selectedItem) return
+      if (!selectedClip) return
 
-      const trackIndex = selectedItem.trackIndex
-      const itemIndex = selectedItem.itemIndex
-      const currentItem = tracks[trackIndex].items[itemIndex]
+      const clipIndex = selectedClip.clipIndex
+      const itemIndex = selectedClip.itemIndex
+      const currentItem = tracks[clipIndex].items[itemIndex]
 
       if (!currentItem) return
 
@@ -109,7 +109,7 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
       if (!containerRect) return
       const scrollLeft = timelineContainerRef.current?.scrollLeft || 0
       const mouseX = moveEvent.clientX - containerRect.left + scrollLeft
-      const trackRect = trackRefs.current[trackIndex]?.getBoundingClientRect() ?? null
+      const trackRect = trackRefs.current[clipIndex]?.getBoundingClientRect() ?? null
       setResizeOverlay(
         getResizeOverlayRect({
           mode,
@@ -136,14 +136,14 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
 
         if (newDurationInFrames < MIN_DURATION_SECONDS * FPS) return
 
-        const updatedItems = [...tracks[trackIndex].items]
+        const updatedItems = [...tracks[clipIndex].items]
         updatedItems[itemIndex] = {
           ...currentItem,
           from: newStartFrame,
           durationInFrames: newDurationInFrames
         }
 
-        handleTrackUpdate(trackIndex, updatedItems)
+        handleTrackUpdate(clipIndex, updatedItems)
       } else {
         // Right resize - changes only duration
         const containerRect = timelineContainerRef.current?.getBoundingClientRect()
@@ -173,13 +173,13 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
           return
         }
 
-        const updatedItems = [...tracks[trackIndex].items]
+        const updatedItems = [...tracks[clipIndex].items]
         updatedItems[itemIndex] = {
           ...currentItem,
           durationInFrames: Math.round(newDurationSeconds * FPS)
         }
 
-        handleTrackUpdate(trackIndex, updatedItems)
+        handleTrackUpdate(clipIndex, updatedItems)
       }
     }
 

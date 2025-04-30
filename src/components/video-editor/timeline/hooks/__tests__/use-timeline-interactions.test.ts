@@ -57,13 +57,13 @@ describe('useTimelineInteractions', () => {
     expect(typeof result.current.handleResizeStart).toBe('function')
   })
 
-  it('should call handleItemSelect to select a track item', () => {
+  it('should call handleItemSelect to select a clip', () => {
     const timelineState = createMockTimelineState()
     const { result } = renderHook(() => useTimelineInteractions(timelineState))
 
     act(() => void result.current.handleItemSelect(1, 2))
 
-    expect(timelineState.setSelectedItem).toHaveBeenCalledWith({ trackIndex: 1, itemIndex: 2 })
+    expect(timelineState.setSelectedClip).toHaveBeenCalledWith({ clipIndex: 1, itemIndex: 2 })
   })
 
   it('should handle timeline click when not dragging', () => {
@@ -90,7 +90,7 @@ describe('useTimelineInteractions', () => {
 
       // Verify the expected functions were called
       expect(mockEvent.preventDefault).toHaveBeenCalled()
-      expect(timelineState.setSelectedItem).toHaveBeenCalledWith(null)
+      expect(timelineState.setSelectedClip).toHaveBeenCalledWith(null)
       expect(timelineState.setIsDragging).toHaveBeenCalledWith(true)
       expect(document.body.classList.add).toHaveBeenCalledWith('timeline-dragging')
       expect(timelineState.calculateTimeFromClick).toHaveBeenCalledWith(100)
@@ -136,7 +136,7 @@ describe('useTimelineInteractions', () => {
 
   it('should handle resize start', () => {
     const timelineState = createMockTimelineState()
-    timelineState.selectedItem = { trackIndex: 0, itemIndex: 0 } as any
+    timelineState.selectedClip = { clipIndex: 0, itemIndex: 0 } as any
     const { result } = renderHook(() => useTimelineInteractions(timelineState))
 
     const mockEvent = {

@@ -48,7 +48,7 @@ export interface TimelineState {
   videoEndPosition: number
   nonPlayableWidth: number
   pixelsPerSecond: number
-  selectedItem: { trackIndex: number; itemIndex: number } | null
+  selectedClip: { clipIndex: number; itemIndex: number } | null
   isDragging: boolean
   resizeMode: 'left' | 'right' | null
   resizeOverlay: {
@@ -60,7 +60,7 @@ export interface TimelineState {
   } | null
   calculateTimeFromClick: (clientX: number) => number
   zoomLevelIndex: number
-  setSelectedItem: (item: { trackIndex: number; itemIndex: number } | null) => void
+  setSelectedClip: (item: { clipIndex: number; itemIndex: number } | null) => void
   setIsDragging: (isDragging: boolean) => void
   setResizeMode: (mode: 'left' | 'right' | null) => void
   setResizeOverlay: (
@@ -74,8 +74,8 @@ export interface TimelineState {
   ) => void
   activeItem: any | null
   setActiveItem: (item: any | null) => void
-  activeItemTrackIndex: number | null
-  setActiveItemTrackIndex: (index: number | null) => void
+  activeItemClipIndex: number | null
+  setActiveItemClipIndex: (index: number | null) => void
   activeItemIndex: number | null
   setActiveItemIndex: (index: number | null) => void
   originalVideoDurationInSeconds: number
@@ -90,7 +90,7 @@ export const useTimeline = (): TimelineState => {
   const [zoomLevelIndex, setZoomLevelIndex] = useState(15)
   const [containerWidth, setContainerWidth] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
-  const [selectedItem, setSelectedItem] = useState<{ trackIndex: number; itemIndex: number } | null>(null)
+  const [selectedClip, setSelectedClip] = useState<{ clipIndex: number; itemIndex: number } | null>(null)
   const [resizeMode, setResizeMode] = useState<'left' | 'right' | null>(null)
   const [resizeOverlay, setResizeOverlay] = useState<{
     left: number
@@ -101,7 +101,7 @@ export const useTimeline = (): TimelineState => {
   } | null>(null)
   const trackRefs = useRef<(HTMLDivElement | null)[]>([])
   const [activeItem, setActiveItem] = useState<any | null>(null)
-  const [activeItemTrackIndex, setActiveItemTrackIndex] = useState<number | null>(null)
+  const [activeItemClipIndex, setActiveItemClipIndex] = useState<number | null>(null)
   const [activeItemIndex, setActiveItemIndex] = useState<number | null>(null)
 
   const durationInSeconds = durationInFrames / FPS
@@ -109,18 +109,18 @@ export const useTimeline = (): TimelineState => {
 
   // Global click listener to deselect the track when clicking outside
   useEffect(() => {
-    if (selectedItem === null) return
+    if (selectedClip === null) return
 
     // Small delay to ensure this doesn't interfere with track selection
     const handleGlobalClick = (e: MouseEvent) => {
       const originalTarget = e.target as HTMLElement
 
       setTimeout(() => {
-        const isTrackItem = originalTarget.closest('.timeline-item') !== null
+        const isClip = originalTarget.closest('.timeline-item') !== null
         const isResizeHandle = originalTarget.closest('.resize-handle') !== null
         const isTimelinePopover = originalTarget.closest('.timeline-popover') !== null
 
-        if (!isTrackItem && !isResizeHandle && !isTimelinePopover) setSelectedItem(null)
+        if (!isClip && !isResizeHandle && !isTimelinePopover) setSelectedClip(null)
       }, 0)
     }
 
@@ -129,7 +129,7 @@ export const useTimeline = (): TimelineState => {
     return () => {
       document.removeEventListener('mousedown', handleGlobalClick)
     }
-  }, [selectedItem])
+  }, [selectedClip])
 
   // Update container width on resize
   useEffect(() => {
@@ -186,20 +186,20 @@ export const useTimeline = (): TimelineState => {
     videoEndPosition,
     nonPlayableWidth,
     pixelsPerSecond,
-    selectedItem,
+    selectedClip,
     isDragging,
     resizeMode,
     resizeOverlay,
     calculateTimeFromClick,
     zoomLevelIndex,
-    setSelectedItem,
+    setSelectedClip,
     setIsDragging,
     setResizeMode,
     setResizeOverlay,
     activeItem,
     setActiveItem,
-    activeItemTrackIndex,
-    setActiveItemTrackIndex,
+    activeItemClipIndex,
+    setActiveItemClipIndex,
     activeItemIndex,
     setActiveItemIndex,
     originalVideoDurationInSeconds,

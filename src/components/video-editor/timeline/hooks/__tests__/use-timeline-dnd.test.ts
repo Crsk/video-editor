@@ -74,14 +74,14 @@ describe('useTimelineDnd', () => {
   it('should handle drag start', () => {
     const timelineState = createMockTimelineState()
     const { result } = renderHook(() => useTimelineDnd(timelineState as any))
-    const mockItem = { id: 'test-item', type: 'video', from: 30, durationInFrames: 60 }
+    const mockClip = { id: 'test-item', type: 'video', from: 30, durationInFrames: 60 }
     const mockEvent = {
       active: {
         data: {
           current: {
-            type: 'track-item',
-            item: mockItem,
-            trackIndex: 1,
+            type: 'clip',
+            item: mockClip,
+            clipIndex: 1,
             itemIndex: 2
           }
         }
@@ -93,10 +93,10 @@ describe('useTimelineDnd', () => {
     })
 
     // Verify the expected functions were called with the correct parameters
-    expect(timelineState.setActiveItem).toHaveBeenCalledWith(mockItem)
-    expect(timelineState.setActiveItemTrackIndex).toHaveBeenCalledWith(1)
+    expect(timelineState.setActiveItem).toHaveBeenCalledWith(mockClip)
+    expect(timelineState.setActiveItemClipIndex).toHaveBeenCalledWith(1)
     expect(timelineState.setActiveItemIndex).toHaveBeenCalledWith(2)
-    expect(timelineState.setSelectedItem).toHaveBeenCalledWith({ trackIndex: 1, itemIndex: 2 })
+    expect(timelineState.setSelectedClip).toHaveBeenCalledWith({ clipIndex: 1, itemIndex: 2 })
     expect(timelineState.setIsDragging).toHaveBeenCalledWith(true)
   })
 
@@ -105,11 +105,11 @@ describe('useTimelineDnd', () => {
     mockContainer.scrollBy = vi.fn()
     const timelineState = {
       setIsDragging: vi.fn(),
-      setSelectedItem: vi.fn(),
+      setSelectedClip: vi.fn(),
       setActiveItem: vi.fn(),
       activeItem: null,
-      setActiveItemTrackIndex: vi.fn(),
-      activeItemTrackIndex: null,
+      setActiveItemClipIndex: vi.fn(),
+      activeItemClipIndex: null,
       setActiveItemIndex: vi.fn(),
       activeItemIndex: null,
       timelineContainerRef: { current: mockContainer },
@@ -160,13 +160,13 @@ describe('useTimelineDnd', () => {
     const timelineState = {
       ...createMockTimelineState(),
       activeItem: { id: 'test-item', type: 'video', from: 30, durationInFrames: 60 },
-      activeItemTrackIndex: 0,
+      activeItemClipIndex: 0,
       activeItemIndex: 0,
       pixelsPerSecond: 30,
       FPS: 30, // Important for the calculation in handleDragEnd
       isDragging: true,
       setActiveItem: vi.fn(),
-      setActiveItemTrackIndex: vi.fn(),
+      setActiveItemClipIndex: vi.fn(),
       setActiveItemIndex: vi.fn(),
       setIsDragging: vi.fn()
     }
@@ -178,11 +178,11 @@ describe('useTimelineDnd', () => {
       active: {
         id: 'test-item',
         data: {
-          current: { type: 'track-item' }
+          current: { type: 'clip' }
         }
       },
       delta: { x: 50, y: 0 },
-      over: { id: 'track-0' }
+      over: { id: 'clip-0' }
     }
 
     act(() => void result.current.handleDragEnd(mockEvent as any))
@@ -193,7 +193,7 @@ describe('useTimelineDnd', () => {
 
     // Verify state is cleared
     expect(timelineState.setActiveItem).toHaveBeenCalledWith(null)
-    expect(timelineState.setActiveItemTrackIndex).toHaveBeenCalledWith(null)
+    expect(timelineState.setActiveItemClipIndex).toHaveBeenCalledWith(null)
     expect(timelineState.setActiveItemIndex).toHaveBeenCalledWith(null)
     expect(timelineState.setIsDragging).toHaveBeenCalledWith(false)
   })
@@ -204,11 +204,11 @@ describe('useTimelineDnd', () => {
 
     const timelineState = {
       setIsDragging: vi.fn(),
-      setSelectedItem: vi.fn(),
+      setSelectedClip: vi.fn(),
       setActiveItem: vi.fn(),
       activeItem: { id: 'item-1', type: 'video', from: 30, durationInFrames: 60 },
-      setActiveItemTrackIndex: vi.fn(),
-      activeItemTrackIndex: 0,
+      setActiveItemClipIndex: vi.fn(),
+      activeItemClipIndex: 0,
       setActiveItemIndex: vi.fn(),
       activeItemIndex: 0,
       timelineContainerRef: { current: document.createElement('div') },
@@ -223,12 +223,12 @@ describe('useTimelineDnd', () => {
       active: {
         data: {
           current: {
-            type: 'track-item'
+            type: 'clip'
           }
         }
       },
       delta: { x: 200, y: 0 },
-      over: { id: 'track-1' } // Different track
+      over: { id: 'clip-1' } // Different track
     }
 
     act(() => void result.current.handleDragEnd(mockEvent as any))
@@ -239,7 +239,7 @@ describe('useTimelineDnd', () => {
 
     // Verify state is cleared
     expect(timelineState.setActiveItem).toHaveBeenCalledWith(null)
-    expect(timelineState.setActiveItemTrackIndex).toHaveBeenCalledWith(null)
+    expect(timelineState.setActiveItemClipIndex).toHaveBeenCalledWith(null)
     expect(timelineState.setActiveItemIndex).toHaveBeenCalledWith(null)
     expect(timelineState.setIsDragging).toHaveBeenCalledWith(false)
   })

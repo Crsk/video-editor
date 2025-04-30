@@ -4,9 +4,9 @@ import { TimelineVolumeControl } from '../timeline/timeline-volume-control'
 
 export const SelectedClipVolumeControl: FC = () => {
   const { timelineState } = useRemotionTimeline()
-  const { selectedItem } = timelineState
+  const { selectedClip } = timelineState
 
-  if (selectedItem?.itemIndex === undefined) {
+  if (selectedClip?.itemIndex === undefined) {
     return null
   }
 

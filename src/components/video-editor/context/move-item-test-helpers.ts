@@ -4,13 +4,13 @@ import { applyGravityToTrack } from './gravity'
 // Pure function for test: mimics moveItemToTrack logic but returns new tracks array
 export function moveItemToTrackForTest(
   tracks: Track[],
-  sourceTrackIndex: number,
+  sourceClipIndex: number,
   itemIndex: number,
-  targetTrackIndex: number,
+  targetClipIndex: number,
   newStartFrame: number
 ): Track[] {
-  const sourceTrack = tracks[sourceTrackIndex]
-  const targetTrack = tracks[targetTrackIndex]
+  const sourceTrack = tracks[sourceClipIndex]
+  const targetTrack = tracks[targetClipIndex]
   const movingItem = { ...sourceTrack.items[itemIndex], from: newStartFrame }
 
   // Check for collision in target track
@@ -39,8 +39,8 @@ export function moveItemToTrackForTest(
   const gravitatedTargetItems = applyGravityToTrack(newTargetItems)
 
   return tracks.map((track, idx) => {
-    if (idx === sourceTrackIndex) return { ...track, items: gravitatedSourceItems }
-    if (idx === targetTrackIndex) return { ...track, items: gravitatedTargetItems }
+    if (idx === sourceClipIndex) return { ...track, items: gravitatedSourceItems }
+    if (idx === targetClipIndex) return { ...track, items: gravitatedTargetItems }
     return track
   })
 }

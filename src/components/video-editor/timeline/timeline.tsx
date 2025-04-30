@@ -48,7 +48,7 @@ export const Timeline: FC = () => {
     videoEndPosition,
     nonPlayableWidth,
     pixelsPerSecond,
-    selectedItem,
+    selectedClip,
     isDragging,
     resizeMode,
     resizeOverlay,
@@ -91,19 +91,19 @@ export const Timeline: FC = () => {
               />
 
               <div className="mt-2">
-                {tracks.map((track, trackIndex) => (
+                {tracks.map((track, clipIndex) => (
                   <Track
-                    key={`track-${trackIndex}`}
+                    key={`clip-${clipIndex}`}
                     track={track}
-                    trackIndex={trackIndex}
+                    clipIndex={clipIndex}
                     pixelsPerSecond={pixelsPerSecond}
                     videoEndPosition={videoEndPosition}
                     nonPlayableWidth={nonPlayableWidth}
-                    selectedItem={selectedItem}
+                    selectedClip={selectedClip}
                     originalVideoDuration={timelineState.originalVideoDurationInSeconds}
                     onItemSelect={handleItemSelect}
                     onResizeStart={handleResizeStart}
-                    trackRef={el => (trackRefs.current[trackIndex] = el)}
+                    trackRef={el => (trackRefs.current[clipIndex] = el)}
                   />
                 ))}
               </div>

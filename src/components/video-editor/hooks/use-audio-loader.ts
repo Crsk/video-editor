@@ -39,8 +39,8 @@ export const useAudioLoader = (_: Track[], setTracks: React.Dispatch<React.SetSt
           const newTracks = [...prevTracks]
 
           // Process each track
-          for (let trackIndex = 0; trackIndex < newTracks.length; trackIndex++) {
-            const track = newTracks[trackIndex]
+          for (let clipIndex = 0; clipIndex < newTracks.length; clipIndex++) {
+            const track = newTracks[clipIndex]
 
             // Process each item in the track
             for (let itemIndex = 0; itemIndex < track.items.length; itemIndex++) {
@@ -53,19 +53,19 @@ export const useAudioLoader = (_: Track[], setTracks: React.Dispatch<React.SetSt
                   try {
                     const actualDurationInFrames = await loadAudioAndUpdateDuration(item.src)
 
-                    // Update the track item with the actual duration
+                    // Update the clip with the actual duration
                     setTracks(currentTracks => {
                       const updatedTracks = [...currentTracks]
-                      if (updatedTracks[trackIndex]?.items[itemIndex]) {
-                        updatedTracks[trackIndex].items[itemIndex] = {
-                          ...updatedTracks[trackIndex].items[itemIndex],
+                      if (updatedTracks[clipIndex]?.items[itemIndex]) {
+                        updatedTracks[clipIndex].items[itemIndex] = {
+                          ...updatedTracks[clipIndex].items[itemIndex],
                           durationInFrames: actualDurationInFrames
                         }
                       }
                       return updatedTracks
                     })
                   } catch (error) {
-                    console.error(`Error updating duration for track ${trackIndex}, item ${itemIndex}:`, error)
+                    console.error(`Error updating duration for clip ${clipIndex}, item ${itemIndex}:`, error)
                   }
                 })()
               }

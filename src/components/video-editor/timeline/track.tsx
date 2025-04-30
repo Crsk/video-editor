@@ -1,27 +1,27 @@
 import { FC } from 'react'
 import { Track as TrackType } from '../types'
-import { TrackItem } from './track-item'
+import { Clip } from './clip'
 import { useDroppable } from '@dnd-kit/core'
 
 interface TrackProps {
   track: TrackType
-  trackIndex: number
+  clipIndex: number
   pixelsPerSecond: number
   videoEndPosition: number
   nonPlayableWidth: number
-  selectedItem: { trackIndex: number; itemIndex: number } | null
+  selectedClip: { clipIndex: number; itemIndex: number } | null
   originalVideoDuration: number
-  onItemSelect: (trackIndex: number, itemIndex: number) => void
+  onItemSelect: (clipIndex: number, itemIndex: number) => void
   onResizeStart: (e: React.MouseEvent, mode: 'left' | 'right') => void
   trackRef?: (el: HTMLDivElement | null) => void
 }
 
 export const Track: FC<TrackProps> = ({
   track,
-  trackIndex,
+  clipIndex,
   pixelsPerSecond,
   videoEndPosition,
-  selectedItem,
+  selectedClip,
   originalVideoDuration,
   onItemSelect,
   onResizeStart,
@@ -29,10 +29,10 @@ export const Track: FC<TrackProps> = ({
 }) => {
   // Setup droppable with dnd-kit
   const { setNodeRef, isOver } = useDroppable({
-    id: `track-${trackIndex}`,
+    id: `clip-${clipIndex}`,
     data: {
-      trackIndex,
-      type: 'track'
+      clipIndex,
+      type: 'clip'
     }
   })
 
@@ -56,17 +56,17 @@ export const Track: FC<TrackProps> = ({
 
         {track.items.map((item, itemIndex) => {
           const isSelected =
-            selectedItem !== null && selectedItem.trackIndex === trackIndex && selectedItem.itemIndex === itemIndex
+            selectedClip !== null && selectedClip.clipIndex === clipIndex && selectedClip.itemIndex === itemIndex
 
           const isResizable = item.type === 'video' || item.type === 'audio'
           const showResizeControls = isSelected && isResizable
           const maxDurationSeconds = item.type === 'video' ? originalVideoDuration : Infinity
 
           return (
-            <TrackItem
+            <Clip
               key={item.id}
               item={item}
-              trackIndex={trackIndex}
+              clipIndex={clipIndex}
               itemIndex={itemIndex}
               pixelsPerSecond={pixelsPerSecond}
               isSelected={isSelected}

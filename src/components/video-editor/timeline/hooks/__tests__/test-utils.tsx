@@ -1,7 +1,7 @@
 import { RefObject } from 'react'
 import { vi, beforeAll, afterAll } from 'vitest'
 
-export interface MockItem {
+export interface MockClip {
   id: string
   type: string
   from: number
@@ -10,24 +10,24 @@ export interface MockItem {
 
 export interface MockTrack {
   id: string
-  items: MockItem[]
+  items: MockClip[]
 }
 
-export const createMockItem = (id: string, type = 'video', from = 0, durationInFrames = 30): MockItem => ({
+export const createMockClip = (id: string, type = 'video', from = 0, durationInFrames = 30): MockClip => ({
   id,
   type,
   from,
   durationInFrames
 })
 
-export const createMockTrack = (id: string, items: MockItem[] = []): MockTrack => ({
+export const createMockTrack = (id: string, items: MockClip[] = []): MockTrack => ({
   id,
   items
 })
 
 export const defaultTracks = [
-  createMockTrack('track-1', [createMockItem('item-1', 'video', 0, 30), createMockItem('item-2', 'video', 60, 30)]),
-  createMockTrack('track-2', [createMockItem('item-3', 'audio', 30, 60)])
+  createMockTrack('track-1', [createMockClip('item-1', 'video', 0, 30), createMockClip('item-2', 'video', 60, 30)]),
+  createMockTrack('track-2', [createMockClip('item-3', 'audio', 30, 60)])
 ]
 
 export const createMockEditorFunctions = () => ({
@@ -80,20 +80,20 @@ export const createMockTimelineState = () => {
     videoEndPosition: 500,
     nonPlayableWidth: 500,
     pixelsPerSecond: 50,
-    selectedItem: null,
+    selectedClip: null,
     isDragging: false,
     resizeMode: null,
     resizeOverlay: null,
     calculateTimeFromClick: vi.fn().mockReturnValue(5),
     zoomLevelIndex: 15,
-    setSelectedItem: vi.fn(),
+    setSelectedClip: vi.fn(),
     setIsDragging: vi.fn(),
     setResizeMode: vi.fn(),
     setResizeOverlay: vi.fn(),
     activeItem: null,
     setActiveItem: vi.fn(),
-    activeItemTrackIndex: null,
-    setActiveItemTrackIndex: vi.fn(),
+    activeItemClipIndex: null,
+    setActiveItemClipIndex: vi.fn(),
     activeItemIndex: null,
     setActiveItemIndex: vi.fn(),
     originalVideoDurationInSeconds: 30,

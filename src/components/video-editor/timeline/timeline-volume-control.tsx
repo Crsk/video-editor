@@ -52,9 +52,9 @@ export const TimelineVolumeControl: FC = () => {
   const { tracks, handleAudioItemVolumeChange } = useEditor()
   const { timelineState } = useRemotionTimeline()
   const [isOpen, setIsOpen] = useState(false)
-  const selectedItem = timelineState.selectedItem
+  const selectedClip = timelineState.selectedClip
 
-  if (!selectedItem) return null
+  if (!selectedClip) return null
 
   return (
     <div className="timeline-popover">
@@ -75,10 +75,10 @@ export const TimelineVolumeControl: FC = () => {
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
           >
             <div className="flex flex-col gap-1">
-              {tracks[selectedItem.trackIndex].items[selectedItem.itemIndex]?.type === 'audio' && (
+              {tracks[selectedClip.clipIndex].items[selectedClip.itemIndex]?.type === 'audio' && (
                 <AudioItemVolume
-                  key={tracks[selectedItem.trackIndex].items[selectedItem.itemIndex].id}
-                  item={tracks[selectedItem.trackIndex].items[selectedItem.itemIndex] as AudibleItem}
+                  key={tracks[selectedClip.clipIndex].items[selectedClip.itemIndex].id}
+                  item={tracks[selectedClip.clipIndex].items[selectedClip.itemIndex] as AudibleItem}
                   onVolumeChange={handleAudioItemVolumeChange}
                 />
               )}

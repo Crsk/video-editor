@@ -7,22 +7,22 @@ import { AudioTrackVisualizer } from './audio-track-visualizer'
 
 const FPS = 30
 
-interface TrackItemProps {
+interface ClipProps {
   item: Item
-  trackIndex: number
+  clipIndex: number
   itemIndex: number
   pixelsPerSecond: number
   isSelected: boolean
   showResizeControls: boolean
   maxDurationSeconds: number
-  onItemSelect: (trackIndex: number, itemIndex: number) => void
+  onItemSelect: (clipIndex: number, itemIndex: number) => void
   onResizeStart: (e: React.MouseEvent, mode: 'left' | 'right') => void
   videoEndPosition?: number // Position where video content ends
 }
 
-export const TrackItem: FC<TrackItemProps> = ({
+export const Clip: FC<ClipProps> = ({
   item,
-  trackIndex,
+  clipIndex,
   itemIndex,
   pixelsPerSecond,
   isSelected,
@@ -40,9 +40,9 @@ export const TrackItem: FC<TrackItemProps> = ({
     id: `item-${item.id}`,
     data: {
       item,
-      trackIndex,
+      clipIndex,
       itemIndex,
-      type: 'track-item'
+      type: 'clip'
     }
   })
 
@@ -74,7 +74,7 @@ export const TrackItem: FC<TrackItemProps> = ({
       )})`}
       onClick={e => {
         e.stopPropagation()
-        onItemSelect(trackIndex, itemIndex)
+        onItemSelect(clipIndex, itemIndex)
       }}
       {...listeners}
     >

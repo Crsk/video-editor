@@ -60,26 +60,25 @@ export const VideoComposer: React.FC<VideoComposerProps> = ({ timelineData }) =>
       </Button>
     )
 
-  const writeVideoTrackItem = async ({ ffmpeg, id, file }: { ffmpeg: FFmpeg; id: string; file: string }) => {
-    console.log(`[writeVideoTrackItem] | Writing track item ${id}`)
+  const writeVideoClip = async ({ ffmpeg, id, file }: { ffmpeg: FFmpeg; id: string; file: string }) => {
+    console.log(`[writeVideoClip] | Writing clip ${id}`)
     await ffmpeg.writeFile(`${id}.mp4`, await fetchFile(file))
-    console.log(`[writeVideoTrackItem] | Finished writing track item ${id}`)
+    console.log(`[writeVideoClip] | Finished writing clip ${id}`)
   }
 
-  const writeAudioTrackItem = async ({ ffmpeg, id, file }: { ffmpeg: FFmpeg; id: string; file: string }) => {
-    console.log(`[writeAudioTrackItem] | Writing track item ${id}`)
+  const writeAudioClip = async ({ ffmpeg, id, file }: { ffmpeg: FFmpeg; id: string; file: string }) => {
+    console.log(`[writeAudioClip] | Writing clip ${id}`)
     await ffmpeg.writeFile(`${id}.mp3`, await fetchFile(file))
-    console.log(`[writeAudioTrackItem] | Finished writing track item ${id}`)
+    console.log(`[writeAudioClip] | Finished writing clip ${id}`)
   }
 
-  const trimTrackItem = async ({ ffmpeg, id, frames }: { ffmpeg: FFmpeg; id: string; frames: number }) => {
-    console.log(`[trimTrackItem] | Trimming track item ${id}`)
+  const trimClip = async ({ ffmpeg, id, frames }: { ffmpeg: FFmpeg; id: string; frames: number }) => {
+    console.log(`[trimClip] | Trimming clip ${id}`)
     await ffmpeg.exec(['-i', `${id}.mp4`, '-frames:v', `${frames}`, '-c:a', 'copy', `${id}-trimmed.mp4`])
-    console.log(`[trimTrackItem] | Finished trimming track item ${id}`)
+    console.log(`[trimClip] | Finished trimming clip ${id}`)
   }
 
-  const createItemId = ({ trackIndex, itemId }: { trackIndex: number; itemId: string }) =>
-    `track-${trackIndex}_${itemId}`
+  const createItemId = ({ clipIndex, itemId }: { clipIndex: number; itemId: string }) => `clip-${clipIndex}_${itemId}`
 
   const concatVideos = async ({
     ffmpeg,
@@ -158,19 +157,19 @@ export const VideoComposer: React.FC<VideoComposerProps> = ({ timelineData }) =>
 
       for (const [index, item] of items.entries()) {
         const isAudio = item.type === 'audio'
-        const itemId = createItemId({ trackIndex: index, itemId: item.id })
+        const itemId = createItemId({ clipIndex: index, itemId: item.id })
 
         if (isAudio) audioPath = `${itemId}.mp3`
 
         // Step 1: store track files in memory
-        if (isAudio) await writeAudioTrackItem({ ffmpeg, id: itemId, file: item.src })
-        else await writeVideoTrackItem({ ffmpeg, id: itemId, file: item.src })
+        if (isAudio) await writeAudioClip({ ffmpeg, id: itemId, file: item.src })
+        else await writeVideoClip({ ffmpeg, id: itemId, file: item.src })
 
         // Step 2: trim (TODO: validate to skip if not necessary)
-        await trimTrackItem({ ffmpeg, id: itemId, frames: item.durationInFrames })
+        await trimClip({ ffmpeg, id: itemId, frames: item.durationInFrames })
 
         // Step 3: build concat list
-        concatList += `file '${createItemId({ trackIndex: index, itemId: item.id })}-trimmed.mp4'\n`
+        concatList += `file '${createItemId({ clipIndex: index, itemId: item.id })}-trimmed.mp4'\n`
       }
     }
 

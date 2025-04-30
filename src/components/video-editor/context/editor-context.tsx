@@ -26,15 +26,15 @@ interface EditorContextState {
   togglePlayPause: () => void
   handleTimeUpdate: (newTimeInSeconds: number) => void
   toggleLoop: () => void
-  handleTrackUpdate: (trackIndex: number, updatedItems: Item[]) => void
-  handleTrackVolumeChange: (trackIndex: number, volume: number) => void
+  handleTrackUpdate: (clipIndex: number, updatedItems: Item[]) => void
+  handleTrackVolumeChange: (clipIndex: number, volume: number) => void
   handleAudioItemVolumeChange: (itemId: string, volume: number) => void
 
   // Move item between tracks with collision detection
   moveItemToTrack: (
-    sourceTrackIndex: number,
+    sourceClipIndex: number,
     itemIndex: number,
-    targetTrackIndex: number,
+    targetClipIndex: number,
     newStartFrame: number
   ) => boolean // returns true if move succeeded, false if collision
 }
@@ -151,11 +151,11 @@ export const EditorProvider: FC<EditorProviderProps> = ({
   }
 
   // Handle track updates (for resizing video items)
-  const handleTrackUpdate = (trackIndex: number, updatedItems: Item[]) => {
+  const handleTrackUpdate = (clipIndex: number, updatedItems: Item[]) => {
     setTracks(prevTracks => {
       const newTracks = [...prevTracks]
-      newTracks[trackIndex] = {
-        ...newTracks[trackIndex],
+      newTracks[clipIndex] = {
+        ...newTracks[clipIndex],
         items: applyGravityToTrack(updatedItems)
       }
       return newTracks
@@ -269,14 +269,14 @@ export const EditorProvider: FC<EditorProviderProps> = ({
 
   // Move item between tracks with collision detection
   function moveItemToTrack(
-    sourceTrackIndex: number,
+    sourceClipIndex: number,
     itemIndex: number,
-    targetTrackIndex: number,
+    targetClipIndex: number,
     newStartFrame: number
   ): boolean {
     setTracks(prevTracks => {
-      const sourceTrack = prevTracks[sourceTrackIndex]
-      const targetTrack = prevTracks[targetTrackIndex]
+      const sourceTrack = prevTracks[sourceClipIndex]
+      const targetTrack = prevTracks[targetClipIndex]
       let movingItem = { ...sourceTrack.items[itemIndex], from: newStartFrame }
 
       // Check for collision in target track
@@ -306,8 +306,8 @@ export const EditorProvider: FC<EditorProviderProps> = ({
       const gravitatedTargetItems = applyGravityToTrack(newTargetItems)
 
       const newTracks = prevTracks.map((track, idx) => {
-        if (idx === sourceTrackIndex) return { ...track, items: gravitatedSourceItems }
-        if (idx === targetTrackIndex) return { ...track, items: gravitatedTargetItems }
+        if (idx === sourceClipIndex) return { ...track, items: gravitatedSourceItems }
+        if (idx === targetClipIndex) return { ...track, items: gravitatedTargetItems }
         return track
       })
       return newTracks
@@ -316,11 +316,11 @@ export const EditorProvider: FC<EditorProviderProps> = ({
   }
 
   // Handle track volume changes
-  const handleTrackVolumeChange = (trackIndex: number, volume: number) => {
+  const handleTrackVolumeChange = (clipIndex: number, volume: number) => {
     setTracks(prevTracks => {
       const newTracks = [...prevTracks]
-      newTracks[trackIndex] = {
-        ...newTracks[trackIndex],
+      newTracks[clipIndex] = {
+        ...newTracks[clipIndex],
         volume
       }
       return newTracks

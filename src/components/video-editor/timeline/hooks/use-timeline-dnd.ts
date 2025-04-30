@@ -21,11 +21,11 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
 
   const {
     setIsDragging,
-    setSelectedItem,
+    setSelectedClip,
     setActiveItem,
     activeItem,
-    setActiveItemTrackIndex,
-    activeItemTrackIndex,
+    setActiveItemClipIndex,
+    activeItemClipIndex,
     setActiveItemIndex,
     activeItemIndex,
     timelineContainerRef,
@@ -55,12 +55,12 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event
 
-    if (active.data.current?.type === 'track-item') {
-      const { item, trackIndex, itemIndex } = active.data.current
+    if (active.data.current?.type === 'clip') {
+      const { item, clipIndex, itemIndex } = active.data.current
       setActiveItem(item)
-      setActiveItemTrackIndex(trackIndex)
+      setActiveItemClipIndex(clipIndex)
       setActiveItemIndex(itemIndex)
-      setSelectedItem({ trackIndex, itemIndex })
+      setSelectedClip({ clipIndex, itemIndex })
       setIsDragging(true)
     }
   }
@@ -87,17 +87,17 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, delta, over } = event
 
-    if (active.data.current?.type === 'track-item' && activeItemTrackIndex !== null && activeItemIndex !== null) {
-      const sourceTrackIndex = activeItemTrackIndex
+    if (active.data.current?.type === 'clip' && activeItemClipIndex !== null && activeItemIndex !== null) {
+      const sourceClipIndex = activeItemClipIndex
       const itemIndex = activeItemIndex
-      const currentItem = tracks[sourceTrackIndex].items[itemIndex]
+      const currentItem = tracks[sourceClipIndex].items[itemIndex]
 
       if (!currentItem) return
 
-      let targetTrackIndex = sourceTrackIndex
-      if (over && typeof over.id === 'string' && over.id.startsWith('track-')) {
-        const parsed = parseInt(over.id.replace('track-', ''), 10)
-        if (!isNaN(parsed)) targetTrackIndex = parsed
+      let targetClipIndex = sourceClipIndex
+      if (over && typeof over.id === 'string' && over.id.startsWith('clip-')) {
+        const parsed = parseInt(over.id.replace('clip-', ''), 10)
+        if (!isNaN(parsed)) targetClipIndex = parsed
       }
 
       const deltaXInPixels = delta.x
@@ -105,14 +105,14 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
       const deltaFrames = Math.round(deltaTimeInSeconds * FPS)
       const newTrackStartFrame = Math.max(0, currentItem.from + deltaFrames)
 
-      if (targetTrackIndex !== sourceTrackIndex) {
-        const moveSucceeded = moveItemToTrack(sourceTrackIndex, itemIndex, targetTrackIndex, newTrackStartFrame)
+      if (targetClipIndex !== sourceClipIndex) {
+        const moveSucceeded = moveItemToTrack(sourceClipIndex, itemIndex, targetClipIndex, newTrackStartFrame)
 
         if (!moveSucceeded) {
           // TODO: show visual feedback for collision
         }
       } else {
-        const updatedItems = [...tracks[sourceTrackIndex].items]
+        const updatedItems = [...tracks[sourceClipIndex].items]
         const snappedGap = getSnappedDropPosition({
           items: updatedItems,
           desiredStartFrame: newTrackStartFrame,
@@ -125,14 +125,14 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
             ...currentItem,
             from: snappedGap
           }
-          handleTrackUpdate(sourceTrackIndex, updatedItems)
+          handleTrackUpdate(sourceClipIndex, updatedItems)
         } else {
           // Optionally feedback
         }
       }
 
       setActiveItem(null)
-      setActiveItemTrackIndex(null)
+      setActiveItemClipIndex(null)
       setActiveItemIndex(null)
       setIsDragging(false)
     }
