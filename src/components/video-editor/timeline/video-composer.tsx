@@ -53,7 +53,12 @@ export const VideoComposer: React.FC<VideoComposerProps> = ({ timelineData }) =>
     setFfmpegLoaded(true)
   }, [ffmpegRef])
 
-  if (!ffmpegLoaded) return <Button onClick={loadFFmpeg}>Load FFmpeg</Button>
+  if (!ffmpegLoaded)
+    return (
+      <Button onClick={loadFFmpeg} className="mt-96">
+        Load FFmpeg (test)
+      </Button>
+    )
 
   const writeVideoTrackItem = async ({ ffmpeg, id, file }: { ffmpeg: FFmpeg; id: string; file: string }) => {
     console.log(`[writeVideoTrackItem] | Writing track item ${id}`)
