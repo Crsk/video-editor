@@ -4,6 +4,7 @@ import { Track, Item } from '../types'
 import { useVideoLoader } from '../hooks/use-video-loader'
 import { useAudioLoader } from '../hooks/use-audio-loader'
 import { applyGravityToTrack } from './gravity'
+import { RemotionTimelineProvider } from '../timeline/context/remotion-timeline-context'
 
 interface EditorContextState {
   // Track data
@@ -366,7 +367,11 @@ export const EditorProvider: FC<EditorProviderProps> = ({
     moveItemToTrack
   }
 
-  return <EditorContext.Provider value={contextValue}>{children}</EditorContext.Provider>
+  return (
+    <EditorContext.Provider value={contextValue}>
+      <RemotionTimelineProvider>{children}</RemotionTimelineProvider>
+    </EditorContext.Provider>
+  )
 }
 
 export const useEditor = (): EditorContextState => {
