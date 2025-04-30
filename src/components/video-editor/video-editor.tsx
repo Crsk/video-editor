@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import { EditorProvider } from './context/editor-context'
-import { Timeline } from './timeline/timeline'
-import { VideoPlayer } from './player'
-import { Track } from './types'
+import { EditorProvider } from '~/components/video-editor/context/editor-context'
+import { Timeline } from '~/components/video-editor/timeline/timeline'
+import { VideoPlayer } from '~/components/video-editor/player'
+import { Track } from '~/components/video-editor/types'
 
 type EditorProps = { tracks: Track[] }
 export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
