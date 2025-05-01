@@ -4,7 +4,7 @@ import { Track } from './track'
 import '../styles/timeline.css'
 import { useEditor } from '../context/video-editor-context'
 import { DndContext, DragOverlay, pointerWithin } from '@dnd-kit/core'
-import { FC, useMemo } from 'react'
+import { FC } from 'react'
 import { useRemotionTimeline } from './context/remotion-timeline-context'
 import { VideoComposer } from './video-composer'
 import { TimelineStyle } from '../types'
@@ -40,39 +40,12 @@ const defaultTimelineStyle: TimelineStyle = {
 }
 
 export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) => {
-  const { tracks, currentTime, durationInFrames } = useEditor()
+  const { tracks, currentTime } = useEditor()
   const { timelineState, timelineInteractions, timelineDnd } = useRemotionTimeline()
   const _styles: TimelineStyle = {
     ...defaultTimelineStyle,
     ...styles
   }
-
-  const ffmpegData = useMemo(
-    () => ({
-      composition: {
-        durationInFrames,
-        fps: timelineState.FPS
-      },
-      tracks: tracks
-        .filter(track => track.items.length > 0)
-        .map(track => ({
-          name: track.name,
-          volume: track.volume || 1,
-          items: track.items
-            .filter(x => x.type === 'video' || x.type === 'audio')
-            .map(item => ({
-              id: item.id,
-              type: item.type,
-              from: item.from,
-              durationInFrames: item.durationInFrames,
-              src: item.src.split('/').pop()!,
-              volume: item.volume || 1
-            }))
-        })),
-      currentTime: currentTime
-    }),
-    [durationInFrames, timelineState.FPS, tracks, currentTime]
-  )
 
   const {
     containerRef,
@@ -189,7 +162,7 @@ export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) =>
         )}
       </DndContext>
 
-      <VideoComposer timelineData={ffmpegData} />
+      <VideoComposer />
     </div>
   )
 }

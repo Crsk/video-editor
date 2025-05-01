@@ -70,3 +70,27 @@ export type TimelineStyle = {
   timeRuler: TimeRulerStyle
   track: TrackStyle
 }
+
+export interface CompositionClip {
+  id: string
+  type: 'video' | 'audio'
+  from: number
+  durationInFrames: number
+  src: string
+  volume?: number
+}
+
+export interface CompositionTrack {
+  name: string
+  volume: number
+  clips: CompositionClip[]
+}
+
+export interface CompositionData {
+  composition: {
+    durationInFrames: number
+    fps: number
+  }
+  tracks: CompositionTrack[]
+  currentTime: number
+}

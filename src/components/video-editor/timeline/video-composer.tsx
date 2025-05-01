@@ -1,40 +1,15 @@
-import { RefObject, useCallback, useRef, useState } from 'react'
+import { FC, RefObject, useCallback, useRef, useState } from 'react'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { toBlobURL, fetchFile } from '@ffmpeg/util'
 import { Button } from '~/components/ui/button'
+import { useCompositionData } from '../hooks/use-composition-data'
+import { CompositionTrack } from '../types'
 
-interface CompositionItem {
-  id: string
-  type: 'video' | 'audio'
-  from: number
-  durationInFrames: number
-  src: string
-  volume?: number
-}
-
-interface Track {
-  name: string
-  volume: number
-  items: CompositionItem[]
-}
-
-interface TimelineData {
-  composition: {
-    durationInFrames: number
-    fps: number
-  }
-  tracks: Track[]
-  currentTime: number
-}
-
-interface VideoComposerProps {
-  timelineData: TimelineData
-}
-
-export const VideoComposer: React.FC<VideoComposerProps> = ({ timelineData }) => {
+export const VideoComposer: FC = () => {
   const [ffmpegLoaded, setFfmpegLoaded] = useState(false)
   const ffmpegRef = useRef(new FFmpeg())
   const videoRef = useRef<HTMLVideoElement | null>(null)
+  const compositionData = useCompositionData()
 
   const loadFFmpeg = useCallback(async () => {
     const baseURL = 'https://unpkg.com/@ffmpeg/core-mt@0.12.9/dist/esm'
@@ -139,7 +114,7 @@ export const VideoComposer: React.FC<VideoComposerProps> = ({ timelineData }) =>
     ffmpeg,
     videoRef
   }: {
-    tracks: Track[]
+    tracks: CompositionTrack[]
     ffmpeg: FFmpeg
     videoRef: RefObject<HTMLVideoElement | null>
   }) => {
@@ -153,23 +128,23 @@ export const VideoComposer: React.FC<VideoComposerProps> = ({ timelineData }) =>
     // const backgroundAudioPath = 'background-audio.mp3' // Supporting one background audio for now, TODO: should be able to merge multiple background audios
 
     for (const track of tracks) {
-      const { items } = track
+      const { clips } = track
 
-      for (const [index, item] of items.entries()) {
-        const isAudio = item.type === 'audio'
-        const itemId = createItemId({ clipIndex: index, itemId: item.id })
+      for (const [index, clip] of clips.entries()) {
+        const isAudio = clip.type === 'audio'
+        const itemId = createItemId({ clipIndex: index, itemId: clip.id })
 
         if (isAudio) audioPath = `${itemId}.mp3`
 
         // Step 1: store track files in memory
-        if (isAudio) await writeAudioClip({ ffmpeg, id: itemId, file: item.src })
-        else await writeVideoClip({ ffmpeg, id: itemId, file: item.src })
+        if (isAudio) await writeAudioClip({ ffmpeg, id: itemId, file: clip.src })
+        else await writeVideoClip({ ffmpeg, id: itemId, file: clip.src })
 
         // Step 2: trim (TODO: validate to skip if not necessary)
-        await trimClip({ ffmpeg, id: itemId, frames: item.durationInFrames })
+        await trimClip({ ffmpeg, id: itemId, frames: clip.durationInFrames })
 
         // Step 3: build concat list
-        concatList += `file '${createItemId({ clipIndex: index, itemId: item.id })}-trimmed.mp4'\n`
+        concatList += `file '${createItemId({ clipIndex: index, itemId: clip.id })}-trimmed.mp4'\n`
       }
     }
 
@@ -192,7 +167,7 @@ export const VideoComposer: React.FC<VideoComposerProps> = ({ timelineData }) =>
       <Button
         onClick={() =>
           transcode({
-            tracks: timelineData.tracks,
+            tracks: compositionData.tracks,
             ffmpeg: ffmpegRef.current,
             videoRef: videoRef
           })
