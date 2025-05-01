@@ -4,7 +4,7 @@ import { useTimeline } from '../use-timeline'
 import { createMockEditorFunctions, createMockTimelineState } from './test-utils'
 import * as timelineCalculations from '../../../utils/timeline-calculations'
 
-vi.mock('../../../context/editor-context', () => {
+vi.mock('../../../context/video-editor-context', () => {
   return {
     useEditor: () => ({
       tracks: [],

@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { Player } from '@remotion/player'
-import { useEditor } from './context/editor-context'
+import { useEditor } from './context/video-editor-context'
 import { MainComposition } from './composition/main-composition'
 
 export const VideoPlayer: FC = () => {

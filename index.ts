@@ -1,5 +1,5 @@
 import './src/index.css'
-import { EditorProvider } from '~/components/video-editor/context/editor-context'
+import { VideoEditorContext } from '~/components/video-editor/context/video-editor-context'
 import { Timeline } from '~/components/video-editor/timeline/timeline'
 import { VideoPlayer } from '~/components/video-editor/player'
 import { type Track, type TimelineStyle } from '~/components/video-editor/types'
@@ -11,7 +11,7 @@ import { TimeDisplay } from '~/components/video-editor/controls/time-display'
 import { VideoLoopControl } from '~/components/video-editor/controls/video-loop-control'
 import { PlayPauseControl } from '~/components/video-editor/controls/play-pause-control'
 
-export { EditorProvider }
+export { VideoEditorContext }
 export { type Track }
 export { VideoPlayer }
 export { Timeline }

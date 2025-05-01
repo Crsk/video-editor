@@ -17,7 +17,7 @@ vi.mock('../calculate-resized-width', () => ({
   calculateResizedWidth: vi.fn().mockReturnValue(150)
 }))
 
-vi.mock('../../../context/editor-context', () => {
+vi.mock('../../../context/video-editor-context', () => {
   return {
     useEditor: () => ({
       tracks: [],

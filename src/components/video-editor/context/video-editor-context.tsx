@@ -42,14 +42,14 @@ interface EditorContextState {
 // Create the context with a default undefined value
 const EditorContext = createContext<EditorContextState | undefined>(undefined)
 
-interface EditorProviderProps {
+interface VideoEditorContextProps {
   children: ReactNode
   initialTracks?: Track[]
 }
 
 const FPS = 30
 
-export const EditorProvider: FC<EditorProviderProps> = ({
+export const VideoEditorContext: FC<VideoEditorContextProps> = ({
   children,
   initialTracks = [
     {
@@ -377,7 +377,7 @@ export const EditorProvider: FC<EditorProviderProps> = ({
 export const useEditor = (): EditorContextState => {
   const context = useContext(EditorContext)
   if (context === undefined) {
-    throw new Error('useEditor must be used within an EditorProvider')
+    throw new Error('useEditor must be used within an VideoEditorContext')
   }
   return context
 }

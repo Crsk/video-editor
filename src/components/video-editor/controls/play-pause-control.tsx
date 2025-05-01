@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { Button } from '~/components/ui/button'
 import { PauseIcon } from '../icons/pause-icon'
 import { PlayIcon } from '../icons/play-icon'
-import { useEditor } from '../context/editor-context'
+import { useEditor } from '../context/video-editor-context'
 
 export const PlayPauseControl: FC = () => {
   const { isPlaying, togglePlayPause } = useEditor()
