@@ -17,6 +17,7 @@ import { TimeDisplay } from '~/components/video-editor/controls/time-display'
 import { VideoLoopControl } from '~/components/video-editor/controls/video-loop-control'
 import { PlayPauseControl } from '~/components/video-editor/controls/play-pause-control'
 import { useCompositionData } from '~/components/video-editor/hooks/use-composition-data'
+import { useTrackManager } from '~/components/video-editor/hooks/use-track-manager'
 
 export { VideoEditorContext }
 export { VideoPlayer }
@@ -36,3 +37,4 @@ export { type CompositionTrack }
 export { type CompositionClip }
 
 export { useCompositionData }
+export { useTrackManager }
