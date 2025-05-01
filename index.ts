@@ -2,7 +2,7 @@ import './src/index.css'
 import { EditorProvider } from '~/components/video-editor/context/editor-context'
 import { Timeline } from '~/components/video-editor/timeline/timeline'
 import { VideoPlayer } from '~/components/video-editor/player'
-import { type Track } from '~/components/video-editor/types'
+import { type Track, type TimelineStyle } from '~/components/video-editor/types'
 
 import { ZoomPlusControl } from '~/components/video-editor/controls/zoom-plus-control'
 import { ZoomMinusControl } from '~/components/video-editor/controls/zoom-minus-control'
@@ -22,3 +22,4 @@ export { SelectedClipVolumeControl }
 export { TimeDisplay }
 export { VideoLoopControl }
 export { PlayPauseControl }
+export { type TimelineStyle }
