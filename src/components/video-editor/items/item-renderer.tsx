@@ -20,8 +20,8 @@ const VideoContainBlurBackground = ({ item }: { item: Item }) => {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          filter: `blur(${25}px)`,
-          transform: 'scale(10.05)'
+          filter: `blur(${100}px)`,
+          transform: 'scale(3)'
         }}
       />
 
@@ -40,15 +40,15 @@ const VideoContainBlurBackground = ({ item }: { item: Item }) => {
 
 const VideoCover = ({ item }: { item: Item }) => {
   if (item.type !== 'video') return null
-  
+
   // Default to center position (0,0) if not specified
   const positionX = item.positionX || 0
   const positionY = item.positionY || 0
-  
+
   // Calculate the object-position based on the position values
   // Convert from -100/100 range to 0-100% range for CSS object-position
-  const objectPositionX = `${50 + positionX/2}%`
-  const objectPositionY = `${50 + positionY/2}%`
+  const objectPositionX = `${50 + positionX / 2}%`
+  const objectPositionY = `${50 + positionY / 2}%`
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#000' }}>
