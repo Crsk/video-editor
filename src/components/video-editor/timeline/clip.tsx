@@ -1,9 +1,10 @@
 import { FC } from 'react'
-import { Item } from '../types'
+import { ClipStyle, Item } from '../types'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { formatTimeCode } from '../utils/format-time'
 import { useDraggable } from '@dnd-kit/core'
 import { AudioTrackVisualizer } from './audio-track-visualizer'
+import { cn } from '~/lib/utils'
 
 const FPS = 30
 
@@ -18,6 +19,7 @@ interface ClipProps {
   onItemSelect: (clipIndex: number, itemIndex: number) => void
   onResizeStart: (e: React.MouseEvent, mode: 'left' | 'right') => void
   videoEndPosition?: number // Position where video content ends
+  styles?: ClipStyle
 }
 
 export const Clip: FC<ClipProps> = ({
@@ -29,7 +31,8 @@ export const Clip: FC<ClipProps> = ({
   showResizeControls,
   onItemSelect,
   onResizeStart,
-  videoEndPosition
+  videoEndPosition,
+  styles
 }) => {
   const itemStartSeconds = item.from / FPS
   const itemDurationSeconds = item.durationInFrames / FPS
@@ -58,16 +61,19 @@ export const Clip: FC<ClipProps> = ({
     width: Math.max(4, itemDurationSeconds * pixelsPerSecond),
     opacity: isDragging ? 0 : 1,
     zIndex: isDragging ? 50 : isSelected ? 30 : 10,
-    borderRadius: '100px',
-    backgroundColor: isSelected ? 'var(--color-timeline-accent)' : ''
+    borderRadius: '100px'
   }
 
   return (
     <div
       ref={setNodeRef}
-      className={`absolute flex items-center justify-center h-7 top-0.5 text-accent text-xs cursor-grab overflow-hidden truncate whitespace-nowrap ${
-        item.type === 'audio' ? '' : 'bg-primary'
-      } timeline-item opacity-80 border-0 select-none`}
+      className={cn(
+        `absolute flex items-center justify-center h-7 top-0.5 text-accent text-xs cursor-grab overflow-hidden truncate whitespace-nowrap ${
+          item.type === 'audio' ? '' : 'bg-primary'
+        } timeline-item opacity-80 border-0 select-none`,
+        styles?.root,
+        isSelected ? (styles?.active.root !== '' ? styles?.active.root : 'bg-[var(--color-timeline-accent)]') : ''
+      )}
       style={style}
       title={`${item.type} (${formatTimeCode(itemStartSeconds)}-${formatTimeCode(
         itemStartSeconds + itemDurationSeconds
@@ -81,7 +87,10 @@ export const Clip: FC<ClipProps> = ({
       {/* Left resize handle for video items */}
       {showResizeControls && (
         <div
-          className="absolute left-0 top-0 bottom-0 w-4 flex items-center justify-center bg-blue-500/0 hover:bg-blue-500/50 cursor-ew-resize z-40 resize-handle text-secondary dark:text-primary"
+          className={cn(
+            'absolute left-0 top-0 bottom-0 w-4 flex items-center justify-center bg-blue-500/0 hover:bg-blue-500/50 cursor-ew-resize z-40 resize-handle text-secondary dark:text-primary',
+            styles?.active.resizeHandle
+          )}
           onMouseDown={e => {
             e.stopPropagation()
             onResizeStart(e, 'left')
@@ -93,7 +102,15 @@ export const Clip: FC<ClipProps> = ({
 
       {/* Item content */}
       <div
-        className={`flex-1 text-center text-secondary ${isSelected ? 'text-secondary/40 dark:text-primary/40' : ''}`}
+        className={cn(
+          'flex-1 text-center text-secondary',
+          styles?.content,
+          isSelected
+            ? styles?.active.content !== ''
+              ? styles?.active.content
+              : 'text-secondary/40 dark:text-primary/40'
+            : ''
+        )}
       >
         {item.type === 'audio' ? (
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
@@ -122,7 +139,10 @@ export const Clip: FC<ClipProps> = ({
       {/* Right resize handle for video items */}
       {showResizeControls && (
         <div
-          className="absolute right-0 top-0 bottom-0 w-4 flex items-center justify-center bg-blue-500/0 hover:bg-blue-500/50 cursor-ew-resize z-40 resize-handle text-secondary dark:text-primary"
+          className={cn(
+            'absolute right-0 top-0 bottom-0 w-4 flex items-center justify-center bg-blue-500/0 hover:bg-blue-500/50 cursor-ew-resize z-40 resize-handle text-secondary dark:text-primary',
+            styles?.active.resizeHandle
+          )}
           onMouseDown={e => {
             e.stopPropagation()
             onResizeStart(e, 'right')

@@ -36,3 +36,37 @@ export type Track = {
   items: Item[]
   volume?: number
 }
+
+export type TimeRulerStyle = {
+  root: string
+  gridLines: string
+  label: string
+}
+
+export type ClipStyle = {
+  root: string
+  content: string
+  active: {
+    root: string
+    resizeHandle: string
+    content: string
+    dragOrResize: string
+  }
+}
+
+export type TrackStyle = {
+  root: string
+  clip: ClipStyle
+}
+
+export type TimeMarkerStyle = {
+  line: string
+  handle: string
+}
+
+export type TimelineStyle = {
+  root?: string
+  timeMarker: TimeMarkerStyle
+  timeRuler: TimeRulerStyle
+  track: TrackStyle
+}

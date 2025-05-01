@@ -1,5 +1,7 @@
 import { FC } from 'react'
 import { formatTimeCode } from '../utils/format-time'
+import { cn } from '~/lib/utils'
+import { TimeRulerStyle } from '../types'
 
 interface TimeRulerProps {
   timeMarkers: number[]
@@ -9,13 +11,18 @@ interface TimeRulerProps {
   hasVideoTracks: boolean
 }
 
-export const TimeRuler: FC<TimeRulerProps> = ({ timeMarkers, pixelsPerSecond, videoEndPosition, hasVideoTracks }) => {
+export const TimeRuler: FC<TimeRulerProps & { styles: TimeRulerStyle }> = ({
+  timeMarkers,
+  pixelsPerSecond,
+  videoEndPosition,
+  hasVideoTracks,
+  styles
+}) => {
   return (
-    <div className="mb-2 text-muted-foreground text-xs cursor-pointer select-none bg-muted">
+    <div className={cn('mb-2 text-muted-foreground text-xs cursor-pointer select-none bg-transparent', styles?.root)}>
       <div className="flex relative h-5">
-        {/* Overlay for non-playable regions */}
         <div className="absolute inset-0 pointer-events-none">
-          {/* Region after video end */}
+          {/* Non-playable region */}
           {hasVideoTracks && (
             <div
               className="absolute top-0 bottom-0 bg-background/70 z-10"
@@ -48,7 +55,7 @@ export const TimeRuler: FC<TimeRulerProps> = ({ timeMarkers, pixelsPerSecond, vi
               gridLines.push(
                 <div
                   key={`grid-${seconds}-${i}`}
-                  className="absolute w-[1px] h-[25%] top-[37.5%] bg-primary/25"
+                  className={cn('absolute w-[1px] h-[25%] top-[37.5%] bg-primary/25', styles?.gridLines)}
                   style={{
                     left: position * pixelsPerSecond
                   }}
@@ -66,7 +73,7 @@ export const TimeRuler: FC<TimeRulerProps> = ({ timeMarkers, pixelsPerSecond, vi
           return (
             <div
               key={seconds}
-              className="absolute top-0 text-center -translate-x-1/2 whitespace-nowrap"
+              className={cn('absolute top-0 text-center -translate-x-1/2 whitespace-nowrap', styles?.label)}
               style={{
                 left: position,
                 ...(seconds === 0 ? { marginLeft: '8px' } : {})

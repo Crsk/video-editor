@@ -30,7 +30,33 @@ export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
           <ZoomPlusControl />
         </div>
       </div>
-      <Timeline />
+      <Timeline
+        styles={{
+          root: 'bg-background p-4 rounded-lg mt-6',
+          timeMarker: {
+            handle: '',
+            line: ''
+          },
+          timeRuler: {
+            root: '',
+            gridLines: '',
+            label: ''
+          },
+          track: {
+            root: '',
+            clip: {
+              root: '',
+              content: '',
+              active: {
+                root: '',
+                resizeHandle: '',
+                content: '',
+                dragOrResize: ''
+              }
+            }
+          }
+        }}
+      />
     </EditorProvider>
   )
 }

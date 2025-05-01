@@ -1,7 +1,9 @@
 import { FC } from 'react'
-import { Track as TrackType } from '../types'
+import { TrackStyle, Track as TrackType } from '../types'
 import { Clip } from './clip'
 import { useDroppable } from '@dnd-kit/core'
+import { cn } from '~/lib/utils'
+import { useRemotionTimeline } from './context/remotion-timeline-context'
 
 interface TrackProps {
   track: TrackType
@@ -14,6 +16,7 @@ interface TrackProps {
   onItemSelect: (clipIndex: number, itemIndex: number) => void
   onResizeStart: (e: React.MouseEvent, mode: 'left' | 'right') => void
   trackRef?: (el: HTMLDivElement | null) => void
+  styles?: TrackStyle
 }
 
 export const Track: FC<TrackProps> = ({
@@ -25,7 +28,8 @@ export const Track: FC<TrackProps> = ({
   originalVideoDuration,
   onItemSelect,
   onResizeStart,
-  trackRef
+  trackRef,
+  styles
 }) => {
   // Setup droppable with dnd-kit
   const { setNodeRef, isOver } = useDroppable({
@@ -36,11 +40,14 @@ export const Track: FC<TrackProps> = ({
     }
   })
 
+  const { timelineState } = useRemotionTimeline()
+  const { resizeMode, resizeOverlay } = timelineState
+
   return (
-    <div className="flex items-center mb-2" ref={trackRef}>
+    <div className={cn('flex items-center mb-2', styles?.root)} ref={trackRef}>
       <div
         ref={setNodeRef}
-        className={`relative h-8 pt-0 cursor-pointer ${isOver ? 'bg-muted/80' : 'bg-muted'}`}
+        className={cn('relative h-8 pt-0 cursor-pointer', isOver ? 'bg-muted/80' : 'bg-transparent', styles?.root)}
         style={{ width: '100%' }}
       >
         {/* Overlay for non-playable regions on tracks */}
@@ -61,21 +68,25 @@ export const Track: FC<TrackProps> = ({
           const isResizable = item.type === 'video' || item.type === 'audio'
           const showResizeControls = isSelected && isResizable
           const maxDurationSeconds = item.type === 'video' ? originalVideoDuration : Infinity
+          const isResizing = resizeMode && resizeOverlay
 
           return (
-            <Clip
-              key={item.id}
-              item={item}
-              clipIndex={clipIndex}
-              itemIndex={itemIndex}
-              pixelsPerSecond={pixelsPerSecond}
-              isSelected={isSelected}
-              showResizeControls={showResizeControls}
-              maxDurationSeconds={maxDurationSeconds}
-              onItemSelect={onItemSelect}
-              onResizeStart={onResizeStart}
-              videoEndPosition={videoEndPosition}
-            />
+            !(isResizing && isSelected) && (
+              <Clip
+                key={item.id}
+                item={item}
+                clipIndex={clipIndex}
+                itemIndex={itemIndex}
+                pixelsPerSecond={pixelsPerSecond}
+                isSelected={isSelected}
+                showResizeControls={showResizeControls}
+                maxDurationSeconds={maxDurationSeconds}
+                onItemSelect={onItemSelect}
+                onResizeStart={onResizeStart}
+                videoEndPosition={videoEndPosition}
+                styles={styles?.clip}
+              />
+            )
           )
         })}
       </div>

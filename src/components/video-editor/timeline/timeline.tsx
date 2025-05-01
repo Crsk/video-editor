@@ -7,10 +7,45 @@ import { DndContext, DragOverlay, pointerWithin } from '@dnd-kit/core'
 import { FC, useMemo } from 'react'
 import { useRemotionTimeline } from './context/remotion-timeline-context'
 import { VideoComposer } from './video-composer'
+import { TimelineStyle } from '../types'
+import { cn } from '~/lib/utils'
 
-export const Timeline: FC = () => {
+const activeDragBase =
+  'flex items-center justify-center h-7 rounded text-accent text-xs overflow-hidden truncate whitespace-nowrap bg-timeline-accent opacity-80 border-0 select-none dark:text-primary/40'
+
+const defaultTimelineStyle: TimelineStyle = {
+  root: '',
+  timeMarker: {
+    line: '',
+    handle: ''
+  },
+  timeRuler: {
+    root: '',
+    gridLines: '',
+    label: ''
+  },
+  track: {
+    root: '',
+    clip: {
+      root: '',
+      content: '',
+      active: {
+        root: '',
+        resizeHandle: '',
+        content: '',
+        dragOrResize: ''
+      }
+    }
+  }
+}
+
+export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) => {
   const { tracks, currentTime, durationInFrames } = useEditor()
   const { timelineState, timelineInteractions, timelineDnd } = useRemotionTimeline()
+  const _styles: TimelineStyle = {
+    ...defaultTimelineStyle,
+    ...styles
+  }
 
   const ffmpegData = useMemo(
     () => ({
@@ -68,7 +103,7 @@ export const Timeline: FC = () => {
         modifiers={modifiers}
         collisionDetection={pointerWithin}
       >
-        <div ref={containerRef} className="bg-background p-4 rounded-lg mt-6">
+        <div ref={containerRef} className={styles?.root}>
           <div
             ref={timelineContainerRef}
             className="overflow-x-auto timeline-scroll-container relative select-none"
@@ -81,6 +116,7 @@ export const Timeline: FC = () => {
                 videoEndPosition={videoEndPosition}
                 nonPlayableWidth={nonPlayableWidth}
                 hasVideoTracks={tracks.some(track => track.items.some(item => item.type === 'video'))}
+                styles={_styles.timeRuler}
               />
 
               <TimeMarker
@@ -88,6 +124,7 @@ export const Timeline: FC = () => {
                 pixelsPerSecond={pixelsPerSecond}
                 isDragging={isDragging}
                 onMarkerDrag={handleMarkerDrag}
+                styles={_styles.timeMarker}
               />
 
               <div className="mt-2">
@@ -104,6 +141,7 @@ export const Timeline: FC = () => {
                     onItemSelect={handleItemSelect}
                     onResizeStart={handleResizeStart}
                     trackRef={el => (trackRefs.current[clipIndex] = el)}
+                    styles={_styles.track}
                   />
                 ))}
               </div>
@@ -112,15 +150,18 @@ export const Timeline: FC = () => {
         </div>
         {resizeMode && resizeOverlay && (
           <div
-            className="pointer-events-none fixed z-[100]"
+            className={cn(
+              'pointer-events-none fixed z-[100]',
+              activeDragBase,
+              styles?.track?.clip?.active?.dragOrResize
+            )}
             style={{
               left: resizeOverlay.left,
               top: resizeOverlay.top,
               width: resizeOverlay.width,
               height: resizeOverlay.height,
               opacity: 0.2,
-              borderRadius: '8px',
-              background: 'var(--color-timeline-accent)',
+              borderRadius: '100px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -135,15 +176,13 @@ export const Timeline: FC = () => {
           <DragOverlay transition="0s" style={{ opacity: 0.2 }}>
             {activeItem && (
               <div
-                className="flex items-center justify-center h-7 rounded text-accent text-xs overflow-hidden truncate whitespace-nowrap bg-timeline-accent opacity-80 border-0 select-none"
+                className={cn(activeDragBase, styles?.track?.clip?.active?.dragOrResize)}
                 style={{
                   width: Math.max(4, (activeItem.durationInFrames / FPS) * pixelsPerSecond),
                   borderRadius: '100px'
                 }}
               >
-                <div className="text-secondary/40 dark:text-primary/40">
-                  {activeItem.type.charAt(0).toUpperCase() + activeItem.type.slice(1)}
-                </div>
+                {/* <div>{activeItem.type.charAt(0).toUpperCase() + activeItem.type.slice(1)}</div> */}
               </div>
             )}
           </DragOverlay>
