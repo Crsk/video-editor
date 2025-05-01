@@ -4,10 +4,10 @@ import { Track } from './track'
 import '../styles/timeline.css'
 import { useEditor } from '../context/video-editor-context'
 import { DndContext, DragOverlay, pointerWithin } from '@dnd-kit/core'
-import { FC, useRef, useState } from 'react'
+import { FC, useRef, useState, useEffect } from 'react'
 import { useRemotionTimeline } from './context/remotion-timeline-context'
 import { VideoComposer } from './video-composer'
-import { TimelineStyle } from '../types'
+import { TimelineStyle, VideoItem } from '../types'
 import { cn } from '~/lib/utils'
 import { useTrackManager } from '../hooks/use-track-manager'
 import { Button } from '~/components/ui/button'
@@ -42,11 +42,14 @@ const defaultTimelineStyle: TimelineStyle = {
 }
 
 export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) => {
-  const { tracks, currentTime } = useEditor()
+  const { tracks, currentTime, handleVideoRenderOptionChange, handleVideoPositionChange } = useEditor()
   const { timelineState, timelineInteractions, timelineDnd } = useRemotionTimeline()
   const { createTrack, addVideoClip, addAudioClip, addClipToBeginning, addClipToEnd, hasPendingOperations } =
     useTrackManager()
   const [selectedTrackIndex, setSelectedTrackIndex] = useState<number | null>(null)
+  const [selectedVideoItem, setSelectedVideoItem] = useState<{ trackIndex: number; itemId: string } | null>(null)
+  const [positionX, setPositionX] = useState(0)
+  const [positionY, setPositionY] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const videoInputRef = useRef<HTMLInputElement>(null)
   const audioInputRef = useRef<HTMLInputElement>(null)
@@ -72,7 +75,7 @@ export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) =>
     FPS
   } = timelineState
 
-  const { handleTimelineClick, handleMarkerDrag, handleItemSelect, handleResizeStart } = timelineInteractions
+  const { handleTimelineClick, handleMarkerDrag, handleResizeStart } = timelineInteractions
   const { sensors, activeItem, handleDragStart, handleDragMove, handleDragEnd, modifiers } = timelineDnd
 
   const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,6 +123,35 @@ export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) =>
     const newTrackIndex = createTrack(trackName)
     setSelectedTrackIndex(newTrackIndex)
   }
+
+  // Custom handler for item selection that also updates selectedVideoItem
+  const handleItemSelectWithRenderOption = (trackIndex: number, itemIndex: number) => {
+    // Call the original handler from timelineInteractions
+    timelineInteractions.handleItemSelect(trackIndex, itemIndex)
+
+    // Set the selected video item if it's a video
+    const item = tracks[trackIndex]?.items[itemIndex]
+    if (item && item.type === 'video') {
+      setSelectedVideoItem({ trackIndex, itemId: item.id })
+      // Set initial position values from the item
+      setPositionX(item.positionX || 0)
+      setPositionY(item.positionY || 0)
+    } else {
+      setSelectedVideoItem(null)
+    }
+  }
+
+  // Update position values when selected item changes
+  useEffect(() => {
+    if (selectedVideoItem) {
+      const track = tracks[selectedVideoItem.trackIndex]
+      const item = track?.items.find(item => item.id === selectedVideoItem.itemId) as VideoItem | undefined
+      if (item) {
+        setPositionX(item.positionX || 0)
+        setPositionY(item.positionY || 0)
+      }
+    }
+  }, [selectedVideoItem, tracks])
 
   return (
     <div>
@@ -211,6 +243,71 @@ export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) =>
         )}
 
         {isLoading && <div className="ml-2 text-sm text-muted-foreground animate-pulse">Processing media...</div>}
+
+        {/* Render option select for video items */}
+        {selectedVideoItem && (
+          <div className="flex flex-col gap-2 ml-4 p-2 border rounded bg-secondary/5">
+            <div className="flex items-center gap-2">
+              <span className="text-sm">Render Style:</span>
+              <select
+                className="p-1 border rounded bg-background text-sm"
+                value={(() => {
+                  const track = tracks[selectedVideoItem.trackIndex]
+                  const item = track?.items.find(item => item.id === selectedVideoItem.itemId) as VideoItem | undefined
+                  return item?.renderOption || 'default'
+                })()}
+                onChange={e => {
+                  const renderOption = e.target.value as 'default' | 'contain-blur' | 'cover'
+                  handleVideoRenderOptionChange(selectedVideoItem.itemId, renderOption)
+                }}
+              >
+                <option value="default">Default</option>
+                <option value="contain-blur">Contain with Blur</option>
+                <option value="cover">Cover</option>
+              </select>
+            </div>
+
+            {/* Position sliders for cover mode */}
+            {(() => {
+              const track = tracks[selectedVideoItem.trackIndex]
+              const item = track?.items.find(item => item.id === selectedVideoItem.itemId) as VideoItem | undefined
+              return item?.renderOption === 'cover' ? (
+                <div className="flex flex-col gap-2 mt-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm w-24">Horizontal:</span>
+                    <input
+                      type="range"
+                      min="-100"
+                      max="100"
+                      value={positionX}
+                      onChange={e => {
+                        const newValue = parseInt(e.target.value)
+                        setPositionX(newValue)
+                        handleVideoPositionChange(selectedVideoItem.itemId, newValue, positionY)
+                      }}
+                      className="flex-1"
+                    />
+                    <span className="text-xs w-8 text-right">{positionX}</span>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setPositionX(0)
+                        setPositionY(0)
+                        handleVideoPositionChange(selectedVideoItem.itemId, 0, 0)
+                      }}
+                    >
+                      Reset
+                    </Button>
+                  </div>
+                </div>
+              ) : null
+            })()}
+          </div>
+        )}
       </div>
 
       <DndContext
@@ -256,7 +353,7 @@ export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) =>
                     nonPlayableWidth={nonPlayableWidth}
                     selectedClip={selectedClip}
                     originalVideoDuration={timelineState.originalVideoDurationInSeconds}
-                    onItemSelect={handleItemSelect}
+                    onItemSelect={handleItemSelectWithRenderOption}
                     onResizeStart={handleResizeStart}
                     trackRef={el => (trackRefs.current[clipIndex] = el)}
                     styles={_styles.track}

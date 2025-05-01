@@ -29,6 +29,8 @@ interface EditorContextState {
   handleTrackUpdate: (clipIndex: number, updatedItems: Item[]) => void
   handleTrackVolumeChange: (clipIndex: number, volume: number) => void
   handleAudioItemVolumeChange: (itemId: string, volume: number) => void
+  handleVideoRenderOptionChange: (itemId: string, renderOption: 'default' | 'contain-blur' | 'cover') => void
+  handleVideoPositionChange: (itemId: string, positionX: number, positionY: number) => void
 
   // Move item between tracks with collision detection
   moveItemToTrack: (
@@ -348,6 +350,49 @@ export const VideoEditorContext: FC<VideoEditorContextProps> = ({
     })
   }
 
+  // Handle video render option changes
+  const handleVideoRenderOptionChange = (itemId: string, renderOption: 'default' | 'contain-blur' | 'cover') => {
+    setTracks(prevTracks => {
+      return prevTracks.map(track => {
+        const updatedItems = track.items.map(item => {
+          if (item.id === itemId && item.type === 'video') {
+            return {
+              ...item,
+              renderOption
+            }
+          }
+          return item
+        })
+        return {
+          ...track,
+          items: updatedItems
+        }
+      })
+    })
+  }
+  
+  // Handle video position changes for centering
+  const handleVideoPositionChange = (itemId: string, positionX: number, positionY: number) => {
+    setTracks(prevTracks => {
+      return prevTracks.map(track => {
+        const updatedItems = track.items.map(item => {
+          if (item.id === itemId && item.type === 'video') {
+            return {
+              ...item,
+              positionX,
+              positionY
+            }
+          }
+          return item
+        })
+        return {
+          ...track,
+          items: updatedItems
+        }
+      })
+    })
+  }
+
   const contextValue: EditorContextState = {
     tracks,
     setTracks,
@@ -364,6 +409,8 @@ export const VideoEditorContext: FC<VideoEditorContextProps> = ({
     handleTrackUpdate,
     handleTrackVolumeChange,
     handleAudioItemVolumeChange,
+    handleVideoRenderOptionChange,
+    handleVideoPositionChange,
     moveItemToTrack
   }
 
