@@ -24,18 +24,41 @@ declare type ClipStyle = {
     };
 };
 
-export declare const EditorProvider: FC<EditorProviderProps>;
+export declare interface CompositionClip {
+    id: string;
+    type: 'video' | 'audio';
+    from: number;
+    durationInFrames: number;
+    src: string;
+    volume?: number;
+}
 
-declare interface EditorProviderProps {
-    children: ReactNode;
-    initialTracks?: Track[];
+export declare interface CompositionData {
+    composition: {
+        durationInFrames: number;
+        fps: number;
+    };
+    tracks: CompositionTrack[];
+    currentTime: number;
+}
+
+export declare interface CompositionTrack {
+    name: string;
+    volume: number;
+    clips: CompositionClip[];
 }
 
 declare type Item = SolidItem | TextItem | VideoItem | AudioItem;
 
+export declare const loadVideoIntoTimeline: (file: File | string, trackIndex?: number) => Promise<void>;
+
 export declare const PlayPauseControl: FC;
 
+export declare const selectAndLoadVideo: (trackIndex?: number) => Promise<void>;
+
 export declare const SelectedClipVolumeControl: FC;
+
+export declare const selectVideoFile: () => Promise<File | null>;
 
 declare type SolidItem = BaseItem & {
     type: 'solid';
@@ -83,10 +106,39 @@ declare type TrackStyle = {
     clip: ClipStyle;
 };
 
+export declare function useCompositionData(): CompositionData;
+
+/**
+ * Hook providing methods to manage tracks and clips in the video editor
+ */
+export declare function useTrackManager(): {
+    tracks: Track[];
+    createTrack: (name: string, volume?: number) => number;
+    removeTrack: (trackIndex: number) => void;
+    addVideoClip: (trackIndex: number, src: string) => string;
+    addAudioClip: (trackIndex: number, src: string) => string;
+    addClipToBeginning: (trackIndex: number, src: string, type: "video" | "audio") => string;
+    addClipToEnd: (trackIndex: number, src: string, type: "video" | "audio") => string;
+    removeClip: (trackIndex: number, clipId: string) => void;
+    updateClip: (trackIndex: number, clipId: string, updates: Partial<Omit<Item, "id" | "type">>) => void;
+    hasPendingOperations: () => boolean;
+};
+
+export declare const VideoEditorContext: FC<VideoEditorContextProps>;
+
+declare interface VideoEditorContextProps {
+    children: ReactNode;
+    initialTracks?: Track[];
+}
+
 declare type VideoItem = BaseItem & {
     type: 'video';
     src: string;
     volume?: number;
+    renderOption?: 'default' | 'contain-blur' | 'cover';
+    positionX?: number;
+    positionY?: number;
+    originalDuration?: number;
 };
 
 export declare const VideoLoopControl: FC;

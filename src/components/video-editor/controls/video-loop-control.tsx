@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { RepeatIcon } from 'lucide-react'
 import { Button } from '~/components/ui/button'
-import { useEditor } from '../context/video-editor-context'
+import { useEditor } from '../context/video-editor-provider'
 
 export const VideoLoopControl: FC = () => {
   const { isLooping, toggleLoop } = useEditor()

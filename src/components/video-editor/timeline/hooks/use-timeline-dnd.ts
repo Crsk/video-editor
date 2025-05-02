@@ -1,6 +1,6 @@
 import { useSensor, useSensors, PointerSensor, KeyboardSensor, Modifier } from '@dnd-kit/core'
 import type { DragStartEvent, DragMoveEvent, DragEndEvent } from '@dnd-kit/core'
-import { useEditor } from '../../context/video-editor-context'
+import { useEditor } from '../../context/video-editor-provider'
 import { getSnappedDropPosition } from '../find-gap-integration'
 import type { Item } from '../../types'
 import type { TimelineState } from './use-timeline'

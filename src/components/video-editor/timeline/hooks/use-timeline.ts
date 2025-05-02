@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { useEditor } from '../../context/video-editor-context'
+import { useEditor } from '../../context/video-editor-provider'
 import {
   calculateMaxEndTime,
   calculateTotalTimelineDuration,

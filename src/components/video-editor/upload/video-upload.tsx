@@ -1,10 +1,11 @@
 import { useState, useRef, ChangeEvent, useCallback } from 'react'
 import { Button } from '~/components/ui/button'
-import { useEditor } from '~/components/video-editor/context/video-editor-context'
-import { v4 as uuidv4 } from 'uuid'
+import { useEditor } from '~/components/video-editor/context/video-editor-provider'
+import { useVideoUpload } from '~/components/video-editor/hooks/use-video-upload'
 
 export const VideoUpload = () => {
-  const { tracks, setTracks } = useEditor()
+  const { tracks } = useEditor()
+  const { selectVideoFile, loadVideoIntoTimeline } = useVideoUpload()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [selectedTrackIndex, setSelectedTrackIndex] = useState<number>(0)
   const [useDefaultFile, setUseDefaultFile] = useState<boolean>(false)
@@ -19,8 +20,12 @@ export const VideoUpload = () => {
     }
   }
 
-  const handleSelectClick = () => {
-    fileInputRef.current?.click()
+  const handleSelectClick = async () => {
+    const file = await selectVideoFile()
+    if (file) {
+      setSelectedFile(file)
+      setUseDefaultFile(false)
+    }
   }
 
   const handleUseTestFile = () => {
@@ -35,62 +40,27 @@ export const VideoUpload = () => {
     setSelectedFile(null)
   }
 
-  const handleLoadIntoTimeline = useCallback(() => {
+  const handleLoadIntoTimeline = useCallback(async () => {
     if ((!selectedFile && !useDefaultFile) || isLoading) return
 
     setIsLoading(true)
 
-    const src = useDefaultFile ? defaultFileName : URL.createObjectURL(selectedFile!)
-
-    const video = document.createElement('video')
-    video.preload = 'metadata'
-    video.src = src
-
-    video.onloadedmetadata = () => {
-      const FPS = 30
-      const durationInSeconds = video.duration
-      const durationInFrames = Math.ceil(durationInSeconds * FPS)
-
-      setTracks(prevTracks => {
-        const newTracks = JSON.parse(JSON.stringify(prevTracks))
-        const items = newTracks[selectedTrackIndex].items
-        const lastItemIndex = items.length - 1
-        const lastItem = lastItemIndex >= 0 ? items[lastItemIndex] : null
-        const startFrame = lastItem ? lastItem.from + lastItem.durationInFrames : 0
-        const newItemId = uuidv4()
-        const newItem = {
-          id: newItemId,
-          from: startFrame,
-          durationInFrames: durationInFrames,
-          originalDuration: durationInFrames,
-          type: 'video',
-          src
-        }
-
-        newTracks[selectedTrackIndex].items = [...newTracks[selectedTrackIndex].items, newItem]
-
-        return newTracks
-      })
+    try {
+      const source = useDefaultFile ? defaultFileName : selectedFile!
+      await loadVideoIntoTimeline(source, selectedTrackIndex)
 
       setSelectedFile(null)
       setUseDefaultFile(false)
-      setIsLoading(false)
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
-    }
-
-    video.onerror = () => {
-      console.error('Error loading video for duration calculation')
+    } catch (error) {
+      console.error('Error loading video:', error)
       alert('Failed to load video. Please try another file.')
-      setSelectedFile(null)
-      setUseDefaultFile(false)
+    } finally {
       setIsLoading(false)
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
-      }
     }
-  }, [selectedFile, useDefaultFile, defaultFileName, selectedTrackIndex, isLoading, setTracks])
+  }, [selectedFile, useDefaultFile, defaultFileName, selectedTrackIndex, isLoading, loadVideoIntoTimeline])
 
   return (
     <div className="bg-background p-4 rounded-lg mb-6">

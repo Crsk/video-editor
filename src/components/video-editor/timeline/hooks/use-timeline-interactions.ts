@@ -1,4 +1,4 @@
-import { useEditor } from '../../context/video-editor-context'
+import { useEditor } from '../../context/video-editor-provider'
 import { getResizeOverlayRect } from '../overlay-utils'
 import { calculateResizedWidth } from '../calculate-resized-width'
 import type { TimelineState } from './use-timeline'
@@ -135,9 +135,14 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
 
         // Check minimum duration constraint
         if (newDurationInFrames < MIN_DURATION_SECONDS * FPS) return
-        
+
         // Check original duration constraint - only for video clips
-        if (currentItem.type === 'video' && currentItem.originalDuration && newDurationInFrames > currentItem.originalDuration) return
+        if (
+          currentItem.type === 'video' &&
+          currentItem.originalDuration &&
+          newDurationInFrames > currentItem.originalDuration
+        )
+          return
 
         const updatedItems = [...tracks[clipIndex].items]
         updatedItems[itemIndex] = {
@@ -155,13 +160,12 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
         const scrollLeft = timelineContainerRef.current?.scrollLeft || 0
         const mouseX = moveEvent.clientX - containerRect.left + scrollLeft
         const itemStartX = (currentItem.from / FPS) * pixelsPerSecond
-        
+
         // We'll use the current item's duration for calculations
-        
+
         // Calculate the original duration in seconds if available - only for video clips
-        const originalDurationSeconds = (currentItem.type === 'video' && currentItem.originalDuration)
-          ? currentItem.originalDuration / FPS
-          : undefined
+        const originalDurationSeconds =
+          currentItem.type === 'video' && currentItem.originalDuration ? currentItem.originalDuration / FPS : undefined
 
         const newWidthPixels = calculateResizedWidth({
           mode: 'right',

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useEditor } from '../context/video-editor-context'
+import { useEditor } from '../context/video-editor-provider'
 import { useRemotionTimeline } from '../timeline/context/remotion-timeline-context'
 import { CompositionData } from '../types'
 

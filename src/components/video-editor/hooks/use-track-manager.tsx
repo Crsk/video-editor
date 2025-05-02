@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { useEditor } from '../context/video-editor-context'
+import { useEditor } from '../context/video-editor-provider'
 import { Item, Track } from '../types'
 import { v4 as uuidv4 } from 'uuid'
 import { applyGravityToTrack } from '../context/gravity'

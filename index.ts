@@ -1,5 +1,5 @@
 import './src/index.css'
-import { VideoEditorContext } from '~/components/video-editor/context/video-editor-context'
+import { VideoEditorProvider } from '~/components/video-editor/context/video-editor-provider'
 import { Timeline } from '~/components/video-editor/timeline/timeline'
 import { VideoPlayer } from '~/components/video-editor/player'
 import {
@@ -18,11 +18,14 @@ import { VideoLoopControl } from '~/components/video-editor/controls/video-loop-
 import { PlayPauseControl } from '~/components/video-editor/controls/play-pause-control'
 import { useCompositionData } from '~/components/video-editor/hooks/use-composition-data'
 import { useTrackManager } from '~/components/video-editor/hooks/use-track-manager'
+import { useVideoUpload } from '~/components/video-editor/hooks/use-video-upload'
 
-export { VideoEditorContext }
+// Core components
+export { VideoEditorProvider }
 export { VideoPlayer }
 export { Timeline }
 
+// Controls
 export { ZoomPlusControl }
 export { ZoomMinusControl }
 export { SelectedClipVolumeControl }
@@ -30,11 +33,16 @@ export { TimeDisplay }
 export { VideoLoopControl }
 export { PlayPauseControl }
 
+// Types
 export { type Track }
 export { type TimelineStyle }
 export { type CompositionData }
 export { type CompositionTrack }
 export { type CompositionClip }
 
+// Hooks
 export { useCompositionData }
 export { useTrackManager }
+
+// Video upload utilities
+export { useVideoUpload }

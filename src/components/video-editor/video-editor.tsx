@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { VideoEditorContext } from '~/components/video-editor/context/video-editor-context'
+import { VideoEditorProvider } from '~/components/video-editor/context/video-editor-provider'
 import { Timeline } from '~/components/video-editor/timeline/timeline'
 import { VideoPlayer } from '~/components/video-editor/player'
 import { Track } from '~/components/video-editor/types'
@@ -15,7 +15,7 @@ import { VideoUpload } from '~/components/video-editor/upload/video-upload'
 type EditorProps = { tracks: Track[] }
 export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
   return (
-    <VideoEditorContext initialTracks={tracks}>
+    <VideoEditorProvider initialTracks={tracks}>
       <VideoPlayer />
       <div className="flex gap-2 mb-2 w-full justify-center py-8">
         <PlayPauseControl />
@@ -61,6 +61,6 @@ export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
           }
         }}
       />
-    </VideoEditorContext>
+    </VideoEditorProvider>
   )
 }

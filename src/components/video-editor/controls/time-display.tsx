@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { useRemotionTimeline } from '../timeline/context/remotion-timeline-context'
-import { useEditor } from '../context/video-editor-context'
+import { useEditor } from '../context/video-editor-provider'
 import { formatTimeDisplay } from '../utils/format-time'
 
 export const TimeDisplay: FC = () => {
