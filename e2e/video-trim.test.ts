@@ -10,7 +10,7 @@ test.describe('Timeline Video Trim', () => {
     await page.waitForTimeout(2000)
   })
 
-  test('should demonstrate bug where small trim causes large reduction with 43s video', async ({ page }) => {
+  test('should verify fix for bug where small trim caused large reduction with 43s video', async ({ page }) => {
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
     await page.waitForTimeout(1000)
     
@@ -126,11 +126,25 @@ test.describe('Timeline Video Trim', () => {
     const estimatedDuration = (clipAfterTrim.width / clipBoundingBox.width) * originalDuration
     console.log(`Estimated duration after trim: ${estimatedDuration.toFixed(2)} seconds`)
     
-    if (estimatedDuration < 20) {
-      console.log('BUG DETECTED: Small trim caused clip to be drastically reduced!')
-      expect(estimatedDuration).toBeGreaterThan(20)
-    } else {
-      console.log('Bug fixed - the duration was not drastically reduced')
-    }
+    const actualTrimPixels = clipBoundingBox.width - clipAfterTrim.width
+    console.log(`Actual pixels trimmed: ${actualTrimPixels}`)
+    
+    const expectedReductionPercentage = (actualTrimPixels / clipBoundingBox.width) * 100
+    console.log(`Expected reduction percentage: ${expectedReductionPercentage.toFixed(2)}%`)
+    
+    const tolerance = 15 // Percentage points of tolerance
+    
+    expect(Math.abs(reductionPercentage - expectedReductionPercentage)).toBeLessThanOrEqual(tolerance)
+    console.log(`Verified: Reduction percentage (${reductionPercentage.toFixed(2)}%) is within ${tolerance}% of expected (${expectedReductionPercentage.toFixed(2)}%)`)
+    
+    const pixelReductionRatio = reductionPercentage / actualTrimPixels
+    console.log(`Pixel reduction ratio: ${pixelReductionRatio.toFixed(4)}% per pixel`)
+    
+    const smallTrimPixels = 10
+    const expectedReductionForSmallTrim = pixelReductionRatio * smallTrimPixels
+    console.log(`Expected reduction for a ${smallTrimPixels}px trim: ${expectedReductionForSmallTrim.toFixed(2)}%`)
+    
+    expect(expectedReductionForSmallTrim).toBeLessThanOrEqual(5)
+    console.log(`Verified: A small trim of ${smallTrimPixels}px would result in a reduction of ${expectedReductionForSmallTrim.toFixed(2)}%`)
   })
 })
