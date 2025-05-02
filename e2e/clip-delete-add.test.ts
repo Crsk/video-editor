@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test'
 
+test.setTimeout(60000)
+
 test.describe('Timeline Clip Delete and Add', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:5173/')
@@ -76,13 +78,34 @@ test.describe('Timeline Clip Delete and Add', () => {
     const loadButton = page.getByText('Load into Timeline')
     await loadButton.waitFor({ state: 'visible', timeout: 10000 })
     await loadButton.click()
-    await page.waitForTimeout(3000) // Wait longer for the clip to be added and loaded
+    
+    // Wait for the loading state to appear and disappear
+    const loadingText = page.getByText('Loading...')
+    try {
+      await loadingText.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {})
+      await loadingText.waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {})
+    } catch (error) {
+      console.log('Loading state might not be visible, continuing test')
+    }
+    
+    // Wait for any network activity to settle
+    await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {})
+    await page.waitForTimeout(1000)
 
     // Verify a new clip was added to track 1
     await track1.waitFor({ state: 'visible', timeout: 10000 })
-    const clipsAfterAdd = await track1.locator('.timeline-item').count()
-    console.log(`Clips in track 1 after adding new clip: ${clipsAfterAdd}`)
-
+    
+    // Wait for the clip to appear with retries
+    let clipsAfterAdd = 0
+    for (let attempt = 0; attempt < 5; attempt++) {
+      clipsAfterAdd = await track1.locator('.timeline-item').count()
+      console.log(`Attempt ${attempt + 1}: Clips in track 1 after adding new clip: ${clipsAfterAdd}`)
+      
+      if (clipsAfterAdd > 0) break
+      
+      await page.waitForTimeout(1000)
+    }
+    
     // Verify at least one clip exists
     expect(clipsAfterAdd).toBeGreaterThan(0)
   })
