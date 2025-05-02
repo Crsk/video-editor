@@ -16,20 +16,19 @@ export const useVideoLoader = (
   setOriginalVideoDuration: React.Dispatch<React.SetStateAction<number | null>>
 ) => {
   useEffect(() => {
-    // Function to load video and update duration
+    if (!tracks.length || !tracks.some(track => track.items.length > 0)) return
+
     const loadVideoAndUpdateDuration = (videoSrc: string) => {
       return new Promise<number>((resolve, reject) => {
         const video = document.createElement('video')
         video.src = videoSrc
 
         video.onloadedmetadata = () => {
-          // Calculate frames based on video duration and FPS
           const durationInSeconds = video.duration
           const actualDurationInFrames = Math.ceil(durationInSeconds * FPS)
           resolve(actualDurationInFrames)
         }
 
-        // Handle potential errors
         video.onerror = () => {
           console.error('Error loading video for duration calculation')
           reject(new Error('Failed to load video'))
@@ -37,62 +36,59 @@ export const useVideoLoader = (
       })
     }
 
-    // Process all tracks and update video durations
     const updateAllVideoDurations = async () => {
       try {
-        // Get the first video to set as the original duration reference
         const firstVideoItem = tracks[0]?.items[0]
         if (firstVideoItem?.type === 'video') {
           const actualDurationInFrames = await loadVideoAndUpdateDuration(firstVideoItem.src)
-          // Store the original video duration in frames
+
           setOriginalVideoDuration(actualDurationInFrames)
         }
 
-        // Update all video items across all tracks
-        setTracks(prevTracks => {
-          const newTracks = [...prevTracks]
+        const updatedItems = new Map()
 
-          // Process each track
-          for (let clipIndex = 0; clipIndex < newTracks.length; clipIndex++) {
-            const track = newTracks[clipIndex]
+        // Process each track
+        for (let clipIndex = 0; clipIndex < tracks.length; clipIndex++) {
+          const track = tracks[clipIndex]
 
-            // Process each item in the track
-            for (let itemIndex = 0; itemIndex < track.items.length; itemIndex++) {
-              const item = track.items[itemIndex]
+          // Process each item in the track
+          for (let itemIndex = 0; itemIndex < track.items.length; itemIndex++) {
+            const item = track.items[itemIndex]
 
-              // If it's a video item, update its duration
-              if (item.type === 'video') {
-                // Use a self-invoking async function to handle the async operation
-                ;(async () => {
-                  try {
-                    const actualDurationInFrames = await loadVideoAndUpdateDuration(item.src)
-
-                    // Update the clip with the actual duration
-                    setTracks(currentTracks => {
-                      const updatedTracks = [...currentTracks]
-                      if (updatedTracks[clipIndex]?.items[itemIndex]) {
-                        updatedTracks[clipIndex].items[itemIndex] = {
-                          ...updatedTracks[clipIndex].items[itemIndex],
-                          durationInFrames: actualDurationInFrames
-                        }
-                      }
-                      return updatedTracks
-                    })
-                  } catch (error) {
-                    console.error(`Error updating duration for clip ${clipIndex}, item ${itemIndex}:`, error)
-                  }
-                })()
+            if (item.type === 'video' && item.durationInFrames <= 1) {
+              try {
+                const actualDurationInFrames = await loadVideoAndUpdateDuration(item.src)
+                updatedItems.set(`${clipIndex}-${itemIndex}`, {
+                  clipIndex,
+                  itemIndex,
+                  duration: actualDurationInFrames
+                })
+              } catch (error) {
+                console.error(`Error updating duration for clip ${clipIndex}, item ${itemIndex}:`, error)
               }
             }
           }
+        }
 
-          return newTracks
-        })
+        if (updatedItems.size > 0) {
+          setTracks(currentTracks => {
+            const updatedTracks = JSON.parse(JSON.stringify(currentTracks))
+
+            updatedItems.forEach(update => {
+              const { clipIndex, itemIndex, duration } = update
+              if (updatedTracks[clipIndex]?.items[itemIndex]) {
+                updatedTracks[clipIndex].items[itemIndex].durationInFrames = duration
+              }
+            })
+
+            return updatedTracks
+          })
+        }
       } catch (error) {
         console.error('Error updating video durations:', error)
       }
     }
 
     updateAllVideoDurations()
-  }, [])
+  }, [tracks])
 }

@@ -9,6 +9,7 @@ import { SelectedClipVolumeControl } from '~/components/video-editor/controls/se
 import { TimeDisplay } from '~/components/video-editor/controls/time-display'
 import { VideoLoopControl } from '~/components/video-editor/controls/video-loop-control'
 import { PlayPauseControl } from '~/components/video-editor/controls/play-pause-control'
+import { VideoUpload } from '~/components/video-editor/upload/video-upload'
 
 type EditorProps = { tracks: Track[] }
 export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
@@ -30,6 +31,7 @@ export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
           <ZoomPlusControl />
         </div>
       </div>
+      <VideoUpload />
       <Timeline
         styles={{
           root: 'bg-background p-4 rounded-lg mt-6',
