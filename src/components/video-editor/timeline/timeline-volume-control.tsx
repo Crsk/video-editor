@@ -56,6 +56,13 @@ export const TimelineVolumeControl: FC = () => {
 
   if (!selectedClip) return null
 
+  if (!tracks[selectedClip.clipIndex] || !tracks[selectedClip.clipIndex].items[selectedClip.itemIndex]) return null
+
+  const selectedItem = tracks[selectedClip.clipIndex].items[selectedClip.itemIndex]
+  const isAudible = selectedItem.type === 'audio' || selectedItem.type === 'video'
+
+  if (!isAudible) return null
+
   return (
     <div className="timeline-popover">
       <Button variant="secondary" size="icon" onClick={() => setIsOpen(!isOpen)}>
@@ -75,13 +82,11 @@ export const TimelineVolumeControl: FC = () => {
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
           >
             <div className="flex flex-col gap-1">
-              {tracks[selectedClip.clipIndex].items[selectedClip.itemIndex]?.type === 'audio' && (
-                <AudioItemVolume
-                  key={tracks[selectedClip.clipIndex].items[selectedClip.itemIndex].id}
-                  item={tracks[selectedClip.clipIndex].items[selectedClip.itemIndex] as AudibleItem}
-                  onVolumeChange={handleAudioItemVolumeChange}
-                />
-              )}
+              <AudioItemVolume
+                key={selectedItem.id}
+                item={selectedItem as AudibleItem}
+                onVolumeChange={handleAudioItemVolumeChange}
+              />
             </div>
           </PopoverContent>
         </Popover>

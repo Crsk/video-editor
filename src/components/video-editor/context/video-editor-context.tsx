@@ -330,12 +330,11 @@ export const VideoEditorContext: FC<VideoEditorContextProps> = ({
     })
   }
 
-  // Handle audio item volume changes
   const handleAudioItemVolumeChange = (itemId: string, volume: number) => {
     setTracks(prevTracks => {
       return prevTracks.map(track => {
         const updatedItems = track.items.map(item => {
-          if (item.id === itemId && item.type === 'audio') {
+          if (item.id === itemId && (item.type === 'audio' || item.type === 'video')) {
             return {
               ...item,
               volume
@@ -371,7 +370,7 @@ export const VideoEditorContext: FC<VideoEditorContextProps> = ({
       })
     })
   }
-  
+
   // Handle video position changes for centering
   const handleVideoPositionChange = (itemId: string, positionX: number, positionY: number) => {
     setTracks(prevTracks => {
@@ -393,22 +392,22 @@ export const VideoEditorContext: FC<VideoEditorContextProps> = ({
       })
     })
   }
-  
+
   // Handle deleting an item from a track
   const handleDeleteItem = (clipIndex: number, itemIndex: number) => {
     if (clipIndex < 0 || clipIndex >= tracks.length) return
-    
+
     setTracks(prevTracks => {
       // Create a deep copy to avoid reference issues
       const newTracks = JSON.parse(JSON.stringify(prevTracks))
-      
+
       // Make sure the item exists before trying to delete it
       if (itemIndex >= 0 && itemIndex < newTracks[clipIndex].items.length) {
         // Remove the item at the specified index
         newTracks[clipIndex].items.splice(itemIndex, 1)
         console.log(`Deleted item at track ${clipIndex}, index ${itemIndex}`)
       }
-      
+
       return newTracks
     })
   }

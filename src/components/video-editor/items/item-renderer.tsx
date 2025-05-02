@@ -8,8 +8,11 @@ interface ItemRendererProps {
   volume?: number
 }
 
-const VideoContainBlurBackground = ({ item }: { item: Item }) => {
+const VideoContainBlurBackground = ({ item, volume }: { item: Item; volume: number }) => {
   if (item.type !== 'video') return null
+
+  const itemVolume = item.volume !== undefined ? item.volume : 1
+  const finalVolume = volume * itemVolume
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#000' }}>
@@ -23,6 +26,7 @@ const VideoContainBlurBackground = ({ item }: { item: Item }) => {
           filter: `blur(${100}px)`,
           transform: 'scale(3)'
         }}
+        volume={0} // Background video has no sound
       />
 
       <OffthreadVideo
@@ -33,12 +37,13 @@ const VideoContainBlurBackground = ({ item }: { item: Item }) => {
           height: '100%',
           objectFit: 'contain'
         }}
+        volume={finalVolume}
       />
     </AbsoluteFill>
   )
 }
 
-const VideoCover = ({ item }: { item: Item }) => {
+const VideoCover = ({ item, volume }: { item: Item; volume: number }) => {
   if (item.type !== 'video') return null
 
   // Default to center position (0,0) if not specified
@@ -49,6 +54,9 @@ const VideoCover = ({ item }: { item: Item }) => {
   // Convert from -100/100 range to 0-100% range for CSS object-position
   const objectPositionX = `${50 + positionX / 2}%`
   const objectPositionY = `${50 + positionY / 2}%`
+
+  const itemVolume = item.volume !== undefined ? item.volume : 1
+  const finalVolume = volume * itemVolume
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#000' }}>
@@ -61,6 +69,7 @@ const VideoCover = ({ item }: { item: Item }) => {
           objectFit: 'cover',
           objectPosition: `${objectPositionX} ${objectPositionY}`
         }}
+        volume={finalVolume}
       />
     </AbsoluteFill>
   )
@@ -69,10 +78,13 @@ const VideoCover = ({ item }: { item: Item }) => {
 export const ItemRenderer: FC<ItemRendererProps> = ({ item, volume = 1 }) => {
   switch (item.type) {
     case 'video':
+      const itemVolume = item.volume !== undefined ? item.volume : 1
+      const finalVolume = volume * itemVolume
+
       if (item.renderOption === 'contain-blur') {
-        return <VideoContainBlurBackground item={item} />
+        return <VideoContainBlurBackground item={item} volume={finalVolume} />
       } else if (item.renderOption === 'cover') {
-        return <VideoCover item={item} />
+        return <VideoCover item={item} volume={finalVolume} />
       } else {
         return (
           <AbsoluteFill style={{ backgroundColor: '#000' }}>
@@ -83,6 +95,7 @@ export const ItemRenderer: FC<ItemRendererProps> = ({ item, volume = 1 }) => {
                 height: '100%',
                 objectFit: 'contain'
               }}
+              volume={finalVolume}
             />
           </AbsoluteFill>
         )
