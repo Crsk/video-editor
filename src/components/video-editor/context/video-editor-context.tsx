@@ -31,6 +31,7 @@ interface EditorContextState {
   handleAudioItemVolumeChange: (itemId: string, volume: number) => void
   handleVideoRenderOptionChange: (itemId: string, renderOption: 'default' | 'contain-blur' | 'cover') => void
   handleVideoPositionChange: (itemId: string, positionX: number, positionY: number) => void
+  handleDeleteItem: (clipIndex: number, itemIndex: number) => void
 
   // Move item between tracks with collision detection
   moveItemToTrack: (
@@ -392,6 +393,25 @@ export const VideoEditorContext: FC<VideoEditorContextProps> = ({
       })
     })
   }
+  
+  // Handle deleting an item from a track
+  const handleDeleteItem = (clipIndex: number, itemIndex: number) => {
+    if (clipIndex < 0 || clipIndex >= tracks.length) return
+    
+    setTracks(prevTracks => {
+      // Create a deep copy to avoid reference issues
+      const newTracks = JSON.parse(JSON.stringify(prevTracks))
+      
+      // Make sure the item exists before trying to delete it
+      if (itemIndex >= 0 && itemIndex < newTracks[clipIndex].items.length) {
+        // Remove the item at the specified index
+        newTracks[clipIndex].items.splice(itemIndex, 1)
+        console.log(`Deleted item at track ${clipIndex}, index ${itemIndex}`)
+      }
+      
+      return newTracks
+    })
+  }
 
   const contextValue: EditorContextState = {
     tracks,
@@ -411,6 +431,7 @@ export const VideoEditorContext: FC<VideoEditorContextProps> = ({
     handleAudioItemVolumeChange,
     handleVideoRenderOptionChange,
     handleVideoPositionChange,
+    handleDeleteItem,
     moveItemToTrack
   }
 
