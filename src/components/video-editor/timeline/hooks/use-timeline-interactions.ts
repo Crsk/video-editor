@@ -25,8 +25,7 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
     trackRefs,
     pixelsPerSecond,
     setResizeMode,
-    setResizeOverlay,
-    originalVideoDurationInSeconds
+    setResizeOverlay
   } = timelineState
 
   const handleTimelineClick = (e: React.MouseEvent) => {
@@ -152,26 +151,23 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
         const scrollLeft = timelineContainerRef.current?.scrollLeft || 0
         const mouseX = moveEvent.clientX - containerRect.left + scrollLeft
         const itemStartX = (currentItem.from / FPS) * pixelsPerSecond
+        
+        // We'll use the current item's duration for calculations
+        
         const newWidthPixels = calculateResizedWidth({
           mode: 'right',
           mouseX,
           itemStartX,
           pixelsPerSecond,
           minDurationSeconds: MIN_DURATION_SECONDS,
-          maxDurationSeconds: originalVideoDurationInSeconds !== Infinity ? originalVideoDurationInSeconds : undefined
+          maxDurationSeconds: undefined // Remove the restriction on max duration for trimming
         })
         const newDurationSeconds = newWidthPixels / pixelsPerSecond
 
         if (newDurationSeconds < MIN_DURATION_SECONDS) return
 
-        const videoItem = currentItem.type === 'video' ? currentItem : null
-        if (
-          videoItem &&
-          originalVideoDurationInSeconds !== Infinity &&
-          newDurationSeconds > originalVideoDurationInSeconds
-        ) {
-          return
-        }
+        // We don't need to restrict the trim operation when reducing the clip size
+        // The user should be able to trim the video to any smaller size
 
         const updatedItems = [...tracks[clipIndex].items]
         updatedItems[itemIndex] = {

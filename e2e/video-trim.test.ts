@@ -128,9 +128,9 @@ test.describe('Timeline Video Trim', () => {
     
     if (estimatedDuration < 20) {
       console.log('BUG DETECTED: Small trim caused clip to be drastically reduced!')
+      expect(estimatedDuration).toBeGreaterThan(20)
     } else {
-      console.log('Bug not detected in this run - the duration was not drastically reduced')
-      expect(estimatedDuration).toBeLessThan(20)
+      console.log('Bug fixed - the duration was not drastically reduced')
     }
   })
 })

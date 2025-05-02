@@ -25,7 +25,7 @@ export const Track: FC<TrackProps> = ({
   pixelsPerSecond,
   videoEndPosition,
   selectedClip,
-  originalVideoDuration,
+  /* originalVideoDuration, */
   onItemSelect,
   onResizeStart,
   trackRef,
@@ -67,7 +67,8 @@ export const Track: FC<TrackProps> = ({
 
           const isResizable = item.type === 'video' || item.type === 'audio'
           const showResizeControls = isSelected && isResizable
-          const maxDurationSeconds = item.type === 'video' ? originalVideoDuration : Infinity
+          // const maxDurationSeconds = item.type === 'video' ? originalVideoDuration : Infinity
+          const maxDurationSeconds = Infinity
           const isResizing = resizeMode && resizeOverlay
 
           return (
