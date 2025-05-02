@@ -8,6 +8,7 @@ export const VideoUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [selectedTrackIndex, setSelectedTrackIndex] = useState<number>(0)
   const [useDefaultFile, setUseDefaultFile] = useState<boolean>(false)
+  const [defaultFileName, setDefaultFileName] = useState<string>('manson_clone.mp4')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -24,6 +25,13 @@ export const VideoUpload = () => {
 
   const handleUseTestFile = () => {
     setUseDefaultFile(true)
+    setDefaultFileName('manson_clone.mp4')
+    setSelectedFile(null)
+  }
+
+  const handleUse43sFile = () => {
+    setUseDefaultFile(true)
+    setDefaultFileName('43s.mp4')
     setSelectedFile(null)
   }
 
@@ -32,7 +40,7 @@ export const VideoUpload = () => {
 
     setIsLoading(true)
 
-    const src = useDefaultFile ? 'manson_clone.mp4' : URL.createObjectURL(selectedFile!)
+    const src = useDefaultFile ? defaultFileName : URL.createObjectURL(selectedFile!)
 
     const video = document.createElement('video')
     video.preload = 'metadata'
@@ -81,7 +89,7 @@ export const VideoUpload = () => {
         fileInputRef.current.value = ''
       }
     }
-  }, [selectedFile, useDefaultFile, selectedTrackIndex, isLoading, setTracks])
+  }, [selectedFile, useDefaultFile, defaultFileName, selectedTrackIndex, isLoading, setTracks])
 
   return (
     <div className="bg-background p-4 rounded-lg mb-6">
@@ -94,7 +102,7 @@ export const VideoUpload = () => {
           </Button>
           <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="video/*" className="hidden" />
           <span className="text-sm">
-            {selectedFile ? selectedFile.name : useDefaultFile ? 'manson_clone.mp4' : 'No file selected'}
+            {selectedFile ? selectedFile.name : useDefaultFile ? defaultFileName : 'No file selected'}
           </span>
         </div>
 
@@ -114,6 +122,10 @@ export const VideoUpload = () => {
 
           <Button onClick={handleUseTestFile} variant="outline" className="mr-2" disabled={isLoading}>
             Use Test File
+          </Button>
+
+          <Button onClick={handleUse43sFile} variant="outline" className="mr-2" disabled={isLoading}>
+            Use 43s File
           </Button>
 
           <Button onClick={handleLoadIntoTimeline} disabled={(!selectedFile && !useDefaultFile) || isLoading}>
