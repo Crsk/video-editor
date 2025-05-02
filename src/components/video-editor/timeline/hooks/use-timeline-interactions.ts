@@ -133,7 +133,11 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
         const newStartFrame = Math.max(0, Math.round(newStartSeconds * FPS))
         const newDurationInFrames = originalEndFrame - newStartFrame
 
+        // Check minimum duration constraint
         if (newDurationInFrames < MIN_DURATION_SECONDS * FPS) return
+        
+        // Check original duration constraint - only for video clips
+        if (currentItem.type === 'video' && currentItem.originalDuration && newDurationInFrames > currentItem.originalDuration) return
 
         const updatedItems = [...tracks[clipIndex].items]
         updatedItems[itemIndex] = {
@@ -154,13 +158,19 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
         
         // We'll use the current item's duration for calculations
         
+        // Calculate the original duration in seconds if available - only for video clips
+        const originalDurationSeconds = (currentItem.type === 'video' && currentItem.originalDuration)
+          ? currentItem.originalDuration / FPS
+          : undefined
+
         const newWidthPixels = calculateResizedWidth({
           mode: 'right',
           mouseX,
           itemStartX,
           pixelsPerSecond,
           minDurationSeconds: MIN_DURATION_SECONDS,
-          maxDurationSeconds: undefined // Remove the restriction on max duration for trimming
+          maxDurationSeconds: undefined, // Remove the restriction on max duration for trimming
+          originalDurationSeconds // Pass the original duration to limit expansion
         })
         const newDurationSeconds = newWidthPixels / pixelsPerSecond
 

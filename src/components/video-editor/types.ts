@@ -22,6 +22,7 @@ export type VideoItem = BaseItem & {
   renderOption?: 'default' | 'contain-blur' | 'cover'
   positionX?: number // Value between -100 and 100 for horizontal position (default: 0 = center)
   positionY?: number // Value between -100 and 100 for vertical position (default: 0 = center)
+  originalDuration?: number
 }
 
 export type AudioItem = BaseItem & {

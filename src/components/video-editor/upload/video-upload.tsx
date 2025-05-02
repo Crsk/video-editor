@@ -62,6 +62,7 @@ export const VideoUpload = () => {
           id: newItemId,
           from: startFrame,
           durationInFrames: durationInFrames,
+          originalDuration: durationInFrames,
           type: 'video',
           src
         }

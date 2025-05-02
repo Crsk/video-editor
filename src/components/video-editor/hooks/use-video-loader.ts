@@ -61,7 +61,8 @@ export const useVideoLoader = (
                 updatedItems.set(`${clipIndex}-${itemIndex}`, {
                   clipIndex,
                   itemIndex,
-                  duration: actualDurationInFrames
+                  duration: actualDurationInFrames,
+                  originalDuration: actualDurationInFrames
                 })
               } catch (error) {
                 console.error(`Error updating duration for clip ${clipIndex}, item ${itemIndex}:`, error)
@@ -75,9 +76,10 @@ export const useVideoLoader = (
             const updatedTracks = JSON.parse(JSON.stringify(currentTracks))
 
             updatedItems.forEach(update => {
-              const { clipIndex, itemIndex, duration } = update
+              const { clipIndex, itemIndex, duration, originalDuration } = update
               if (updatedTracks[clipIndex]?.items[itemIndex]) {
                 updatedTracks[clipIndex].items[itemIndex].durationInFrames = duration
+                updatedTracks[clipIndex].items[itemIndex].originalDuration = originalDuration
               }
             })
 
