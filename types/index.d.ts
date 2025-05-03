@@ -153,7 +153,13 @@ declare interface VideoEditorProviderProps {
     initialTracks?: Track[];
 }
 
-export declare const VideoLoopControl: FC;
+export declare const VideoLoopControl: FC<{
+    classNames?: {
+        root: string;
+        active: string;
+        inactive: string;
+    };
+}>;
 
 export declare const VideoPlayer: FC;
 

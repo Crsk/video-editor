@@ -18,7 +18,9 @@ type EditorProps = { tracks: Track[] }
 export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
   return (
     <VideoEditorProvider initialTracks={tracks}>
-      <VideoPlayer />
+      <div className="h-[calc(100vh-200px)]">
+        <VideoPlayer />
+      </div>
       <div className="flex gap-2 mb-2 w-full justify-center py-8">
         <PlayPauseControl />
         <VideoLoopControl />

@@ -85,7 +85,7 @@ export const useTimeline = (): TimelineState => {
 
   const containerRef = useRef<HTMLDivElement>(null)
   const timelineContainerRef = useRef<HTMLDivElement>(null)
-  const [zoomLevelIndex, setZoomLevelIndex] = useState(15)
+  const [zoomLevelIndex, setZoomLevelIndex] = useState(16)
   const [containerWidth, setContainerWidth] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [selectedClip, setSelectedClip] = useState<{ clipIndex: number; ClipIndex: number } | null>(null)

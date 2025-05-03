@@ -11,14 +11,13 @@ export const VideoPlayer: FC = () => {
     <div
       style={{
         position: 'relative',
-        width: '100%',
-        maxWidth: 360,
+        height: '100%',
         aspectRatio: '9 / 16',
         margin: '0 auto',
         background: '#111',
         borderRadius: 12,
         overflow: 'hidden',
-        boxShadow: '0 2px 16px #0002'
+        border: '1px solid var(--accent)'
       }}
     >
       <div style={{ width: '100%', height: '100%', position: 'relative' }}>

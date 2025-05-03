@@ -2,8 +2,11 @@ import { FC } from 'react'
 import { RepeatIcon } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { useEditor } from '../context/video-editor-provider'
+import { cn } from '~/lib/utils'
 
-export const VideoLoopControl: FC = () => {
+export const VideoLoopControl: FC<{ classNames?: { root?: string; active?: string; inactive?: string } }> = ({
+  classNames
+}) => {
   const { isLooping, toggleLoop } = useEditor()
 
   return (
@@ -11,10 +14,14 @@ export const VideoLoopControl: FC = () => {
       variant="secondary"
       size="icon"
       onClick={toggleLoop}
-      className="rounded-full"
+      className={cn('rounded-full', classNames?.root)}
       title={isLooping ? 'Loop enabled' : 'Loop disabled'}
     >
-      {isLooping ? <RepeatIcon className="text-chart-2" /> : <RepeatIcon className="text-muted-foreground" />}
+      {isLooping ? (
+        <RepeatIcon className={cn('text-chart-2', classNames?.inactive)} />
+      ) : (
+        <RepeatIcon className={cn('text-muted-foreground', classNames?.active)} />
+      )}
     </Button>
   )
 }

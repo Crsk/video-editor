@@ -114,11 +114,7 @@ export const Clip: FC<ClipProps> = ({
       >
         {clip.type === 'audio' ? (
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-            <AudioTrackVisualizer
-              src={clip.src}
-              color={isSelected ? '#ffffff80' : 'var(--color-timeline-accent)'}
-              height={26}
-            />
+            <AudioTrackVisualizer src={clip.src} color={isSelected ? '#ffffff80' : 'var(--color-ring)'} height={26} />
             {isAudioExtendingBeyondVideo && videoEndPosition !== undefined && (
               <div
                 className="absolute top-0 bottom-0 z-10 border-l"

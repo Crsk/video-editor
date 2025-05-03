@@ -73,7 +73,7 @@ describe('useTimeline', () => {
     expect(result.current.selectedClip).toBe(null)
     expect(result.current.resizeMode).toBe(null)
     expect(result.current.resizeOverlay).toBe(null)
-    expect(result.current.zoomLevelIndex).toBe(15) // Default zoom level
+    expect(result.current.zoomLevelIndex).toBe(16) // Default zoom level
   })
 
   it('should call timeline calculation functions with correct parameters', () => {
