@@ -32,3 +32,4 @@ dist-ssr
 /playwright/.cache/
 
 e2e/screenshots
+types/index.d.ts
