@@ -18,9 +18,9 @@ export const VideoLoopControl: FC<{ classNames?: { root?: string; active?: strin
       title={isLooping ? 'Loop enabled' : 'Loop disabled'}
     >
       {isLooping ? (
-        <RepeatIcon className={cn('text-chart-2', classNames?.inactive)} />
+        <RepeatIcon className={cn('text-chart-2', classNames?.active)} />
       ) : (
-        <RepeatIcon className={cn('text-muted-foreground', classNames?.active)} />
+        <RepeatIcon className={cn('text-muted-foreground', classNames?.inactive)} />
       )}
     </Button>
   )

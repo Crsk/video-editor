@@ -2,17 +2,15 @@ import { FC } from 'react'
 import { VideoEditorProvider } from '~/components/video-editor/context/video-editor-provider'
 import { Timeline } from '~/components/video-editor/timeline/timeline'
 import { VideoPlayer } from '~/components/video-editor/player'
-import { VideoRenderControls } from '~/components/video-editor/controls/video-render-controls'
 import { Track } from '~/components/video-editor/types'
-import { ZoomPlusControl } from '~/components/video-editor/controls/zoom-plus-control'
-import { ZoomMinusControl } from '~/components/video-editor/controls/zoom-minus-control'
-import { SelectedClipVolumeControl } from '~/components/video-editor/controls/selected-clip-volume-control'
+import { SelectedVideoRenderSettingsControl } from '~/components/video-editor/controls/selected-video-render-settings-control'
 import { TimeDisplay } from '~/components/video-editor/controls/time-display'
 import { VideoLoopControl } from '~/components/video-editor/controls/video-loop-control'
 import { PlayPauseControl } from '~/components/video-editor/controls/play-pause-control'
-import { DeleteClipControl } from '~/components/video-editor/controls/delete-clip-control'
 import { VideoUpload } from '~/components/video-editor/upload/video-upload'
 import { VideoComposer } from './timeline/video-composer'
+import { ZoomMinusControl } from './controls/zoom-minus-control'
+import { ZoomPlusControl } from './controls/zoom-plus-control'
 
 type EditorProps = { tracks: Track[] }
 export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
@@ -31,8 +29,7 @@ export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
           <TimeDisplay />
         </div>
         <div className="flex gap-2">
-          <SelectedClipVolumeControl />
-          <DeleteClipControl />
+          <SelectedVideoRenderSettingsControl />
           <ZoomMinusControl />
           <ZoomPlusControl />
         </div>
@@ -40,9 +37,6 @@ export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
       <div className="flex gap-4">
         <div className="flex-1">
           <VideoUpload />
-        </div>
-        <div className="flex-1">
-          <VideoRenderControls />
         </div>
       </div>
       <Timeline

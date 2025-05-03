@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { applyGravityToTrack } from '../context/gravity'
 
 export function useTrackManager() {
-  const { tracks, setTracks, handleVideoRenderOptionChange, handleVideoPositionChange } = useEditor()
+  const { tracks, setTracks, handleVideoRenderOptionChange, handleVideoPositionChange, handleVideoZoomChange } = useEditor()
 
   const createTrack = useCallback(
     (name: string, volume = 1): number => {
@@ -268,6 +268,13 @@ export function useTrackManager() {
     [handleVideoPositionChange]
   )
 
+  const setVideoZoom = useCallback(
+    (ClipId: string, zoom: number): void => {
+      handleVideoZoomChange(ClipId, zoom)
+    },
+    [handleVideoZoomChange]
+  )
+
   const getAllTracks = useCallback((): Track[] => {
     return tracks
   }, [tracks])
@@ -322,6 +329,7 @@ export function useTrackManager() {
 
     // Video controls
     setVideoRenderOption,
-    setVideoPosition
+    setVideoPosition,
+    setVideoZoom
   }
 }

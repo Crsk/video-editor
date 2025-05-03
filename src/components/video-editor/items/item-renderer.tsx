@@ -1,7 +1,8 @@
 import { FC } from 'react'
 import { AbsoluteFill, OffthreadVideo } from 'remotion'
-import { Clip } from '../types'
+import { Clip, VideoClip } from '../types'
 import { AudioClip } from './audio-item'
+import { useVideoTransform } from '../hooks/use-video-transform'
 
 interface ClipRendererProps {
   clip: Clip
@@ -11,8 +12,8 @@ interface ClipRendererProps {
 const VideoContainBlurBackground = ({ clip, volume }: { clip: Clip; volume: number }) => {
   if (clip.type !== 'video') return null
 
-  const ClipVolume = clip.volume !== undefined ? clip.volume : 1
-  const finalVolume = volume * ClipVolume
+  const { getVideoTransform } = useVideoTransform()
+  const { transform, finalVolume } = getVideoTransform(clip as VideoClip, volume)
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#000' }}>
@@ -35,7 +36,8 @@ const VideoContainBlurBackground = ({ clip, volume }: { clip: Clip; volume: numb
           position: 'absolute',
           width: '100%',
           height: '100%',
-          objectFit: 'contain'
+          objectFit: 'contain',
+          transform // Apply zoom and position
         }}
         volume={finalVolume}
       />
@@ -46,17 +48,8 @@ const VideoContainBlurBackground = ({ clip, volume }: { clip: Clip; volume: numb
 const VideoCover = ({ clip, volume }: { clip: Clip; volume: number }) => {
   if (clip.type !== 'video') return null
 
-  // Default to center position (0,0) if not specified
-  const positionX = clip.positionX || 0
-  const positionY = clip.positionY || 0
-
-  // Calculate the object-position based on the position values
-  // Convert from -100/100 range to 0-100% range for CSS object-position
-  const objectPositionX = `${50 + positionX / 2}%`
-  const objectPositionY = `${50 + positionY / 2}%`
-
-  const ClipVolume = clip.volume !== undefined ? clip.volume : 1
-  const finalVolume = volume * ClipVolume
+  const { getVideoTransform } = useVideoTransform()
+  const { objectPosition, transform, finalVolume } = getVideoTransform(clip as VideoClip, volume)
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#000' }}>
@@ -67,7 +60,8 @@ const VideoCover = ({ clip, volume }: { clip: Clip; volume: number }) => {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          objectPosition: `${objectPositionX} ${objectPositionY}`
+          objectPosition,
+          transform // Apply zoom with new scale
         }}
         volume={finalVolume}
       />
@@ -78,13 +72,13 @@ const VideoCover = ({ clip, volume }: { clip: Clip; volume: number }) => {
 export const ClipRenderer: FC<ClipRendererProps> = ({ clip, volume = 1 }) => {
   switch (clip.type) {
     case 'video':
-      const ClipVolume = clip.volume !== undefined ? clip.volume : 1
-      const finalVolume = volume * ClipVolume
+      const { getVideoTransform } = useVideoTransform()
+      const { transform, finalVolume } = getVideoTransform(clip as VideoClip, volume)
 
       if (clip.renderOption === 'contain-blur') {
-        return <VideoContainBlurBackground clip={clip} volume={finalVolume} />
+        return <VideoContainBlurBackground clip={clip} volume={volume} />
       } else if (clip.renderOption === 'cover') {
-        return <VideoCover clip={clip} volume={finalVolume} />
+        return <VideoCover clip={clip} volume={volume} />
       } else {
         return (
           <AbsoluteFill style={{ backgroundColor: '#000' }}>
@@ -93,7 +87,8 @@ export const ClipRenderer: FC<ClipRendererProps> = ({ clip, volume = 1 }) => {
               style={{
                 width: '100%',
                 height: '100%',
-                objectFit: 'contain'
+                objectFit: 'contain',
+                transform // Apply zoom and position
               }}
               volume={finalVolume}
             />

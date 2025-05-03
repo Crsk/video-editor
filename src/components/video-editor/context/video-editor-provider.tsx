@@ -31,6 +31,7 @@ interface EditorContextState {
   handleAudioClipVolumeChange: (ClipId: string, volume: number) => void
   handleVideoRenderOptionChange: (ClipId: string, renderOption: 'default' | 'contain-blur' | 'cover') => void
   handleVideoPositionChange: (ClipId: string, positionX: number, positionY: number) => void
+  handleVideoZoomChange: (ClipId: string, zoom: number) => void
   handleDeleteClip: (clipIndex: number, ClipIndex: number) => void
 
   // Move clip between tracks with collision detection
@@ -393,6 +394,27 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
     })
   }
 
+  // Handle video zoom changes
+  const handleVideoZoomChange = (ClipId: string, zoom: number) => {
+    setTracks(prevTracks => {
+      return prevTracks.map(track => {
+        const updatedClips = track.clips.map(clip => {
+          if (clip.id === ClipId && clip.type === 'video') {
+            return {
+              ...clip,
+              zoom
+            }
+          }
+          return clip
+        })
+        return {
+          ...track,
+          clips: updatedClips
+        }
+      })
+    })
+  }
+
   // Handle deleting an clip from a track
   const handleDeleteClip = (clipIndex: number, ClipIndex: number) => {
     if (clipIndex < 0 || clipIndex >= tracks.length) return
@@ -430,6 +452,7 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
     handleAudioClipVolumeChange,
     handleVideoRenderOptionChange,
     handleVideoPositionChange,
+    handleVideoZoomChange,
     handleDeleteClip,
     moveClipToTrack
   }

@@ -11,16 +11,15 @@ import {
   type Clip
 } from '~/components/video-editor/types'
 
-import { ZoomPlusControl } from '~/components/video-editor/controls/zoom-plus-control'
-import { ZoomMinusControl } from '~/components/video-editor/controls/zoom-minus-control'
 import { SelectedClipVolumeControl } from '~/components/video-editor/controls/selected-clip-volume-control'
+import { SelectedVideoRenderSettingsControl } from '~/components/video-editor/controls/selected-video-render-settings-control'
 import { TimeDisplay } from '~/components/video-editor/controls/time-display'
 import { VideoLoopControl } from '~/components/video-editor/controls/video-loop-control'
 import { PlayPauseControl } from '~/components/video-editor/controls/play-pause-control'
-import { VideoRenderControls } from '~/components/video-editor/controls/video-render-controls'
 import { useCompositionData } from '~/components/video-editor/hooks/use-composition-data'
 import { useTrackManager } from '~/components/video-editor/hooks/use-track-manager'
 import { useVideoUpload } from '~/components/video-editor/hooks/use-video-upload'
+import { useVideoTransform } from '~/components/video-editor/hooks/use-video-transform'
 
 // Core components
 export { VideoEditorProvider }
@@ -28,13 +27,11 @@ export { VideoPlayer }
 export { Timeline }
 
 // Controls
-export { ZoomPlusControl }
-export { ZoomMinusControl }
 export { SelectedClipVolumeControl }
+export { SelectedVideoRenderSettingsControl }
 export { TimeDisplay }
 export { VideoLoopControl }
 export { PlayPauseControl }
-export { VideoRenderControls }
 
 // Types
 export { type Track }
@@ -48,3 +45,4 @@ export { type Clip }
 export { useCompositionData }
 export { useTrackManager }
 export { useVideoUpload }
+export { useVideoTransform }

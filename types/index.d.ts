@@ -155,9 +155,9 @@ declare interface VideoEditorProviderProps {
 
 export declare const VideoLoopControl: FC<{
     classNames?: {
-        root: string;
-        active: string;
-        inactive: string;
+        root?: string;
+        active?: string;
+        inactive?: string;
     };
 }>;
 
