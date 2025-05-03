@@ -5,6 +5,7 @@ import { useVideoLoader } from '../hooks/use-video-loader'
 import { useAudioLoader } from '../hooks/use-audio-loader'
 import { applyGravityToTrack } from './gravity'
 import { RemotionTimelineProvider } from '../timeline/context/remotion-timeline-context'
+import { v4 as uuidv4 } from 'uuid'
 
 interface EditorContextState {
   // Track data
@@ -33,6 +34,7 @@ interface EditorContextState {
   handleVideoPositionChange: (ClipId: string, positionX: number, positionY: number) => void
   handleVideoZoomChange: (ClipId: string, zoom: number) => void
   handleDeleteClip: (clipIndex: number, ClipIndex: number) => void
+  handleSplitClip: (clipIndex: number, ClipIndex: number, splitTimeInFrames: number) => void
 
   // Move clip between tracks with collision detection
   moveClipToTrack: (
@@ -446,6 +448,66 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
     })
   }
 
+  const handleSplitClip = (clipIndex: number, ClipIndex: number, splitTimeInFrames: number) => {
+    if (clipIndex < 0 || clipIndex >= tracks.length) return
+
+    setTracks(prevTracks => {
+      const newTracks = JSON.parse(JSON.stringify(prevTracks))
+
+      if (ClipIndex < 0 || ClipIndex >= newTracks[clipIndex].clips.length) return newTracks
+
+      const track = newTracks[clipIndex]
+      const clipToSplit = track.clips[ClipIndex]
+
+      const clipStartFrame = clipToSplit.from
+      const clipEndFrame = clipStartFrame + clipToSplit.durationInFrames
+
+      if (splitTimeInFrames <= clipStartFrame || splitTimeInFrames >= clipEndFrame) {
+        console.warn('Split point is outside clip boundaries')
+        return newTracks
+      }
+
+      const firstClipDuration = splitTimeInFrames - clipStartFrame
+      const secondClipDuration = clipEndFrame - splitTimeInFrames
+
+      if (clipToSplit.type === 'video') {
+        const relativePositionInClip = firstClipDuration
+        const currentOffset = clipToSplit.offset || 0
+
+        const firstClip = {
+          ...clipToSplit,
+          durationInFrames: firstClipDuration
+        }
+
+        const secondClip = {
+          ...clipToSplit,
+          id: uuidv4(),
+          from: splitTimeInFrames,
+          durationInFrames: secondClipDuration,
+          offset: currentOffset + relativePositionInClip
+        }
+
+        track.clips.splice(ClipIndex, 1, firstClip, secondClip)
+      } else {
+        const firstClip = {
+          ...clipToSplit,
+          durationInFrames: firstClipDuration
+        }
+
+        const secondClip = {
+          ...clipToSplit,
+          id: uuidv4(),
+          from: splitTimeInFrames,
+          durationInFrames: secondClipDuration
+        }
+
+        track.clips.splice(ClipIndex, 1, firstClip, secondClip)
+      }
+
+      return newTracks
+    })
+  }
+
   const contextValue: EditorContextState = {
     tracks,
     setTracks,
@@ -466,6 +528,7 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
     handleVideoPositionChange,
     handleVideoZoomChange,
     handleDeleteClip,
+    handleSplitClip,
     moveClipToTrack
   }
 

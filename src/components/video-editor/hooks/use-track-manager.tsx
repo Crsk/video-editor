@@ -4,8 +4,18 @@ import { Clip, Track } from '../types'
 import { v4 as uuidv4 } from 'uuid'
 import { applyGravityToTrack } from '../context/gravity'
 
+const FPS = 30
+
 export function useTrackManager() {
-  const { tracks, setTracks, handleVideoRenderOptionChange, handleVideoPositionChange, handleVideoZoomChange } = useEditor()
+  const {
+    tracks,
+    setTracks,
+    handleVideoRenderOptionChange,
+    handleVideoPositionChange,
+    handleVideoZoomChange,
+    handleSplitClip,
+    currentTime
+  } = useEditor()
 
   const createTrack = useCallback(
     (name: string, volume = 1): number => {
@@ -310,6 +320,21 @@ export function useTrackManager() {
     [setTracks]
   )
 
+  const splitClip = useCallback(
+    (trackIndex: number, clipId: string): void => {
+      const track = tracks[trackIndex]
+      if (!track) return
+
+      const clipIndex = track.clips.findIndex(clip => clip.id === clipId)
+      if (clipIndex === -1) return
+
+      const currentTimeInFrames = Math.round(currentTime * FPS)
+
+      handleSplitClip(trackIndex, clipIndex, currentTimeInFrames)
+    },
+    [tracks, currentTime, handleSplitClip]
+  )
+
   return {
     // Track management
     tracks,
@@ -326,6 +351,7 @@ export function useTrackManager() {
     addClipToEnd,
     removeClip,
     updateClip,
+    splitClip,
 
     // Video controls
     setVideoRenderOption,

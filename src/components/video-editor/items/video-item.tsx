@@ -7,10 +7,13 @@ interface VideoClipProps {
 }
 
 export const VideoClip: FC<VideoClipProps> = ({ clip }) => {
+  const frameOffset = clip.offset || 0
+
   return (
     <AbsoluteFill style={{ backgroundColor: '#000' }}>
       <OffthreadVideo
         src={clip.src}
+        startFrom={frameOffset}
         style={{
           width: '100%',
           height: '100%',

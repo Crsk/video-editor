@@ -20,10 +20,11 @@ export type VideoClip = BaseClip & {
   src: string
   volume?: number
   renderOption?: 'default' | 'contain-blur' | 'cover'
-  positionX?: number // Value between -100 and 100 for horizontal position (default: 0 = center)
-  positionY?: number // Value between -100 and 100 for vertical position (default: 0 = center)
-  zoom?: number // Value between 1 and 3 for zoom level (default: 1 = no zoom)
+  positionX?: number
+  positionY?: number
+  zoom?: number
   originalDuration?: number
+  offset?: number
 }
 
 export type AudioClip = BaseClip & {

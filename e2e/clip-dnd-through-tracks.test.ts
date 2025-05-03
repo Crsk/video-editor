@@ -25,8 +25,6 @@ test.describe('Timeline Clip Movement', () => {
       `Before drag: Source track clips: ${sourceTrackInitialClips}, Target track clips: ${targetTrackInitialClips}`
     )
 
-    await page.screenshot({ path: `e2e/screenshots/before-drag-down.png` })
-
     const sourceClip = sourceTrack.locator('.timeline-clip').first()
     const sourceBox = await sourceClip.boundingBox()
     const targetTrackBox = await targetTrack.boundingBox()
@@ -55,7 +53,6 @@ test.describe('Timeline Clip Movement', () => {
     await page.waitForTimeout(100)
     await page.mouse.up()
     await page.waitForTimeout(2000)
-    await page.screenshot({ path: `e2e/screenshots/after-drag-down.png` })
 
     const sourceTrackClipsAfterDrag = await sourceTrack.locator('.timeline-clip').count()
     const targetTrackClipsAfterDrag = await targetTrack.locator('.timeline-clip').count()
@@ -95,8 +92,6 @@ test.describe('Timeline Clip Movement', () => {
       `Before drag: Source track (2) clips: ${sourceTrackInitialClips}, Target track (1) clips: ${targetTrackInitialClips}`
     )
 
-    await page.screenshot({ path: `e2e/screenshots/before-drag-up.png` })
-
     const sourceClip = sourceTrack.locator('.timeline-clip').first()
     const sourceBox = await sourceClip.boundingBox()
     const targetTrackBox = await targetTrack.boundingBox()
@@ -125,7 +120,6 @@ test.describe('Timeline Clip Movement', () => {
     await page.waitForTimeout(100)
     await page.mouse.up()
     await page.waitForTimeout(2000)
-    await page.screenshot({ path: `e2e/screenshots/after-drag-up.png` })
 
     const sourceTrackClipsAfterDrag = await sourceTrack.locator('.timeline-clip').count()
     const targetTrackClipsAfterDrag = await targetTrack.locator('.timeline-clip').count()

@@ -19,6 +19,7 @@ const VideoContainBlurBackground = ({ clip, volume }: { clip: Clip; volume: numb
     <AbsoluteFill style={{ backgroundColor: '#000' }}>
       <OffthreadVideo
         src={clip.src}
+        startFrom={(clip as VideoClip).offset || 0}
         style={{
           position: 'absolute',
           width: '100%',
@@ -32,6 +33,7 @@ const VideoContainBlurBackground = ({ clip, volume }: { clip: Clip; volume: numb
 
       <OffthreadVideo
         src={clip.src}
+        startFrom={(clip as VideoClip).offset || 0}
         style={{
           position: 'absolute',
           width: '100%',
@@ -55,6 +57,7 @@ const VideoCover = ({ clip, volume }: { clip: Clip; volume: number }) => {
     <AbsoluteFill style={{ backgroundColor: '#000' }}>
       <OffthreadVideo
         src={clip.src}
+        startFrom={(clip as VideoClip).offset || 0}
         style={{
           position: 'absolute',
           width: '100%',
@@ -84,6 +87,7 @@ export const ClipRenderer: FC<ClipRendererProps> = ({ clip, volume = 1 }) => {
           <AbsoluteFill style={{ backgroundColor: '#000' }}>
             <OffthreadVideo
               src={clip.src}
+              startFrom={(clip as VideoClip).offset || 0}
               style={{
                 width: '100%',
                 height: '100%',

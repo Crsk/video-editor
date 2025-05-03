@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { Slider } from '~/components/ui/slider'
-import { RotateCcw, SettingsIcon, Trash2Icon, Volume2Icon } from 'lucide-react'
+import { RotateCcw, SettingsIcon, Trash2Icon, Volume2Icon, ScissorsIcon } from 'lucide-react'
 import { useEditor } from '../context/video-editor-provider'
 import { VideoClip } from '../types'
 import { useRemotionTimeline } from '../timeline/context/remotion-timeline-context'
@@ -13,7 +13,7 @@ import { useVolumeControl } from '../hooks/use-volume-control'
 export const SelectedVideoRenderSettingsControl: FC = () => {
   const { tracks, handleDeleteClip } = useEditor()
   const { timelineState } = useRemotionTimeline()
-  const { setVideoRenderOption, setVideoPosition, setVideoZoom } = useTrackManager()
+  const { setVideoRenderOption, setVideoPosition, setVideoZoom, splitClip } = useTrackManager()
   const { getSelectedClip, updateVolume } = useVolumeControl()
   const [isOpen, setIsOpen] = useState(false)
   const { selectedClip } = timelineState
@@ -278,6 +278,25 @@ export const SelectedVideoRenderSettingsControl: FC = () => {
                 Reset
               </Button>
 
+              <Button
+                size="sm"
+                onClick={() => {
+                  if (selectedClip) {
+                    const { clipIndex, ClipIndex } = selectedClip;
+                    const track = tracks[clipIndex];
+                    if (track && ClipIndex >= 0 && ClipIndex < track.clips.length) {
+                      const clip = track.clips[ClipIndex];
+                      splitClip(clipIndex, clip.id);
+                    }
+                  }
+                }}
+                className="text-xs bg-white/95 text-black hover:bg-white hover:text-black w-full mb-2"
+                title="Split Clip at Current Position"
+              >
+                <ScissorsIcon className="h-4 w-4" />
+                Split Clip
+              </Button>
+              
               <Button
                 size="sm"
                 variant="destructive"
