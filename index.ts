@@ -19,6 +19,8 @@ import { useCompositionData } from '~/components/video-editor/hooks/use-composit
 import { useTrackManager } from '~/components/video-editor/hooks/use-track-manager'
 import { useVideoUpload } from '~/components/video-editor/hooks/use-video-upload'
 import { useVideoTransform } from '~/components/video-editor/hooks/use-video-transform'
+import { ZoomMinusControl } from '~/components/video-editor/controls/zoom-minus-control'
+import { ZoomPlusControl } from '~/components/video-editor/controls/zoom-plus-control'
 
 // Core components
 export { VideoEditorProvider }
@@ -30,6 +32,8 @@ export { SelectedVideoRenderSettingsControl }
 export { TimeDisplay }
 export { VideoLoopControl }
 export { PlayPauseControl }
+export { ZoomMinusControl }
+export { ZoomPlusControl }
 
 // Types
 export { type Track }
