@@ -48,7 +48,7 @@ export interface TimelineState {
   videoEndPosition: number
   nonPlayableWidth: number
   pixelsPerSecond: number
-  selectedClip: { clipIndex: number; itemIndex: number } | null
+  selectedClip: { clipIndex: number; ClipIndex: number } | null
   isDragging: boolean
   resizeMode: 'left' | 'right' | null
   resizeOverlay: {
@@ -60,7 +60,7 @@ export interface TimelineState {
   } | null
   calculateTimeFromClick: (clientX: number) => number
   zoomLevelIndex: number
-  setSelectedClip: (item: { clipIndex: number; itemIndex: number } | null) => void
+  setSelectedClip: (clip: { clipIndex: number; ClipIndex: number } | null) => void
   setIsDragging: (isDragging: boolean) => void
   setResizeMode: (mode: 'left' | 'right' | null) => void
   setResizeOverlay: (
@@ -72,12 +72,10 @@ export interface TimelineState {
       label: string
     } | null
   ) => void
-  activeItem: any | null
-  setActiveItem: (item: any | null) => void
-  activeItemClipIndex: number | null
-  setActiveItemClipIndex: (index: number | null) => void
-  activeItemIndex: number | null
-  setActiveItemIndex: (index: number | null) => void
+  activeClip: any | null
+  setActiveClip: (clip: any | null) => void
+  activeClipIndex: number | null
+  setActiveClipIndex: (index: number | null) => void
   originalVideoDurationInSeconds: number
   FPS: number
 }
@@ -90,7 +88,7 @@ export const useTimeline = (): TimelineState => {
   const [zoomLevelIndex, setZoomLevelIndex] = useState(15)
   const [containerWidth, setContainerWidth] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
-  const [selectedClip, setSelectedClip] = useState<{ clipIndex: number; itemIndex: number } | null>(null)
+  const [selectedClip, setSelectedClip] = useState<{ clipIndex: number; ClipIndex: number } | null>(null)
   const [resizeMode, setResizeMode] = useState<'left' | 'right' | null>(null)
   const [resizeOverlay, setResizeOverlay] = useState<{
     left: number
@@ -100,9 +98,8 @@ export const useTimeline = (): TimelineState => {
     label: string
   } | null>(null)
   const trackRefs = useRef<(HTMLDivElement | null)[]>([])
-  const [activeItem, setActiveItem] = useState<any | null>(null)
-  const [activeItemClipIndex, setActiveItemClipIndex] = useState<number | null>(null)
-  const [activeItemIndex, setActiveItemIndex] = useState<number | null>(null)
+  const [activeClip, setActiveClip] = useState<any | null>(null)
+  const [activeClipIndex, setActiveClipIndex] = useState<number | null>(null)
 
   const durationInSeconds = durationInFrames / FPS
   const originalVideoDurationInSeconds = originalVideoDuration ? originalVideoDuration / FPS : Infinity
@@ -172,12 +169,10 @@ export const useTimeline = (): TimelineState => {
     setIsDragging,
     setResizeMode,
     setResizeOverlay,
-    activeItem,
-    setActiveItem,
-    activeItemClipIndex,
-    setActiveItemClipIndex,
-    activeItemIndex,
-    setActiveItemIndex,
+    activeClip,
+    setActiveClip,
+    activeClipIndex,
+    setActiveClipIndex,
     originalVideoDurationInSeconds,
     FPS
   }

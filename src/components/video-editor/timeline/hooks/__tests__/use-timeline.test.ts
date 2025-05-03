@@ -14,7 +14,7 @@ vi.mock('../../../context/video-editor-provider', () => {
       togglePlayPause: vi.fn(),
       toggleLoop: vi.fn(),
       handleTrackUpdate: vi.fn(),
-      moveItemToTrack: vi.fn().mockReturnValue(true),
+      moveClipToTrack: vi.fn().mockReturnValue(true),
       isPlaying: false,
       isLooping: false,
       currentTime: 0
@@ -142,7 +142,7 @@ describe('useTimeline', () => {
 
     expect(result.current.selectedClip).toBeNull()
 
-    const newSelectedClip = { clipIndex: 1, itemIndex: 2 }
+    const newSelectedClip = { clipIndex: 1, ClipIndex: 2 }
     act(() => void result.current.setSelectedClip(newSelectedClip))
 
     expect(result.current.selectedClip).toEqual(newSelectedClip)

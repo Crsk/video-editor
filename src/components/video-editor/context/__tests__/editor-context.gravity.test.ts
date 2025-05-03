@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { applyGravityToTrack } from '../gravity'
-import { Item } from '../../types'
+import { Clip } from '../../types'
 
 describe('applyGravityToTrack', () => {
-  const make = (from: number, duration: number, id: string): Item => ({
+  const make = (from: number, duration: number, id: string): Clip => ({
     id,
     from,
     durationInFrames: duration,
@@ -11,22 +11,22 @@ describe('applyGravityToTrack', () => {
     src: '/dummy.mp4'
   })
 
-  it('shifts all items left to fill gaps', () => {
-    const items = [make(10, 5, 'a'), make(20, 5, 'b'), make(30, 5, 'c')]
-    const result = applyGravityToTrack(items)
-    expect(result.map((i: Item) => i.from)).toEqual([0, 5, 10])
+  it('shifts all clips left to fill gaps', () => {
+    const clips = [make(10, 5, 'a'), make(20, 5, 'b'), make(30, 5, 'c')]
+    const result = applyGravityToTrack(clips)
+    expect(result.map((i: Clip) => i.from)).toEqual([0, 5, 10])
   })
 
-  it('works with items already contiguous', () => {
-    const items = [make(0, 5, 'a'), make(5, 5, 'b'), make(10, 5, 'c')]
-    const result = applyGravityToTrack(items)
-    expect(result.map((i: Item) => i.from)).toEqual([0, 5, 10])
+  it('works with clips already contiguous', () => {
+    const clips = [make(0, 5, 'a'), make(5, 5, 'b'), make(10, 5, 'c')]
+    const result = applyGravityToTrack(clips)
+    expect(result.map((i: Clip) => i.from)).toEqual([0, 5, 10])
   })
 
-  it('works with single item', () => {
-    const items = [make(20, 5, 'a')]
-    const result = applyGravityToTrack(items)
-    expect(result.map((i: Item) => i.from)).toEqual([0])
+  it('works with single clip', () => {
+    const clips = [make(20, 5, 'a')]
+    const result = applyGravityToTrack(clips)
+    expect(result.map((i: Clip) => i.from)).toEqual([0])
   })
 
   it('works with empty array', () => {
@@ -34,10 +34,10 @@ describe('applyGravityToTrack', () => {
   })
 
   it('preserves order and duration', () => {
-    const items = [make(20, 5, 'a'), make(40, 10, 'b'), make(70, 3, 'c')]
-    const result = applyGravityToTrack(items)
-    expect(result.map((i: Item) => i.id)).toEqual(['a', 'b', 'c'])
-    expect(result.map((i: Item) => i.from)).toEqual([0, 5, 15])
-    expect(result.map((i: Item) => i.durationInFrames)).toEqual([5, 10, 3])
+    const clips = [make(20, 5, 'a'), make(40, 10, 'b'), make(70, 3, 'c')]
+    const result = applyGravityToTrack(clips)
+    expect(result.map((i: Clip) => i.id)).toEqual(['a', 'b', 'c'])
+    expect(result.map((i: Clip) => i.from)).toEqual([0, 5, 15])
+    expect(result.map((i: Clip) => i.durationInFrames)).toEqual([5, 10, 3])
   })
 })

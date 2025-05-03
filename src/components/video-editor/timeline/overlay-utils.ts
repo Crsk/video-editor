@@ -1,8 +1,8 @@
-import { Item } from '../types'
+import { Clip } from '../types'
 
 export interface ResizeOverlayRectParams {
   mode: 'left' | 'right'
-  currentItem: Item
+  currentClip: Clip
   mouseX: number
   pixelsPerSecond: number
   minDurationSeconds: number
@@ -13,7 +13,7 @@ export interface ResizeOverlayRectParams {
 
 export function getResizeOverlayRect({
   mode,
-  currentItem,
+  currentClip,
   mouseX,
   pixelsPerSecond,
   minDurationSeconds,
@@ -24,7 +24,7 @@ export function getResizeOverlayRect({
   let left = 0
   let width = 0
   if (mode === 'left') {
-    const originalRightX = ((currentItem.from + currentItem.durationInFrames) / 30) * pixelsPerSecond
+    const originalRightX = ((currentClip.from + currentClip.durationInFrames) / 30) * pixelsPerSecond
     width = originalRightX - mouseX
     left = mouseX
     if (width < minDurationSeconds * pixelsPerSecond) {
@@ -32,7 +32,7 @@ export function getResizeOverlayRect({
       left = originalRightX - width
     }
   } else {
-    left = (currentItem.from / 30) * pixelsPerSecond
+    left = (currentClip.from / 30) * pixelsPerSecond
     width = mouseX - left
     if (width < minDurationSeconds * pixelsPerSecond) width = minDurationSeconds * pixelsPerSecond
   }
@@ -45,6 +45,6 @@ export function getResizeOverlayRect({
     top: Math.round(overlayTop),
     width: Math.round(width),
     height: 28,
-    label: currentItem.type.charAt(0).toUpperCase() + currentItem.type.slice(1)
+    label: currentClip.type.charAt(0).toUpperCase() + currentClip.type.slice(1)
   }
 }

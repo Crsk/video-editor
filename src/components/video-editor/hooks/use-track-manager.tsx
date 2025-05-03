@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useEditor } from '../context/video-editor-provider'
-import { Item, Track } from '../types'
+import { Clip, Track } from '../types'
 import { v4 as uuidv4 } from 'uuid'
 import { applyGravityToTrack } from '../context/gravity'
 
@@ -14,7 +14,7 @@ export function useTrackManager() {
       setTracks(prevTracks => {
         const newTrack: Track = {
           name,
-          items: [],
+          clips: [],
           volume
         }
         const updatedTracks = [...prevTracks, newTrack]
@@ -43,12 +43,12 @@ export function useTrackManager() {
     [setTracks]
   )
 
-  const calculateClipStartPosition = useCallback((items: Item[]): number => {
-    if (items.length === 0) return 0
+  const calculateClipStartPosition = useCallback((clips: Clip[]): number => {
+    if (clips.length === 0) return 0
 
     let maxEndPosition = 0
-    items.forEach(item => {
-      const endPosition = item.from + item.durationInFrames
+    clips.forEach(clip => {
+      const endPosition = clip.from + clip.durationInFrames
       if (endPosition > maxEndPosition) {
         maxEndPosition = endPosition
       }
@@ -71,21 +71,21 @@ export function useTrackManager() {
         const track = updatedTracks[trackIndex]
 
         // Create the new clip and add it to the track
-        const newClip: Item = {
+        const newClip: Clip = {
           id: clipId,
           type: 'video',
-          from: calculateClipStartPosition(track.items),
+          from: calculateClipStartPosition(track.clips),
           durationInFrames,
           src,
           volume: 1
         }
 
         // Add the clip and apply gravity to ensure no gaps
-        const updatedItems = applyGravityToTrack([...track.items, newClip])
+        const updatedClips = applyGravityToTrack([...track.clips, newClip])
 
         updatedTracks[trackIndex] = {
           ...track,
-          items: updatedItems
+          clips: updatedClips
         }
 
         return updatedTracks
@@ -108,20 +108,20 @@ export function useTrackManager() {
 
         const updatedTracks = [...prevTracks]
         const track = updatedTracks[trackIndex]
-        const newClip: Item = {
+        const newClip: Clip = {
           id: clipId,
           type: 'audio',
-          from: calculateClipStartPosition(track.items),
+          from: calculateClipStartPosition(track.clips),
           durationInFrames,
           src,
           volume: 1
         }
 
-        const updatedItems = applyGravityToTrack([...track.items, newClip])
+        const updatedClips = applyGravityToTrack([...track.clips, newClip])
 
         updatedTracks[trackIndex] = {
           ...track,
-          items: updatedItems
+          clips: updatedClips
         }
 
         return updatedTracks
@@ -145,7 +145,7 @@ export function useTrackManager() {
 
         updatedTracks[trackIndex] = {
           ...track,
-          items: track.items.filter(item => item.id !== clipId)
+          clips: track.clips.filter(clip => clip.id !== clipId)
         }
 
         return updatedTracks
@@ -155,7 +155,7 @@ export function useTrackManager() {
   )
 
   const updateClip = useCallback(
-    (trackIndex: number, clipId: string, updates: Partial<Omit<Item, 'id' | 'type'>>): void => {
+    (trackIndex: number, clipId: string, updates: Partial<Omit<Clip, 'id' | 'type'>>): void => {
       setTracks(prevTracks => {
         if (trackIndex < 0 || trackIndex >= prevTracks.length) {
           console.warn(`Track index ${trackIndex} is out of bounds`)
@@ -167,11 +167,11 @@ export function useTrackManager() {
 
         updatedTracks[trackIndex] = {
           ...track,
-          items: track.items.map(item => {
-            if (item.id === clipId) {
-              return { ...item, ...updates }
+          clips: track.clips.map(clip => {
+            if (clip.id === clipId) {
+              return { ...clip, ...updates }
             }
-            return item
+            return clip
           })
         }
 
@@ -194,7 +194,7 @@ export function useTrackManager() {
         const updatedTracks = [...prevTracks]
         const track = updatedTracks[trackIndex]
 
-        const newClip: Item = {
+        const newClip: Clip = {
           id: clipId,
           type,
           from: 0,
@@ -203,11 +203,11 @@ export function useTrackManager() {
           volume: 1
         }
 
-        const updatedItems = applyGravityToTrack([newClip, ...track.items])
+        const updatedClips = applyGravityToTrack([newClip, ...track.clips])
 
         updatedTracks[trackIndex] = {
           ...track,
-          items: updatedItems
+          clips: updatedClips
         }
 
         return updatedTracks
@@ -230,9 +230,9 @@ export function useTrackManager() {
 
         const updatedTracks = [...prevTracks]
         const track = updatedTracks[trackIndex]
-        const endPosition = calculateClipStartPosition(track.items)
+        const endPosition = calculateClipStartPosition(track.clips)
 
-        const newClip: Item = {
+        const newClip: Clip = {
           id: clipId,
           type,
           from: endPosition,
@@ -243,7 +243,7 @@ export function useTrackManager() {
 
         updatedTracks[trackIndex] = {
           ...track,
-          items: [...track.items, newClip]
+          clips: [...track.clips, newClip]
         }
 
         return updatedTracks
@@ -255,15 +255,15 @@ export function useTrackManager() {
   )
 
   const setVideoRenderOption = useCallback(
-    (itemId: string, renderOption: 'default' | 'contain-blur' | 'cover'): void => {
-      handleVideoRenderOptionChange(itemId, renderOption)
+    (ClipId: string, renderOption: 'default' | 'contain-blur' | 'cover'): void => {
+      handleVideoRenderOptionChange(ClipId, renderOption)
     },
     [handleVideoRenderOptionChange]
   )
 
   const setVideoPosition = useCallback(
-    (itemId: string, positionX: number, positionY: number): void => {
-      handleVideoPositionChange(itemId, positionX, positionY)
+    (ClipId: string, positionX: number, positionY: number): void => {
+      handleVideoPositionChange(ClipId, positionX, positionY)
     },
     [handleVideoPositionChange]
   )

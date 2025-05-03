@@ -1,46 +1,46 @@
 import { Track } from '../types'
 import { applyGravityToTrack } from './gravity'
 
-// Pure function for test: mimics moveItemToTrack logic but returns new tracks array
-export function moveItemToTrackForTest(
+// Pure function for test: mimics moveClipToTrack logic but returns new tracks array
+export function moveClipToTrackForTest(
   tracks: Track[],
   sourceClipIndex: number,
-  itemIndex: number,
+  ClipIndex: number,
   targetClipIndex: number,
   newStartFrame: number
 ): Track[] {
   const sourceTrack = tracks[sourceClipIndex]
   const targetTrack = tracks[targetClipIndex]
-  const movingItem = { ...sourceTrack.items[itemIndex], from: newStartFrame }
+  const movingClip = { ...sourceTrack.clips[ClipIndex], from: newStartFrame }
 
   // Check for collision in target track
-  const hasCollision = targetTrack.items.some(item => {
-    const itemStart = item.from
-    const itemEnd = item.from + item.durationInFrames
-    const movingEnd = newStartFrame + movingItem.durationInFrames
-    return !(movingEnd <= itemStart || newStartFrame >= itemEnd)
+  const hasCollision = targetTrack.clips.some(clip => {
+    const ClipStart = clip.from
+    const ClipEnd = clip.from + clip.durationInFrames
+    const movingEnd = newStartFrame + movingClip.durationInFrames
+    return !(movingEnd <= ClipStart || newStartFrame >= ClipEnd)
   })
 
-  let newTargetItems
+  let newTargetClips
   if (hasCollision) {
-    // Place after last item
-    const last = targetTrack.items[targetTrack.items.length - 1]
+    // Place after last clip
+    const last = targetTrack.clips[targetTrack.clips.length - 1]
     const forcedStart = last ? last.from + last.durationInFrames : 0
-    newTargetItems = [...targetTrack.items, { ...movingItem, from: forcedStart }]
+    newTargetClips = [...targetTrack.clips, { ...movingClip, from: forcedStart }]
   } else {
-    newTargetItems = [...targetTrack.items, movingItem]
+    newTargetClips = [...targetTrack.clips, movingClip]
   }
 
   // Remove from source
-  const newSourceItems = sourceTrack.items.filter((_, idx) => idx !== itemIndex)
+  const newSourceClips = sourceTrack.clips.filter((_, idx) => idx !== ClipIndex)
 
   // Apply gravity to both tracks
-  const gravitatedSourceItems = applyGravityToTrack(newSourceItems)
-  const gravitatedTargetItems = applyGravityToTrack(newTargetItems)
+  const gravitatedSourceClips = applyGravityToTrack(newSourceClips)
+  const gravitatedTargetClips = applyGravityToTrack(newTargetClips)
 
   return tracks.map((track, idx) => {
-    if (idx === sourceClipIndex) return { ...track, items: gravitatedSourceItems }
-    if (idx === targetClipIndex) return { ...track, items: gravitatedTargetItems }
+    if (idx === sourceClipIndex) return { ...track, clips: gravitatedSourceClips }
+    if (idx === targetClipIndex) return { ...track, clips: gravitatedTargetClips }
     return track
   })
 }

@@ -34,7 +34,7 @@ export const useAudioLoader = (_: Track[], setTracks: React.Dispatch<React.SetSt
     // Process all tracks and update audio durations
     const updateAllAudioDurations = async () => {
       try {
-        // Update all audio items across all tracks
+        // Update all audio clips across all tracks
         setTracks(prevTracks => {
           const newTracks = [...prevTracks]
 
@@ -42,30 +42,30 @@ export const useAudioLoader = (_: Track[], setTracks: React.Dispatch<React.SetSt
           for (let clipIndex = 0; clipIndex < newTracks.length; clipIndex++) {
             const track = newTracks[clipIndex]
 
-            // Process each item in the track
-            for (let itemIndex = 0; itemIndex < track.items.length; itemIndex++) {
-              const item = track.items[itemIndex]
+            // Process each clip in the track
+            for (let ClipIndex = 0; ClipIndex < track.clips.length; ClipIndex++) {
+              const clip = track.clips[ClipIndex]
 
-              // If it's an audio item, update its duration
-              if (item.type === 'audio') {
+              // If it's an audio clip, update its duration
+              if (clip.type === 'audio') {
                 // Use a self-invoking async function to handle the async operation
                 ;(async () => {
                   try {
-                    const actualDurationInFrames = await loadAudioAndUpdateDuration(item.src)
+                    const actualDurationInFrames = await loadAudioAndUpdateDuration(clip.src)
 
                     // Update the clip with the actual duration
                     setTracks(currentTracks => {
                       const updatedTracks = [...currentTracks]
-                      if (updatedTracks[clipIndex]?.items[itemIndex]) {
-                        updatedTracks[clipIndex].items[itemIndex] = {
-                          ...updatedTracks[clipIndex].items[itemIndex],
+                      if (updatedTracks[clipIndex]?.clips[ClipIndex]) {
+                        updatedTracks[clipIndex].clips[ClipIndex] = {
+                          ...updatedTracks[clipIndex].clips[ClipIndex],
                           durationInFrames: actualDurationInFrames
                         }
                       }
                       return updatedTracks
                     })
                   } catch (error) {
-                    console.error(`Error updating duration for clip ${clipIndex}, item ${itemIndex}:`, error)
+                    console.error(`Error updating duration for clip ${clipIndex}, clip ${ClipIndex}:`, error)
                   }
                 })()
               }

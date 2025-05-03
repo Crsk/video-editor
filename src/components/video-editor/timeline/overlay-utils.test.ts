@@ -2,7 +2,7 @@ import { getResizeOverlayRect } from './overlay-utils'
 import { describe, it, expect } from 'vitest'
 
 describe('getResizeOverlayRect', () => {
-  const item = {
+  const clip = {
     from: 0,
     durationInFrames: 60,
     type: 'video',
@@ -18,7 +18,7 @@ describe('getResizeOverlayRect', () => {
     const mouseX = 300
     const rect = getResizeOverlayRect({
       mode: 'right',
-      currentItem: item,
+      currentClip: clip,
       mouseX,
       pixelsPerSecond,
       minDurationSeconds,
@@ -37,7 +37,7 @@ describe('getResizeOverlayRect', () => {
     const mouseX = 50
     const rect = getResizeOverlayRect({
       mode: 'right',
-      currentItem: item,
+      currentClip: clip,
       mouseX,
       pixelsPerSecond,
       minDurationSeconds,
@@ -52,7 +52,7 @@ describe('getResizeOverlayRect', () => {
     const mouseX = 100
     const rect = getResizeOverlayRect({
       mode: 'left',
-      currentItem: item,
+      currentClip: clip,
       mouseX,
       pixelsPerSecond,
       minDurationSeconds,

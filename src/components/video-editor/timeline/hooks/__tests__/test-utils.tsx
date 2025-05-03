@@ -10,7 +10,7 @@ export interface MockClip {
 
 export interface MockTrack {
   id: string
-  items: MockClip[]
+  clips: MockClip[]
 }
 
 export const createMockClip = (id: string, type = 'video', from = 0, durationInFrames = 30): MockClip => ({
@@ -20,14 +20,14 @@ export const createMockClip = (id: string, type = 'video', from = 0, durationInF
   durationInFrames
 })
 
-export const createMockTrack = (id: string, items: MockClip[] = []): MockTrack => ({
+export const createMockTrack = (id: string, clips: MockClip[] = []): MockTrack => ({
   id,
-  items
+  clips
 })
 
 export const defaultTracks = [
-  createMockTrack('track-1', [createMockClip('item-1', 'video', 0, 30), createMockClip('item-2', 'video', 60, 30)]),
-  createMockTrack('track-2', [createMockClip('item-3', 'audio', 30, 60)])
+  createMockTrack('track-1', [createMockClip('clip-1', 'video', 0, 30), createMockClip('clip-2', 'video', 60, 30)]),
+  createMockTrack('track-2', [createMockClip('clip-3', 'audio', 30, 60)])
 ]
 
 export const createMockEditorFunctions = () => ({
@@ -35,7 +35,7 @@ export const createMockEditorFunctions = () => ({
   togglePlayPause: vi.fn(),
   toggleLoop: vi.fn(),
   handleTrackUpdate: vi.fn(),
-  moveItemToTrack: vi.fn().mockReturnValue(true),
+  moveClipToTrack: vi.fn().mockReturnValue(true),
   tracks: defaultTracks,
   duration: 30,
   FPS: 30,
@@ -90,12 +90,10 @@ export const createMockTimelineState = () => {
     setIsDragging: vi.fn(),
     setResizeMode: vi.fn(),
     setResizeOverlay: vi.fn(),
-    activeItem: null,
-    setActiveItem: vi.fn(),
-    activeItemClipIndex: null,
-    setActiveItemClipIndex: vi.fn(),
-    activeItemIndex: null,
-    setActiveItemIndex: vi.fn(),
+    activeClip: null,
+    setActiveClip: vi.fn(),
+    activeClipIndex: null,
+    setActiveClipIndex: vi.fn(),
     originalVideoDurationInSeconds: 30,
     FPS: 30
   }

@@ -2,7 +2,7 @@ import { useSensor, useSensors, PointerSensor, KeyboardSensor, Modifier } from '
 import type { DragStartEvent, DragMoveEvent, DragEndEvent } from '@dnd-kit/core'
 import { useEditor } from '../../context/video-editor-provider'
 import { getSnappedDropPosition } from '../find-gap-integration'
-import type { Item } from '../../types'
+import type { Clip } from '../../types'
 import type { TimelineState } from './use-timeline'
 
 const FPS = 30
@@ -13,21 +13,19 @@ export interface TimelineDnd {
   handleDragMove: (event: DragMoveEvent) => void
   handleDragEnd: (event: DragEndEvent) => void
   modifiers: Modifier[]
-  activeItem: Item | null
+  activeClip: Clip | null
 }
 
 export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
-  const { moveItemToTrack, handleTrackUpdate, tracks } = useEditor()
+  const { moveClipToTrack, handleTrackUpdate, tracks } = useEditor()
 
   const {
     setIsDragging,
     setSelectedClip,
-    setActiveItem,
-    activeItem,
-    setActiveItemClipIndex,
-    activeItemClipIndex,
-    setActiveItemIndex,
-    activeItemIndex,
+    setActiveClip,
+    activeClip,
+    setActiveClipIndex,
+    activeClipIndex,
     timelineContainerRef,
     pixelsPerSecond
   } = timelineState
@@ -56,11 +54,11 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
     const { active } = event
 
     if (active.data.current?.type === 'clip') {
-      const { item, clipIndex, itemIndex } = active.data.current
-      setActiveItem(item)
-      setActiveItemClipIndex(clipIndex)
-      setActiveItemIndex(itemIndex)
-      setSelectedClip({ clipIndex, itemIndex })
+      const { clip, clipIndex, ClipIndex } = active.data.current
+      setActiveClip(clip)
+      setActiveClipIndex(clipIndex)
+      setActiveClipIndex(ClipIndex)
+      setSelectedClip({ clipIndex, ClipIndex })
       setIsDragging(true)
     }
   }
@@ -87,12 +85,12 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, delta, over } = event
 
-    if (active.data.current?.type === 'clip' && activeItemClipIndex !== null && activeItemIndex !== null) {
-      const sourceClipIndex = activeItemClipIndex
-      const itemIndex = activeItemIndex
-      const currentItem = tracks[sourceClipIndex].items[itemIndex]
+    if (active.data.current?.type === 'clip' && activeClipIndex !== null && activeClipIndex !== null) {
+      const sourceClipIndex = activeClipIndex
+      const ClipIndex = activeClipIndex
+      const currentClip = tracks[sourceClipIndex].clips[ClipIndex]
 
-      if (!currentItem) return
+      if (!currentClip) return
 
       let targetClipIndex = sourceClipIndex
       if (over && typeof over.id === 'string' && over.id.startsWith('clip-')) {
@@ -103,37 +101,37 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
       const deltaXInPixels = delta.x
       const deltaTimeInSeconds = deltaXInPixels / pixelsPerSecond
       const deltaFrames = Math.round(deltaTimeInSeconds * FPS)
-      const newTrackStartFrame = Math.max(0, currentItem.from + deltaFrames)
+      const newTrackStartFrame = Math.max(0, currentClip.from + deltaFrames)
 
       if (targetClipIndex !== sourceClipIndex) {
-        const moveSucceeded = moveItemToTrack(sourceClipIndex, itemIndex, targetClipIndex, newTrackStartFrame)
+        const moveSucceeded = moveClipToTrack(sourceClipIndex, ClipIndex, targetClipIndex, newTrackStartFrame)
 
         if (!moveSucceeded) {
           // TODO: show visual feedback for collision
         }
       } else {
-        const updatedItems = [...tracks[sourceClipIndex].items]
+        const updatedClips = [...tracks[sourceClipIndex].clips]
         const snappedGap = getSnappedDropPosition({
-          items: updatedItems,
+          clips: updatedClips,
           desiredStartFrame: newTrackStartFrame,
-          durationInFrames: currentItem.durationInFrames,
-          ignoreItemId: currentItem.id,
+          durationInFrames: currentClip.durationInFrames,
+          ignoreClipId: currentClip.id,
           snapToGrid: 1
         })
         if (snappedGap !== null) {
-          updatedItems[itemIndex] = {
-            ...currentItem,
+          updatedClips[ClipIndex] = {
+            ...currentClip,
             from: snappedGap
           }
-          handleTrackUpdate(sourceClipIndex, updatedItems)
+          handleTrackUpdate(sourceClipIndex, updatedClips)
         } else {
           // Optionally feedback
         }
       }
 
-      setActiveItem(null)
-      setActiveItemClipIndex(null)
-      setActiveItemIndex(null)
+      setActiveClip(null)
+      setActiveClipIndex(null)
+      setActiveClipIndex(null)
       setIsDragging(false)
     }
   }
@@ -144,6 +142,6 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
     handleDragMove,
     handleDragEnd,
     modifiers,
-    activeItem
+    activeClip
   }
 }

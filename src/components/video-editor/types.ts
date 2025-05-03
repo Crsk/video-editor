@@ -1,21 +1,21 @@
-type BaseItem = {
+type BaseClip = {
   from: number
   durationInFrames: number
   id: string
 }
 
-export type SolidItem = BaseItem & {
+export type SolidClip = BaseClip & {
   type: 'solid'
   color: string
 }
 
-export type TextItem = BaseItem & {
+export type TextClip = BaseClip & {
   type: 'text'
   text: string
   color: string
 }
 
-export type VideoItem = BaseItem & {
+export type VideoClip = BaseClip & {
   type: 'video'
   src: string
   volume?: number
@@ -25,19 +25,19 @@ export type VideoItem = BaseItem & {
   originalDuration?: number
 }
 
-export type AudioItem = BaseItem & {
+export type AudioClip = BaseClip & {
   type: 'audio'
   src: string
   volume?: number
 }
 
-export type Item = SolidItem | TextItem | VideoItem | AudioItem
+export type Clip = SolidClip | TextClip | VideoClip | AudioClip
 
-export type AudibleItem = VideoItem | AudioItem
+export type AudibleClip = VideoClip | AudioClip
 
 export type Track = {
   name: string
-  items: Item[]
+  clips: Clip[]
   volume?: number
 }
 

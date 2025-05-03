@@ -1,15 +1,15 @@
 import { FC } from 'react'
 import { AbsoluteFill, Audio, staticFile } from 'remotion'
-import { AudioItem as AudioItemType } from '../types'
+import { AudioClip as AudioClipType } from '../types'
 
-interface AudioItemProps {
-  item: AudioItemType
+interface AudioClipProps {
+  clip: AudioClipType
 }
 
 type VisualizationType = 'none'
 
-interface AudioItemProps {
-  item: AudioItemType
+interface AudioClipProps {
+  clip: AudioClipType
   visualizationType?: VisualizationType
   visualizationColor?: string
   visualizationHeight?: number
@@ -17,8 +17,8 @@ interface AudioItemProps {
   volume?: number
 }
 
-export const AudioItem: FC<AudioItemProps> = ({
-  item,
+export const AudioClip: FC<AudioClipProps> = ({
+  clip,
   visualizationType = 'waveform',
   visualizationHeight = 100,
   visualizationBackground = 'rgba(0, 0, 0, 0.5)',
@@ -26,7 +26,7 @@ export const AudioItem: FC<AudioItemProps> = ({
 }) => {
   return (
     <AbsoluteFill>
-      <Audio src={staticFile(item.src)} volume={volume} />
+      <Audio src={staticFile(clip.src)} volume={volume} />
 
       {visualizationType !== 'none' && (
         <div

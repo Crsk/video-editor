@@ -3,27 +3,27 @@ import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover
 import { Slider } from '~/components/ui/slider'
 import { Volume2Icon } from 'lucide-react'
 import { useEditor } from '../context/video-editor-provider'
-import { AudibleItem } from '../types'
+import { AudibleClip } from '../types'
 import { useRemotionTimeline } from './context/remotion-timeline-context'
 import { Button } from '~/components/ui/button'
 
-interface AudioItemVolumeProps {
-  item: AudibleItem
-  onVolumeChange: (itemId: string, volume: number) => void
+interface AudioClipVolumeProps {
+  clip: AudibleClip
+  onVolumeChange: (ClipId: string, volume: number) => void
 }
 
-const AudioItemVolume: FC<AudioItemVolumeProps> = ({ item, onVolumeChange }) => {
-  const [volume, setVolume] = useState(item.volume ?? 1)
+const AudioClipVolume: FC<AudioClipVolumeProps> = ({ clip, onVolumeChange }) => {
+  const [volume, setVolume] = useState(clip.volume ?? 1)
 
   const handleVolumeChange = (values: number[]) => {
     const newVolume = values[0]
     setVolume(newVolume)
-    onVolumeChange(item.id, newVolume)
+    onVolumeChange(clip.id, newVolume)
   }
 
   return (
     <div className="flex items-center gap-2 py-1">
-      <div className="w-24 truncate text-xs text-white/80">{item.src.split('/').pop()}</div>
+      <div className="w-24 truncate text-xs text-white/80">{clip.src.split('/').pop()}</div>
       <Slider
         orientation="horizontal"
         defaultValue={[volume]}
@@ -49,17 +49,17 @@ const AudioItemVolume: FC<AudioItemVolumeProps> = ({ item, onVolumeChange }) => 
 }
 
 export const TimelineVolumeControl: FC = () => {
-  const { tracks, handleAudioItemVolumeChange } = useEditor()
+  const { tracks, handleAudioClipVolumeChange } = useEditor()
   const { timelineState } = useRemotionTimeline()
   const [isOpen, setIsOpen] = useState(false)
   const selectedClip = timelineState.selectedClip
 
   if (!selectedClip) return null
 
-  if (!tracks[selectedClip.clipIndex] || !tracks[selectedClip.clipIndex].items[selectedClip.itemIndex]) return null
+  if (!tracks[selectedClip.clipIndex] || !tracks[selectedClip.clipIndex].clips[selectedClip.ClipIndex]) return null
 
-  const selectedItem = tracks[selectedClip.clipIndex].items[selectedClip.itemIndex]
-  const isAudible = selectedItem.type === 'audio' || selectedItem.type === 'video'
+  const _selectedClip = tracks[selectedClip.clipIndex].clips[selectedClip.ClipIndex]
+  const isAudible = _selectedClip.type === 'audio' || _selectedClip.type === 'video'
 
   if (!isAudible) return null
 
@@ -82,10 +82,10 @@ export const TimelineVolumeControl: FC = () => {
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
           >
             <div className="flex flex-col gap-1">
-              <AudioItemVolume
-                key={selectedItem.id}
-                item={selectedItem as AudibleItem}
-                onVolumeChange={handleAudioItemVolumeChange}
+              <AudioClipVolume
+                key={_selectedClip.id}
+                clip={_selectedClip as AudibleClip}
+                onVolumeChange={handleAudioClipVolumeChange}
               />
             </div>
           </PopoverContent>

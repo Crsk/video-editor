@@ -40,7 +40,7 @@ vi.mock('../../context/video-editor-provider', () => {
         {
           name: 'Video Track',
           volume: 1,
-          items: [
+          clips: [
             {
               id: 'video1',
               type: 'video',
@@ -53,7 +53,7 @@ vi.mock('../../context/video-editor-provider', () => {
         {
           name: 'Audio Track',
           volume: 1,
-          items: [
+          clips: [
             {
               id: 'audio1',
               type: 'audio',

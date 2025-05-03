@@ -6,7 +6,7 @@ export const SelectedClipVolumeControl: FC = () => {
   const { timelineState } = useRemotionTimeline()
   const { selectedClip } = timelineState
 
-  if (selectedClip?.itemIndex === undefined) {
+  if (selectedClip?.ClipIndex === undefined) {
     return null
   }
 

@@ -5,31 +5,31 @@ import { useEditor } from '~/components/video-editor/context/video-editor-provid
 import { useRemotionTimeline } from '../timeline/context/remotion-timeline-context'
 
 export const DeleteClipControl: FC = () => {
-  const { tracks, handleDeleteItem } = useEditor()
+  const { tracks, handleDeleteClip } = useEditor()
   const { timelineState } = useRemotionTimeline()
   const { selectedClip, setSelectedClip } = timelineState
 
-  const handleDeleteClip = useCallback(() => {
+  const _handleDeleteClip = useCallback(() => {
     if (!selectedClip) return
 
-    const { clipIndex, itemIndex } = selectedClip
+    const { clipIndex, ClipIndex } = selectedClip
 
     // Use the context's delete function
-    handleDeleteItem(clipIndex, itemIndex)
+    handleDeleteClip(clipIndex, ClipIndex)
 
     // Deselect the clip after deletion
     setSelectedClip(null)
-  }, [selectedClip, handleDeleteItem, setSelectedClip])
+  }, [selectedClip, handleDeleteClip, setSelectedClip])
 
-  if (!selectedClip || selectedClip.clipIndex === undefined || selectedClip.itemIndex === undefined) {
+  if (!selectedClip || selectedClip.clipIndex === undefined || selectedClip.ClipIndex === undefined) {
     return null
   }
 
   // Make sure the selected clip actually exists
   const clipExists =
     tracks[selectedClip.clipIndex] &&
-    tracks[selectedClip.clipIndex].items &&
-    tracks[selectedClip.clipIndex].items[selectedClip.itemIndex]
+    tracks[selectedClip.clipIndex].clips &&
+    tracks[selectedClip.clipIndex].clips[selectedClip.ClipIndex]
 
   if (!clipExists) {
     return null
@@ -42,7 +42,7 @@ export const DeleteClipControl: FC = () => {
         size="icon"
         onClick={e => {
           e.stopPropagation()
-          handleDeleteClip()
+          _handleDeleteClip()
         }}
         title="Delete clip"
       >

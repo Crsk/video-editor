@@ -66,13 +66,13 @@ export function useVideoUpload(): UseVideoUploadReturn {
 
             setTracks(prevTracks => {
               const newTracks = JSON.parse(JSON.stringify(prevTracks))
-              const items = newTracks[trackIndex].items
-              const lastItemIndex = items.length - 1
-              const lastItem = lastItemIndex >= 0 ? items[lastItemIndex] : null
-              const startFrame = lastItem ? lastItem.from + lastItem.durationInFrames : 0
-              const newItemId = uuidv4()
-              const newItem = {
-                id: newItemId,
+              const clips = newTracks[trackIndex].clips
+              const lastClipIndex = clips.length - 1
+              const lastClip = lastClipIndex >= 0 ? clips[lastClipIndex] : null
+              const startFrame = lastClip ? lastClip.from + lastClip.durationInFrames : 0
+              const newClipId = uuidv4()
+              const newClip = {
+                id: newClipId,
                 from: startFrame,
                 durationInFrames: durationInFrames,
                 originalDuration: durationInFrames,
@@ -80,7 +80,7 @@ export function useVideoUpload(): UseVideoUploadReturn {
                 src
               }
 
-              newTracks[trackIndex].items = [...newTracks[trackIndex].items, newItem]
+              newTracks[trackIndex].clips = [...newTracks[trackIndex].clips, newClip]
 
               return newTracks
             })

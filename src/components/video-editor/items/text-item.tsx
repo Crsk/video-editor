@@ -1,22 +1,22 @@
 import { FC } from 'react'
 import { AbsoluteFill } from 'remotion'
-import { TextItem as TextItemType } from '../types'
+import { TextClip as TextClipType } from '../types'
 
-interface TextItemProps {
-  item: TextItemType
+interface TextClipProps {
+  clip: TextClipType
 }
 
-export const TextItem: FC<TextItemProps> = ({ item }) => {
+export const TextClip: FC<TextClipProps> = ({ clip }) => {
   return (
     <AbsoluteFill
       style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        color: item.color || '#fff'
+        color: clip.color || '#fff'
       }}
     >
-      <h1>{item.text}</h1>
+      <h1>{clip.text}</h1>
     </AbsoluteFill>
   )
 }

@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { ClipStyle, Item } from '../types'
+import { ClipStyle, Clip as ClipType } from '../types'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { formatTimeCode } from '../utils/format-time'
 import { useDraggable } from '@dnd-kit/core'
@@ -9,56 +9,56 @@ import { cn } from '~/lib/utils'
 const FPS = 30
 
 interface ClipProps {
-  item: Item
+  clip: ClipType
   clipIndex: number
-  itemIndex: number
+  ClipIndex: number
   pixelsPerSecond: number
   isSelected: boolean
   showResizeControls: boolean
   maxDurationSeconds: number
-  onItemSelect: (clipIndex: number, itemIndex: number) => void
+  onClipSelect: (clipIndex: number, ClipIndex: number) => void
   onResizeStart: (e: React.MouseEvent, mode: 'left' | 'right') => void
   videoEndPosition?: number // Position where video content ends
   styles?: ClipStyle
 }
 
 export const Clip: FC<ClipProps> = ({
-  item,
+  clip,
   clipIndex,
-  itemIndex,
+  ClipIndex,
   pixelsPerSecond,
   isSelected,
   showResizeControls,
-  onItemSelect,
+  onClipSelect,
   onResizeStart,
   videoEndPosition,
   styles
 }) => {
-  const itemStartSeconds = item.from / FPS
-  const itemDurationSeconds = item.durationInFrames / FPS
-  const leftPosition = itemStartSeconds * pixelsPerSecond
+  const ClipStartSeconds = clip.from / FPS
+  const ClipDurationSeconds = clip.durationInFrames / FPS
+  const leftPosition = ClipStartSeconds * pixelsPerSecond
 
   // Setup draggable with dnd-kit
   const { listeners, setNodeRef, isDragging } = useDraggable({
-    id: `item-${item.id}`,
+    id: `clip-${clip.id}`,
     data: {
-      item,
+      clip,
       clipIndex,
-      itemIndex,
+      ClipIndex,
       type: 'clip'
     }
   })
 
-  // Calculate if this audio item extends beyond video end
+  // Calculate if this audio clip extends beyond video end
   const isAudioExtendingBeyondVideo =
-    item.type === 'audio' &&
+    clip.type === 'audio' &&
     videoEndPosition !== undefined &&
-    leftPosition + itemDurationSeconds * pixelsPerSecond > videoEndPosition
+    leftPosition + ClipDurationSeconds * pixelsPerSecond > videoEndPosition
 
   // Apply transform only when dragging
   const style = {
     left: leftPosition,
-    width: Math.max(4, itemDurationSeconds * pixelsPerSecond),
+    width: Math.max(4, ClipDurationSeconds * pixelsPerSecond),
     opacity: isDragging ? 0 : 1,
     zIndex: isDragging ? 50 : isSelected ? 30 : 10,
     borderRadius: '100px'
@@ -69,22 +69,22 @@ export const Clip: FC<ClipProps> = ({
       ref={setNodeRef}
       className={cn(
         `absolute flex items-center justify-center h-7 top-0.5 text-accent text-xs cursor-grab overflow-hidden truncate whitespace-nowrap ${
-          item.type === 'audio' ? '' : 'bg-primary'
-        } timeline-item opacity-80 border-0 select-none`,
+          clip.type === 'audio' ? '' : 'bg-primary'
+        } timeline-clip opacity-80 border-0 select-none`,
         styles?.root,
         isSelected ? (styles?.active.root !== '' ? styles?.active.root : 'bg-[var(--color-timeline-accent)]') : ''
       )}
       style={style}
-      title={`${item.type} (${formatTimeCode(itemStartSeconds)}-${formatTimeCode(
-        itemStartSeconds + itemDurationSeconds
+      title={`${clip.type} (${formatTimeCode(ClipStartSeconds)}-${formatTimeCode(
+        ClipStartSeconds + ClipDurationSeconds
       )})`}
       onClick={e => {
         e.stopPropagation()
-        onItemSelect(clipIndex, itemIndex)
+        onClipSelect(clipIndex, ClipIndex)
       }}
       {...listeners}
     >
-      {/* Left resize handle for video items */}
+      {/* Left resize handle for video clips */}
       {showResizeControls && (
         <div
           className={cn(
@@ -100,7 +100,7 @@ export const Clip: FC<ClipProps> = ({
         </div>
       )}
 
-      {/* Item content */}
+      {/* Clip content */}
       <div
         className={cn(
           'flex-1 text-center text-secondary',
@@ -112,10 +112,10 @@ export const Clip: FC<ClipProps> = ({
             : ''
         )}
       >
-        {item.type === 'audio' ? (
+        {clip.type === 'audio' ? (
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
             <AudioTrackVisualizer
-              src={item.src}
+              src={clip.src}
               color={isSelected ? '#ffffff80' : 'var(--color-timeline-accent)'}
               height={26}
             />
@@ -134,7 +134,7 @@ export const Clip: FC<ClipProps> = ({
         )}
       </div>
 
-      {/* Right resize handle for video items */}
+      {/* Right resize handle for video clips */}
       {showResizeControls && (
         <div
           className={cn(

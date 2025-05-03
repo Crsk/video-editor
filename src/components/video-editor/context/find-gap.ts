@@ -1,22 +1,22 @@
-import { Item } from '../types'
+import { Clip } from '../types'
 
 /**
- * Find the next available gap (frame index) in a track for an item of given duration.
+ * Find the next available gap (frame index) in a track for an clip of given duration.
  * All calculations are in frames.
- * @param items Items in the track (should be sorted by .from ascending)
- * @param desiredStartFrame Where the user wants to start the item
- * @param durationInFrames How long the item is
- * @param ignoreItemId (optional) If moving an existing item, ignore its current position
+ * @param clips Clips in the track (should be sorted by .from ascending)
+ * @param desiredStartFrame Where the user wants to start the clip
+ * @param durationInFrames How long the clip is
+ * @param ignoreClipId (optional) If moving an existing clip, ignore its current position
  * @returns The start frame of the next available gap, or null if none found
  */
 export function findNextAvailableGap(
-  items: Item[],
+  clips: Clip[],
   desiredStartFrame: number,
   durationInFrames: number,
-  ignoreItemId?: string
+  ignoreClipId?: string
 ): number | null {
-  // Filter out the item being moved if needed
-  const filtered = ignoreItemId ? items.filter(i => i.id !== ignoreItemId) : items.slice()
+  // Filter out the clip being moved if needed
+  const filtered = ignoreClipId ? clips.filter(i => i.id !== ignoreClipId) : clips.slice()
   // Sort by start
   filtered.sort((a, b) => a.from - b.from)
 
@@ -30,7 +30,7 @@ export function findNextAvailableGap(
     return 0
   }
 
-  // Check all gaps between items for the earliest fit
+  // Check all gaps between clips for the earliest fit
   for (let i = 0; i < filtered.length - 1; i++) {
     const current = filtered[i]
     const next = filtered[i + 1]
@@ -42,7 +42,7 @@ export function findNextAvailableGap(
     }
   }
 
-  // After last item: only allow if desiredStartFrame is after the last item
+  // After last clip: only allow if desiredStartFrame is after the last clip
   const last = filtered[filtered.length - 1]
   if (desiredStartFrame >= last.from + last.durationInFrames) {
     return desiredStartFrame

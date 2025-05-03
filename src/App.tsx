@@ -7,17 +7,17 @@ function App() {
   const initialTracks: Track[] = [
     {
       name: 'Track 1',
-      items: [],
+      clips: [],
       volume: 1
     },
     {
       name: 'Track 2',
-      items: [],
+      clips: [],
       volume: 1
     },
     {
       name: 'Audio Track',
-      items: [],
+      clips: [],
       volume: 1
     }
   ]

@@ -8,7 +8,7 @@ const FPS = 30
 export interface TimelineInteractions {
   handleTimelineClick: (e: React.MouseEvent) => void
   handleMarkerDrag: (startEvent: React.MouseEvent) => void
-  handleItemSelect: (clipIndex: number, itemIndex: number) => void
+  handleClipSelect: (clipIndex: number, ClipIndex: number) => void
   handleResizeStart: (e: React.MouseEvent, mode: 'left' | 'right') => void
 }
 
@@ -32,10 +32,10 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
     if (isDragging) return
 
     const target = e.target as HTMLElement
-    const isItem = target.closest('.timeline-item') !== null
+    const isClip = target.closest('.timeline-clip') !== null
     const isResizeHandle = target.closest('.resize-handle') !== null
 
-    if (!isItem && !isResizeHandle) {
+    if (!isClip && !isResizeHandle) {
       setSelectedClip(null)
       e.preventDefault()
 
@@ -85,10 +85,10 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
     document.addEventListener('mouseup', handleMouseUp)
   }
 
-  const handleItemSelect = (clipIndex: number, itemIndex: number) => {
-    if (selectedClip && selectedClip.clipIndex === clipIndex && selectedClip.itemIndex === itemIndex) {
+  const handleClipSelect = (clipIndex: number, ClipIndex: number) => {
+    if (selectedClip && selectedClip.clipIndex === clipIndex && selectedClip.ClipIndex === ClipIndex) {
       setSelectedClip(null)
-    } else setSelectedClip({ clipIndex, itemIndex })
+    } else setSelectedClip({ clipIndex, ClipIndex })
   }
 
   const handleResizeStart = (e: React.MouseEvent, mode: 'left' | 'right') => {
@@ -101,10 +101,10 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
       if (!selectedClip) return
 
       const clipIndex = selectedClip.clipIndex
-      const itemIndex = selectedClip.itemIndex
-      const currentItem = tracks[clipIndex].items[itemIndex]
+      const ClipIndex = selectedClip.ClipIndex
+      const currentClip = tracks[clipIndex].clips[ClipIndex]
 
-      if (!currentItem) return
+      if (!currentClip) return
 
       const containerRect = timelineContainerRef.current?.getBoundingClientRect()
       if (!containerRect) return
@@ -114,7 +114,7 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
       setResizeOverlay(
         getResizeOverlayRect({
           mode,
-          currentItem,
+          currentClip,
           mouseX,
           pixelsPerSecond,
           minDurationSeconds: MIN_DURATION_SECONDS,
@@ -131,7 +131,7 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
         const scrollLeft = timelineContainerRef.current?.scrollLeft || 0
         const mouseX = moveEvent.clientX - containerRect.left + scrollLeft
         const newStartSeconds = mouseX / pixelsPerSecond
-        const originalEndFrame = currentItem.from + currentItem.durationInFrames
+        const originalEndFrame = currentClip.from + currentClip.durationInFrames
         const newStartFrame = Math.max(0, Math.round(newStartSeconds * FPS))
         const newDurationInFrames = originalEndFrame - newStartFrame
 
@@ -140,20 +140,20 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
 
         // Check original duration constraint - only for video clips
         if (
-          currentItem.type === 'video' &&
-          currentItem.originalDuration &&
-          newDurationInFrames > currentItem.originalDuration
+          currentClip.type === 'video' &&
+          currentClip.originalDuration &&
+          newDurationInFrames > currentClip.originalDuration
         )
           return
 
-        const updatedItems = [...tracks[clipIndex].items]
-        updatedItems[itemIndex] = {
-          ...currentItem,
+        const updatedClips = [...tracks[clipIndex].clips]
+        updatedClips[ClipIndex] = {
+          ...currentClip,
           from: newStartFrame,
           durationInFrames: newDurationInFrames
         }
 
-        handleTrackUpdate(clipIndex, updatedItems)
+        handleTrackUpdate(clipIndex, updatedClips)
       } else {
         // Right resize - changes only duration
         const containerRect = timelineContainerRef.current?.getBoundingClientRect()
@@ -161,18 +161,18 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
 
         const scrollLeft = timelineContainerRef.current?.scrollLeft || 0
         const mouseX = moveEvent.clientX - containerRect.left + scrollLeft
-        const itemStartX = (currentItem.from / FPS) * pixelsPerSecond
+        const ClipStartX = (currentClip.from / FPS) * pixelsPerSecond
 
-        // We'll use the current item's duration for calculations
+        // We'll use the current clip's duration for calculations
 
         // Calculate the original duration in seconds if available - only for video clips
         const originalDurationSeconds =
-          currentItem.type === 'video' && currentItem.originalDuration ? currentItem.originalDuration / FPS : undefined
+          currentClip.type === 'video' && currentClip.originalDuration ? currentClip.originalDuration / FPS : undefined
 
         const newWidthPixels = calculateResizedWidth({
           mode: 'right',
           mouseX,
-          itemStartX,
+          ClipStartX,
           pixelsPerSecond,
           minDurationSeconds: MIN_DURATION_SECONDS,
           maxDurationSeconds: undefined, // Remove the restriction on max duration for trimming
@@ -185,13 +185,13 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
         // We don't need to restrict the trim operation when reducing the clip size
         // The user should be able to trim the video to any smaller size
 
-        const updatedItems = [...tracks[clipIndex].items]
-        updatedItems[itemIndex] = {
-          ...currentItem,
+        const updatedClips = [...tracks[clipIndex].clips]
+        updatedClips[ClipIndex] = {
+          ...currentClip,
           durationInFrames: Math.round(newDurationSeconds * FPS)
         }
 
-        handleTrackUpdate(clipIndex, updatedItems)
+        handleTrackUpdate(clipIndex, updatedClips)
       }
     }
 
@@ -209,7 +209,7 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
   return {
     handleTimelineClick,
     handleMarkerDrag,
-    handleItemSelect,
+    handleClipSelect,
     handleResizeStart
   }
 }

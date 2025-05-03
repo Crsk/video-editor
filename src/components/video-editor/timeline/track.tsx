@@ -11,9 +11,9 @@ interface TrackProps {
   pixelsPerSecond: number
   videoEndPosition: number
   nonPlayableWidth: number
-  selectedClip: { clipIndex: number; itemIndex: number } | null
+  selectedClip: { clipIndex: number; ClipIndex: number } | null
   originalVideoDuration: number
-  onItemSelect: (clipIndex: number, itemIndex: number) => void
+  onClipSelect: (clipIndex: number, ClipIndex: number) => void
   onResizeStart: (e: React.MouseEvent, mode: 'left' | 'right') => void
   trackRef?: (el: HTMLDivElement | null) => void
   styles?: TrackStyle
@@ -26,7 +26,7 @@ export const Track: FC<TrackProps> = ({
   videoEndPosition,
   selectedClip,
   /* originalVideoDuration, */
-  onItemSelect,
+  onClipSelect,
   onResizeStart,
   trackRef,
   styles
@@ -61,28 +61,28 @@ export const Track: FC<TrackProps> = ({
           />
         )}
 
-        {track.items.map((item, itemIndex) => {
+        {track.clips.map((clip, ClipIndex) => {
           const isSelected =
-            selectedClip !== null && selectedClip.clipIndex === clipIndex && selectedClip.itemIndex === itemIndex
+            selectedClip !== null && selectedClip.clipIndex === clipIndex && selectedClip.ClipIndex === ClipIndex
 
-          const isResizable = item.type === 'video' || item.type === 'audio'
+          const isResizable = clip.type === 'video' || clip.type === 'audio'
           const showResizeControls = isSelected && isResizable
-          // const maxDurationSeconds = item.type === 'video' ? originalVideoDuration : Infinity
+          // const maxDurationSeconds = clip.type === 'video' ? originalVideoDuration : Infinity
           const maxDurationSeconds = Infinity
           const isResizing = resizeMode && resizeOverlay
 
           return (
             !(isResizing && isSelected) && (
               <Clip
-                key={item.id}
-                item={item}
+                key={clip.id}
+                clip={clip}
                 clipIndex={clipIndex}
-                itemIndex={itemIndex}
+                ClipIndex={ClipIndex}
                 pixelsPerSecond={pixelsPerSecond}
                 isSelected={isSelected}
                 showResizeControls={showResizeControls}
                 maxDurationSeconds={maxDurationSeconds}
-                onItemSelect={onItemSelect}
+                onClipSelect={onClipSelect}
                 onResizeStart={onResizeStart}
                 videoEndPosition={videoEndPosition}
                 styles={styles?.clip}

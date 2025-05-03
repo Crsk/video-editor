@@ -20,14 +20,14 @@ test.describe('Timeline Clip Delete and Add', () => {
     const track1 = page.locator('.mt-2 > div').nth(0)
     await track1.waitFor({ state: 'visible', timeout: 10000 })
 
-    const initialClipsCount = await track1.locator('.timeline-item').count()
+    const initialClipsCount = await track1.locator('.timeline-clip').count()
     console.log(`Initial clips in track 1: ${initialClipsCount}`)
 
     if (initialClipsCount > 0) {
       for (let i = 0; i < initialClipsCount; i++) {
         await page.waitForTimeout(1000)
 
-        const clip = track1.locator('.timeline-item').first()
+        const clip = track1.locator('.timeline-clip').first()
         await clip.waitFor({ state: 'visible', timeout: 10000 })
         await page.waitForTimeout(500)
         await clip.click({ force: true })
@@ -61,7 +61,7 @@ test.describe('Timeline Clip Delete and Add', () => {
       }
     }
 
-    const clipsAfterDelete = await track1.locator('.timeline-item').count()
+    const clipsAfterDelete = await track1.locator('.timeline-clip').count()
     console.log(`Clips in track 1 after deletion: ${clipsAfterDelete}`)
 
     const useTestFileButton = page.getByText('Use Test File')
@@ -73,7 +73,7 @@ test.describe('Timeline Clip Delete and Add', () => {
     const trackSelector = page.locator('select')
     await trackSelector.waitFor({ state: 'visible', timeout: 10000 })
     await trackSelector.selectOption('0') // Select first option (Track 1)
-    
+
     // Wait for the loading state to appear and disappear
     const loadingText = page.getByText('Loading...')
     try {
@@ -82,25 +82,25 @@ test.describe('Timeline Clip Delete and Add', () => {
     } catch (error) {
       console.log('Loading state might not be visible, continuing test')
     }
-    
+
     // Wait for any network activity to settle
     await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {})
     await page.waitForTimeout(1000)
 
     // Verify a new clip was added to track 1
     await track1.waitFor({ state: 'visible', timeout: 10000 })
-    
+
     // Wait for the clip to appear with retries
     let clipsAfterAdd = 0
     for (let attempt = 0; attempt < 5; attempt++) {
-      clipsAfterAdd = await track1.locator('.timeline-item').count()
+      clipsAfterAdd = await track1.locator('.timeline-clip').count()
       console.log(`Attempt ${attempt + 1}: Clips in track 1 after adding new clip: ${clipsAfterAdd}`)
-      
+
       if (clipsAfterAdd > 0) break
-      
+
       await page.waitForTimeout(1000)
     }
-    
+
     // Verify at least one clip exists
     expect(clipsAfterAdd).toBeGreaterThan(0)
   })

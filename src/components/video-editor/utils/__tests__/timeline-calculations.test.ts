@@ -16,7 +16,7 @@ describe('Timeline Calculations', () => {
   const mockTracks: Track[] = [
     {
       name: 'Video Track',
-      items: [
+      clips: [
         {
           id: 'video-1',
           from: 0,
@@ -35,7 +35,7 @@ describe('Timeline Calculations', () => {
     },
     {
       name: 'Audio Track',
-      items: [
+      clips: [
         {
           id: 'audio-1',
           from: 0,
@@ -77,7 +77,7 @@ describe('Timeline Calculations', () => {
       const shortTracks: Track[] = [
         {
           name: 'Short Track',
-          items: [
+          clips: [
             {
               id: 'short-1',
               from: 0,

@@ -65,12 +65,12 @@ export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) =>
   } = timelineState
 
   const { handleTimelineClick, handleMarkerDrag, handleResizeStart } = timelineInteractions
-  const { sensors, activeItem, handleDragStart, handleDragMove, handleDragEnd, modifiers } = timelineDnd
+  const { sensors, activeClip, handleDragStart, handleDragMove, handleDragEnd, modifiers } = timelineDnd
 
-  // Use the original handler from timelineInteractions for item selection
-  const handleItemSelectWithRenderOption = (trackIndex: number, itemIndex: number) => {
+  // Use the original handler from timelineInteractions for clip selection
+  const handleClipSelectWithRenderOption = (trackIndex: number, ClipIndex: number) => {
     // Call the original handler from timelineInteractions
-    timelineInteractions.handleItemSelect(trackIndex, itemIndex)
+    timelineInteractions.handleClipSelect(trackIndex, ClipIndex)
   }
 
   return (
@@ -95,7 +95,7 @@ export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) =>
                 pixelsPerSecond={pixelsPerSecond}
                 videoEndPosition={videoEndPosition}
                 nonPlayableWidth={nonPlayableWidth}
-                hasVideoTracks={tracks.some(track => track.items.some(item => item.type === 'video'))}
+                hasVideoTracks={tracks.some(track => track.clips.some(clip => clip.type === 'video'))}
                 styles={_styles.timeRuler}
               />
 
@@ -118,7 +118,7 @@ export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) =>
                     nonPlayableWidth={nonPlayableWidth}
                     selectedClip={selectedClip}
                     originalVideoDuration={timelineState.originalVideoDurationInSeconds}
-                    onItemSelect={handleItemSelectWithRenderOption}
+                    onClipSelect={handleClipSelectWithRenderOption}
                     onResizeStart={handleResizeStart}
                     trackRef={el => (trackRefs.current[clipIndex] = el)}
                     styles={_styles.track}
@@ -154,15 +154,15 @@ export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) =>
         )}
         {!resizeMode && (
           <DragOverlay transition="0s" style={{ opacity: 0.2 }}>
-            {activeItem && (
+            {activeClip && (
               <div
                 className={cn(activeDragBase, styles?.track?.clip?.active?.dragOrResize)}
                 style={{
-                  width: Math.max(4, (activeItem.durationInFrames / FPS) * pixelsPerSecond),
+                  width: Math.max(4, (activeClip.durationInFrames / FPS) * pixelsPerSecond),
                   borderRadius: '100px'
                 }}
               >
-                {/* <div>{activeItem.type.charAt(0).toUpperCase() + activeItem.type.slice(1)}</div> */}
+                {/* <div>{activeClip.type.charAt(0).toUpperCase() + activeClip.type.slice(1)}</div> */}
               </div>
             )}
           </DragOverlay>

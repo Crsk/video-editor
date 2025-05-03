@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useRef, useEffect, ReactNode, FC, RefObject } from 'react'
 import { PlayerRef } from '@remotion/player'
-import { Track, Item } from '../types'
+import { Track, Clip } from '../types'
 import { useVideoLoader } from '../hooks/use-video-loader'
 import { useAudioLoader } from '../hooks/use-audio-loader'
 import { applyGravityToTrack } from './gravity'
@@ -26,17 +26,17 @@ interface EditorContextState {
   togglePlayPause: () => void
   handleTimeUpdate: (newTimeInSeconds: number) => void
   toggleLoop: () => void
-  handleTrackUpdate: (clipIndex: number, updatedItems: Item[]) => void
+  handleTrackUpdate: (clipIndex: number, updatedClips: Clip[]) => void
   handleTrackVolumeChange: (clipIndex: number, volume: number) => void
-  handleAudioItemVolumeChange: (itemId: string, volume: number) => void
-  handleVideoRenderOptionChange: (itemId: string, renderOption: 'default' | 'contain-blur' | 'cover') => void
-  handleVideoPositionChange: (itemId: string, positionX: number, positionY: number) => void
-  handleDeleteItem: (clipIndex: number, itemIndex: number) => void
+  handleAudioClipVolumeChange: (ClipId: string, volume: number) => void
+  handleVideoRenderOptionChange: (ClipId: string, renderOption: 'default' | 'contain-blur' | 'cover') => void
+  handleVideoPositionChange: (ClipId: string, positionX: number, positionY: number) => void
+  handleDeleteClip: (clipIndex: number, ClipIndex: number) => void
 
-  // Move item between tracks with collision detection
-  moveItemToTrack: (
+  // Move clip between tracks with collision detection
+  moveClipToTrack: (
     sourceClipIndex: number,
-    itemIndex: number,
+    ClipIndex: number,
     targetClipIndex: number,
     newStartFrame: number
   ) => boolean // returns true if move succeeded, false if collision
@@ -57,9 +57,9 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
   initialTracks = [
     {
       name: 'Track 1',
-      items: [
+      clips: [
         {
-          id: 'item-1',
+          id: 'clip-1',
           from: 0,
           durationInFrames: 1,
           type: 'video',
@@ -70,9 +70,9 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
     },
     {
       name: 'Track 2',
-      items: [
+      clips: [
         {
-          id: 'item-2',
+          id: 'clip-2',
           from: 0,
           durationInFrames: 1,
           type: 'video',
@@ -83,7 +83,7 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
     },
     {
       name: 'Audio Track',
-      items: [
+      clips: [
         {
           id: 'audio-1',
           from: 0,
@@ -153,13 +153,13 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
     setIsLooping(prev => !prev)
   }
 
-  // Handle track updates (for resizing video items)
-  const handleTrackUpdate = (clipIndex: number, updatedItems: Item[]) => {
+  // Handle track updates (for resizing video clips)
+  const handleTrackUpdate = (clipIndex: number, updatedClips: Clip[]) => {
     setTracks(prevTracks => {
       const newTracks = [...prevTracks]
       newTracks[clipIndex] = {
         ...newTracks[clipIndex],
-        items: applyGravityToTrack(updatedItems)
+        clips: applyGravityToTrack(updatedClips)
       }
       return newTracks
     })
@@ -249,18 +249,18 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
     }
   }, [])
 
-  // Calculate the maximum end time (in frames) for video items only
-  // This ensures the video ends when the last video item ends, regardless of audio length
+  // Calculate the maximum end time (in frames) for video clips only
+  // This ensures the video ends when the last video clip ends, regardless of audio length
   const durationInFrames = (() => {
     let maxEndFrame = 0
 
     tracks.forEach(track => {
-      track.items.forEach(item => {
-        // Only consider video items for determining the composition duration
-        if (item.type === 'video') {
-          const itemEndFrame = item.from + item.durationInFrames
-          if (itemEndFrame > maxEndFrame) {
-            maxEndFrame = itemEndFrame
+      track.clips.forEach(clip => {
+        // Only consider video clips for determining the composition duration
+        if (clip.type === 'video') {
+          const ClipEndFrame = clip.from + clip.durationInFrames
+          if (ClipEndFrame > maxEndFrame) {
+            maxEndFrame = ClipEndFrame
           }
         }
       })
@@ -270,47 +270,47 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
     return Math.max(maxEndFrame, 1)
   })()
 
-  // Move item between tracks with collision detection
-  function moveItemToTrack(
+  // Move clip between tracks with collision detection
+  function moveClipToTrack(
     sourceClipIndex: number,
-    itemIndex: number,
+    ClipIndex: number,
     targetClipIndex: number,
     newStartFrame: number
   ): boolean {
     setTracks(prevTracks => {
       const sourceTrack = prevTracks[sourceClipIndex]
       const targetTrack = prevTracks[targetClipIndex]
-      let movingItem = { ...sourceTrack.items[itemIndex], from: newStartFrame }
+      let movingClip = { ...sourceTrack.clips[ClipIndex], from: newStartFrame }
 
       // Check for collision in target track
-      const hasCollision = targetTrack.items.some(item => {
-        const itemStart = item.from
-        const itemEnd = item.from + item.durationInFrames
-        const movingEnd = newStartFrame + movingItem.durationInFrames
-        return !(movingEnd <= itemStart || newStartFrame >= itemEnd)
+      const hasCollision = targetTrack.clips.some(clip => {
+        const ClipStart = clip.from
+        const ClipEnd = clip.from + clip.durationInFrames
+        const movingEnd = newStartFrame + movingClip.durationInFrames
+        return !(movingEnd <= ClipStart || newStartFrame >= ClipEnd)
       })
 
-      let newTargetItems
+      let newTargetClips
       if (hasCollision) {
-        // Place after last item
-        const last = targetTrack.items[targetTrack.items.length - 1]
+        // Place after last clip
+        const last = targetTrack.clips[targetTrack.clips.length - 1]
         const forcedStart = last ? last.from + last.durationInFrames : 0
-        movingItem = { ...movingItem, from: forcedStart }
-        newTargetItems = [...targetTrack.items, movingItem]
+        movingClip = { ...movingClip, from: forcedStart }
+        newTargetClips = [...targetTrack.clips, movingClip]
       } else {
-        newTargetItems = [...targetTrack.items, movingItem]
+        newTargetClips = [...targetTrack.clips, movingClip]
       }
 
       // Remove from source
-      const newSourceItems = sourceTrack.items.filter((_, idx) => idx !== itemIndex)
+      const newSourceClips = sourceTrack.clips.filter((_, idx) => idx !== ClipIndex)
 
       // Apply gravity to both tracks
-      const gravitatedSourceItems = applyGravityToTrack(newSourceItems)
-      const gravitatedTargetItems = applyGravityToTrack(newTargetItems)
+      const gravitatedSourceClips = applyGravityToTrack(newSourceClips)
+      const gravitatedTargetClips = applyGravityToTrack(newTargetClips)
 
       const newTracks = prevTracks.map((track, idx) => {
-        if (idx === sourceClipIndex) return { ...track, items: gravitatedSourceItems }
-        if (idx === targetClipIndex) return { ...track, items: gravitatedTargetItems }
+        if (idx === sourceClipIndex) return { ...track, clips: gravitatedSourceClips }
+        if (idx === targetClipIndex) return { ...track, clips: gravitatedTargetClips }
         return track
       })
       return newTracks
@@ -330,82 +330,82 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
     })
   }
 
-  const handleAudioItemVolumeChange = (itemId: string, volume: number) => {
+  const handleAudioClipVolumeChange = (ClipId: string, volume: number) => {
     setTracks(prevTracks => {
       return prevTracks.map(track => {
-        const updatedItems = track.items.map(item => {
-          if (item.id === itemId && (item.type === 'audio' || item.type === 'video')) {
+        const updatedClips = track.clips.map(clip => {
+          if (clip.id === ClipId && (clip.type === 'audio' || clip.type === 'video')) {
             return {
-              ...item,
+              ...clip,
               volume
             }
           }
-          return item
+          return clip
         })
         return {
           ...track,
-          items: updatedItems
+          clips: updatedClips
         }
       })
     })
   }
 
   // Handle video render option changes
-  const handleVideoRenderOptionChange = (itemId: string, renderOption: 'default' | 'contain-blur' | 'cover') => {
+  const handleVideoRenderOptionChange = (ClipId: string, renderOption: 'default' | 'contain-blur' | 'cover') => {
     setTracks(prevTracks => {
       return prevTracks.map(track => {
-        const updatedItems = track.items.map(item => {
-          if (item.id === itemId && item.type === 'video') {
+        const updatedClips = track.clips.map(clip => {
+          if (clip.id === ClipId && clip.type === 'video') {
             return {
-              ...item,
+              ...clip,
               renderOption
             }
           }
-          return item
+          return clip
         })
         return {
           ...track,
-          items: updatedItems
+          clips: updatedClips
         }
       })
     })
   }
 
   // Handle video position changes for centering
-  const handleVideoPositionChange = (itemId: string, positionX: number, positionY: number) => {
+  const handleVideoPositionChange = (ClipId: string, positionX: number, positionY: number) => {
     setTracks(prevTracks => {
       return prevTracks.map(track => {
-        const updatedItems = track.items.map(item => {
-          if (item.id === itemId && item.type === 'video') {
+        const updatedClips = track.clips.map(clip => {
+          if (clip.id === ClipId && clip.type === 'video') {
             return {
-              ...item,
+              ...clip,
               positionX,
               positionY
             }
           }
-          return item
+          return clip
         })
         return {
           ...track,
-          items: updatedItems
+          clips: updatedClips
         }
       })
     })
   }
 
-  // Handle deleting an item from a track
-  const handleDeleteItem = (clipIndex: number, itemIndex: number) => {
+  // Handle deleting an clip from a track
+  const handleDeleteClip = (clipIndex: number, ClipIndex: number) => {
     if (clipIndex < 0 || clipIndex >= tracks.length) return
 
     setTracks(prevTracks => {
       // Create a deep copy to avoid reference issues
       const newTracks = JSON.parse(JSON.stringify(prevTracks))
 
-      // Make sure the item exists before trying to delete it
-      if (itemIndex >= 0 && itemIndex < newTracks[clipIndex].items.length) {
-        // Remove the item at the specified index
-        newTracks[clipIndex].items.splice(itemIndex, 1)
-        console.log(`Deleted item at track ${clipIndex}, index ${itemIndex}`)
+      // Make sure the clip exists before trying to delete it
+      if (ClipIndex >= 0 && ClipIndex < newTracks[clipIndex].clips.length) {
+        // Remove the clip at the specified index
+        newTracks[clipIndex].clips.splice(ClipIndex, 1)
+        console.log(`Deleted clip at track ${clipIndex}, index ${ClipIndex}`)
       }
 
       return newTracks
@@ -427,11 +427,11 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
     toggleLoop,
     handleTrackUpdate,
     handleTrackVolumeChange,
-    handleAudioItemVolumeChange,
+    handleAudioClipVolumeChange,
     handleVideoRenderOptionChange,
     handleVideoPositionChange,
-    handleDeleteItem,
-    moveItemToTrack
+    handleDeleteClip,
+    moveClipToTrack
   }
 
   return (

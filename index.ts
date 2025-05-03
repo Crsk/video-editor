@@ -8,7 +8,7 @@ import {
   type CompositionData,
   type CompositionTrack,
   type CompositionClip,
-  type Item
+  type Clip
 } from '~/components/video-editor/types'
 
 import { ZoomPlusControl } from '~/components/video-editor/controls/zoom-plus-control'
@@ -42,7 +42,7 @@ export { type TimelineStyle }
 export { type CompositionData }
 export { type CompositionTrack }
 export { type CompositionClip }
-export { type Item }
+export { type Clip }
 
 // Hooks
 export { useCompositionData }

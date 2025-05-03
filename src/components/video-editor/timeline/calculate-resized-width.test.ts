@@ -10,7 +10,7 @@ describe('calculateResizedWidth', () => {
     const width = calculateResizedWidth({
       mode: 'right',
       mouseX: 500,
-      itemStartX: 200,
+      ClipStartX: 200,
       pixelsPerSecond,
       minDurationSeconds,
       maxDurationSeconds
@@ -22,7 +22,7 @@ describe('calculateResizedWidth', () => {
     const width = calculateResizedWidth({
       mode: 'right',
       mouseX: 210,
-      itemStartX: 200,
+      ClipStartX: 200,
       pixelsPerSecond,
       minDurationSeconds,
       maxDurationSeconds
@@ -31,11 +31,11 @@ describe('calculateResizedWidth', () => {
   })
 
   it('calculates width lower than original when shrinking a little (right resize)', () => {
-    // Original width: 300 (mouseX: 500, itemStartX: 200)
+    // Original width: 300 (mouseX: 500, ClipStartX: 200)
     const originalWidth = calculateResizedWidth({
       mode: 'right',
       mouseX: 500,
-      itemStartX: 200,
+      ClipStartX: 200,
       pixelsPerSecond,
       minDurationSeconds,
       maxDurationSeconds
@@ -44,7 +44,7 @@ describe('calculateResizedWidth', () => {
     const shrunkWidth = calculateResizedWidth({
       mode: 'right',
       mouseX: 450,
-      itemStartX: 200,
+      ClipStartX: 200,
       pixelsPerSecond,
       minDurationSeconds,
       maxDurationSeconds
@@ -56,7 +56,7 @@ describe('calculateResizedWidth', () => {
     const tooSmallWidth = calculateResizedWidth({
       mode: 'right',
       mouseX: 100,
-      itemStartX: 200,
+      ClipStartX: 200,
       pixelsPerSecond,
       minDurationSeconds,
       maxDurationSeconds
@@ -68,7 +68,7 @@ describe('calculateResizedWidth', () => {
     const width = calculateResizedWidth({
       mode: 'right',
       mouseX: 2000,
-      itemStartX: 200,
+      ClipStartX: 200,
       pixelsPerSecond,
       minDurationSeconds,
       maxDurationSeconds
@@ -77,11 +77,11 @@ describe('calculateResizedWidth', () => {
   })
 
   it('calculates width for left resize within bounds', () => {
-    // For left: width = itemStartX + maxDurationSeconds * pixelsPerSecond - mouseX
+    // For left: width = ClipStartX + maxDurationSeconds * pixelsPerSecond - mouseX
     const width = calculateResizedWidth({
       mode: 'left',
       mouseX: 200,
-      itemStartX: 200,
+      ClipStartX: 200,
       pixelsPerSecond,
       minDurationSeconds,
       maxDurationSeconds
@@ -93,7 +93,7 @@ describe('calculateResizedWidth', () => {
     const width = calculateResizedWidth({
       mode: 'left',
       mouseX: 2000,
-      itemStartX: 200,
+      ClipStartX: 200,
       pixelsPerSecond,
       minDurationSeconds,
       maxDurationSeconds
@@ -105,7 +105,7 @@ describe('calculateResizedWidth', () => {
     const width = calculateResizedWidth({
       mode: 'left',
       mouseX: -5000,
-      itemStartX: 200,
+      ClipStartX: 200,
       pixelsPerSecond,
       minDurationSeconds,
       maxDurationSeconds

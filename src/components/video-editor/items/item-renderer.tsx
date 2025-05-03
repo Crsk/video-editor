@@ -1,23 +1,23 @@
 import { FC } from 'react'
 import { AbsoluteFill, OffthreadVideo } from 'remotion'
-import { Item } from '../types'
-import { AudioItem } from './audio-item'
+import { Clip } from '../types'
+import { AudioClip } from './audio-item'
 
-interface ItemRendererProps {
-  item: Item
+interface ClipRendererProps {
+  clip: Clip
   volume?: number
 }
 
-const VideoContainBlurBackground = ({ item, volume }: { item: Item; volume: number }) => {
-  if (item.type !== 'video') return null
+const VideoContainBlurBackground = ({ clip, volume }: { clip: Clip; volume: number }) => {
+  if (clip.type !== 'video') return null
 
-  const itemVolume = item.volume !== undefined ? item.volume : 1
-  const finalVolume = volume * itemVolume
+  const ClipVolume = clip.volume !== undefined ? clip.volume : 1
+  const finalVolume = volume * ClipVolume
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#000' }}>
       <OffthreadVideo
-        src={item.src}
+        src={clip.src}
         style={{
           position: 'absolute',
           width: '100%',
@@ -30,7 +30,7 @@ const VideoContainBlurBackground = ({ item, volume }: { item: Item; volume: numb
       />
 
       <OffthreadVideo
-        src={item.src}
+        src={clip.src}
         style={{
           position: 'absolute',
           width: '100%',
@@ -43,25 +43,25 @@ const VideoContainBlurBackground = ({ item, volume }: { item: Item; volume: numb
   )
 }
 
-const VideoCover = ({ item, volume }: { item: Item; volume: number }) => {
-  if (item.type !== 'video') return null
+const VideoCover = ({ clip, volume }: { clip: Clip; volume: number }) => {
+  if (clip.type !== 'video') return null
 
   // Default to center position (0,0) if not specified
-  const positionX = item.positionX || 0
-  const positionY = item.positionY || 0
+  const positionX = clip.positionX || 0
+  const positionY = clip.positionY || 0
 
   // Calculate the object-position based on the position values
   // Convert from -100/100 range to 0-100% range for CSS object-position
   const objectPositionX = `${50 + positionX / 2}%`
   const objectPositionY = `${50 + positionY / 2}%`
 
-  const itemVolume = item.volume !== undefined ? item.volume : 1
-  const finalVolume = volume * itemVolume
+  const ClipVolume = clip.volume !== undefined ? clip.volume : 1
+  const finalVolume = volume * ClipVolume
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#000' }}>
       <OffthreadVideo
-        src={item.src}
+        src={clip.src}
         style={{
           position: 'absolute',
           width: '100%',
@@ -75,21 +75,21 @@ const VideoCover = ({ item, volume }: { item: Item; volume: number }) => {
   )
 }
 
-export const ItemRenderer: FC<ItemRendererProps> = ({ item, volume = 1 }) => {
-  switch (item.type) {
+export const ClipRenderer: FC<ClipRendererProps> = ({ clip, volume = 1 }) => {
+  switch (clip.type) {
     case 'video':
-      const itemVolume = item.volume !== undefined ? item.volume : 1
-      const finalVolume = volume * itemVolume
+      const ClipVolume = clip.volume !== undefined ? clip.volume : 1
+      const finalVolume = volume * ClipVolume
 
-      if (item.renderOption === 'contain-blur') {
-        return <VideoContainBlurBackground item={item} volume={finalVolume} />
-      } else if (item.renderOption === 'cover') {
-        return <VideoCover item={item} volume={finalVolume} />
+      if (clip.renderOption === 'contain-blur') {
+        return <VideoContainBlurBackground clip={clip} volume={finalVolume} />
+      } else if (clip.renderOption === 'cover') {
+        return <VideoCover clip={clip} volume={finalVolume} />
       } else {
         return (
           <AbsoluteFill style={{ backgroundColor: '#000' }}>
             <OffthreadVideo
-              src={item.src}
+              src={clip.src}
               style={{
                 width: '100%',
                 height: '100%',
@@ -107,17 +107,17 @@ export const ItemRenderer: FC<ItemRendererProps> = ({ item, volume = 1 }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: item.color || '#fff'
+            color: clip.color || '#fff'
           }}
         >
-          <h1>{item.text}</h1>
+          <h1>{clip.text}</h1>
         </AbsoluteFill>
       )
     case 'solid':
-      return <AbsoluteFill style={{ backgroundColor: item.color }} />
+      return <AbsoluteFill style={{ backgroundColor: clip.color }} />
     case 'audio':
-      return <AudioItem item={item} visualizationType="none" volume={item.volume || volume} />
+      return <AudioClip clip={clip} visualizationType="none" volume={clip.volume || volume} />
     default:
-      throw new Error(`Unknown item type: ${JSON.stringify(item)}`)
+      throw new Error(`Unknown clip type: ${JSON.stringify(clip)}`)
   }
 }

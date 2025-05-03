@@ -53,7 +53,7 @@ export const VideoComposer: FC = () => {
     console.log(`[trimClip] | Finished trimming clip ${id}`)
   }
 
-  const createItemId = ({ clipIndex, itemId }: { clipIndex: number; itemId: string }) => `clip-${clipIndex}_${itemId}`
+  const createClipId = ({ clipIndex, ClipId }: { clipIndex: number; ClipId: string }) => `clip-${clipIndex}_${ClipId}`
 
   const concatVideos = async ({
     ffmpeg,
@@ -132,19 +132,19 @@ export const VideoComposer: FC = () => {
 
       for (const [index, clip] of clips.entries()) {
         const isAudio = clip.type === 'audio'
-        const itemId = createItemId({ clipIndex: index, itemId: clip.id })
+        const ClipId = createClipId({ clipIndex: index, ClipId: clip.id })
 
-        if (isAudio) audioPath = `${itemId}.mp3`
+        if (isAudio) audioPath = `${ClipId}.mp3`
 
         // Step 1: store track files in memory
-        if (isAudio) await writeAudioClip({ ffmpeg, id: itemId, file: clip.src })
-        else await writeVideoClip({ ffmpeg, id: itemId, file: clip.src })
+        if (isAudio) await writeAudioClip({ ffmpeg, id: ClipId, file: clip.src })
+        else await writeVideoClip({ ffmpeg, id: ClipId, file: clip.src })
 
         // Step 2: trim (TODO: validate to skip if not necessary)
-        await trimClip({ ffmpeg, id: itemId, frames: clip.durationInFrames })
+        await trimClip({ ffmpeg, id: ClipId, frames: clip.durationInFrames })
 
         // Step 3: build concat list
-        concatList += `file '${createItemId({ clipIndex: index, itemId: clip.id })}-trimmed.mp4'\n`
+        concatList += `file '${createClipId({ clipIndex: index, ClipId: clip.id })}-trimmed.mp4'\n`
       }
     }
 

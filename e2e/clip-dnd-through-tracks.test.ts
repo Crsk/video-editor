@@ -18,8 +18,8 @@ test.describe('Timeline Clip Movement', () => {
 
     const sourceTrack = page.locator('.mt-2 > div').nth(0)
     const targetTrack = page.locator('.mt-2 > div').nth(1)
-    const sourceTrackInitialClips = await sourceTrack.locator('.timeline-item').count()
-    const targetTrackInitialClips = await targetTrack.locator('.timeline-item').count()
+    const sourceTrackInitialClips = await sourceTrack.locator('.timeline-clip').count()
+    const targetTrackInitialClips = await targetTrack.locator('.timeline-clip').count()
 
     console.log(
       `Before drag: Source track clips: ${sourceTrackInitialClips}, Target track clips: ${targetTrackInitialClips}`
@@ -27,7 +27,7 @@ test.describe('Timeline Clip Movement', () => {
 
     await page.screenshot({ path: `e2e/screenshots/before-drag.png` })
 
-    const sourceClip = sourceTrack.locator('.timeline-item').first()
+    const sourceClip = sourceTrack.locator('.timeline-clip').first()
     const sourceBox = await sourceClip.boundingBox()
     const targetTrackBox = await targetTrack.boundingBox()
 
@@ -57,8 +57,8 @@ test.describe('Timeline Clip Movement', () => {
     await page.waitForTimeout(2000)
     await page.screenshot({ path: `e2e/screenshots/after-drag.png` })
 
-    const sourceTrackClipsAfterDrag = await sourceTrack.locator('.timeline-item').count()
-    const targetTrackClipsAfterDrag = await targetTrack.locator('.timeline-item').count()
+    const sourceTrackClipsAfterDrag = await sourceTrack.locator('.timeline-clip').count()
+    const targetTrackClipsAfterDrag = await targetTrack.locator('.timeline-clip').count()
 
     console.log(
       `After drag: Source track clips: ${sourceTrackClipsAfterDrag}, Target track clips: ${targetTrackClipsAfterDrag}`

@@ -1,26 +1,26 @@
 // Integration for robust gap-finding in the Remotion timeline drag-and-drop
 import { findNextAvailableGap } from '../context/find-gap'
-import { Item } from '../types'
+import { Clip } from '../types'
 
 /**
- * Returns the next available position for an item in a track, given the desired start frame and duration.
+ * Returns the next available position for an clip in a track, given the desired start frame and duration.
  * Used in drag-and-drop and snapping logic.
  */
 export function getSnappedDropPosition({
-  items,
+  clips,
   desiredStartFrame,
   durationInFrames,
-  ignoreItemId,
+  ignoreClipId,
   snapToGrid = 1
 }: {
-  items: Item[]
+  clips: Clip[]
   desiredStartFrame: number
   durationInFrames: number
-  ignoreItemId?: string
+  ignoreClipId?: string
   snapToGrid?: number
 }): number | null {
   // Snap to grid first
   const snapped = Math.round(desiredStartFrame / snapToGrid) * snapToGrid
   // Find the next available gap
-  return findNextAvailableGap(items, snapped, durationInFrames, ignoreItemId)
+  return findNextAvailableGap(clips, snapped, durationInFrames, ignoreClipId)
 }

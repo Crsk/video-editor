@@ -1,11 +1,11 @@
 import { FC } from 'react'
 import { AbsoluteFill } from 'remotion'
-import { SolidItem as SolidItemType } from '../types'
+import { SolidClip as SolidClipType } from '../types'
 
-interface SolidItemProps {
-  item: SolidItemType
+interface SolidClipProps {
+  clip: SolidClipType
 }
 
-export const SolidItem: FC<SolidItemProps> = ({ item }) => {
-  return <AbsoluteFill style={{ backgroundColor: item.color }} />
+export const SolidClip: FC<SolidClipProps> = ({ clip }) => {
+  return <AbsoluteFill style={{ backgroundColor: clip.color }} />
 }

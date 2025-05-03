@@ -14,19 +14,19 @@ export function useCompositionData(): CompositionData {
         fps: timelineState.FPS
       },
       tracks: tracks
-        .filter(track => track.items.length > 0)
+        .filter(track => track.clips.length > 0)
         .map(track => ({
           name: track.name,
           volume: track.volume || 1,
-          clips: track.items
+          clips: track.clips
             .filter(x => x.type === 'video' || x.type === 'audio')
-            .map(item => ({
-              id: item.id,
-              type: item.type,
-              from: item.from,
-              durationInFrames: item.durationInFrames,
-              src: item.src.split('/').pop()!,
-              volume: item.volume || 1
+            .map(clip => ({
+              id: clip.id,
+              type: clip.type,
+              from: clip.from,
+              durationInFrames: clip.durationInFrames,
+              src: clip.src.split('/').pop()!,
+              volume: clip.volume || 1
             }))
         })),
       currentTime: currentTime

@@ -17,7 +17,7 @@ test.describe('Timeline Video Trim', () => {
     const track1 = page.locator('.mt-2 > div').nth(0)
     await track1.waitFor({ state: 'visible', timeout: 10000 })
 
-    const initialClipsCount = await track1.locator('.timeline-item').count()
+    const initialClipsCount = await track1.locator('.timeline-clip').count()
     console.log(`Initial clips in track 1: ${initialClipsCount}`)
 
     const use43sFileButton = page.getByText('Use 43s File')
@@ -29,11 +29,11 @@ test.describe('Timeline Video Trim', () => {
 
     await page.waitForTimeout(2000)
 
-    const clipsAfterAdd = await track1.locator('.timeline-item').count()
+    const clipsAfterAdd = await track1.locator('.timeline-clip').count()
     console.log(`Clips in track 1 after adding new clip: ${clipsAfterAdd}`)
     expect(clipsAfterAdd).toBeGreaterThan(initialClipsCount)
 
-    const clip = track1.locator('.timeline-item').nth(clipsAfterAdd - 1)
+    const clip = track1.locator('.timeline-clip').nth(clipsAfterAdd - 1)
     await clip.click({ force: true })
     await page.waitForTimeout(500)
 

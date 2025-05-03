@@ -3,7 +3,7 @@ import { Button } from '~/components/ui/button'
 import { useTrackManager } from '../hooks/use-track-manager'
 import { useEditor } from '../context/video-editor-provider'
 import { useRemotionTimeline } from '../timeline/context/remotion-timeline-context'
-import { VideoItem } from '../types'
+import { VideoClip } from '../types'
 
 export const VideoRenderControls: FC = () => {
   const { tracks } = useEditor()
@@ -15,70 +15,70 @@ export const VideoRenderControls: FC = () => {
   const [positionY, setPositionY] = useState(0)
   const [renderOption, setRenderOption] = useState<'default' | 'contain-blur' | 'cover'>('default')
 
-  // Get the selected video item when the selection changes
+  // Get the selected video clip when the selection changes
   useEffect(() => {
     if (!selectedClip) return
 
-    const { clipIndex, itemIndex } = selectedClip
+    const { clipIndex, ClipIndex } = selectedClip
     if (clipIndex < 0 || clipIndex >= tracks.length) return
 
     const track = tracks[clipIndex]
-    if (!track || itemIndex < 0 || itemIndex >= track.items.length) return
+    if (!track || ClipIndex < 0 || ClipIndex >= track.clips.length) return
 
-    const item = track.items[itemIndex]
-    if (item.type !== 'video') return
+    const clip = track.clips[ClipIndex]
+    if (clip.type !== 'video') return
 
-    const videoItem = item as VideoItem
-    setPositionX(videoItem.positionX || 0)
-    setPositionY(videoItem.positionY || 0)
-    setRenderOption(videoItem.renderOption || 'default')
+    const videoClip = clip as VideoClip
+    setPositionX(videoClip.positionX || 0)
+    setPositionY(videoClip.positionY || 0)
+    setRenderOption(videoClip.renderOption || 'default')
   }, [selectedClip, tracks])
 
   const handleRenderOptionChange = (newRenderOption: 'default' | 'contain-blur' | 'cover') => {
     if (!selectedClip) return
 
-    const { clipIndex, itemIndex } = selectedClip
+    const { clipIndex, ClipIndex } = selectedClip
     if (clipIndex < 0 || clipIndex >= tracks.length) return
 
     const track = tracks[clipIndex]
-    if (!track || itemIndex < 0 || itemIndex >= track.items.length) return
+    if (!track || ClipIndex < 0 || ClipIndex >= track.clips.length) return
 
-    const item = track.items[itemIndex]
-    if (item.type !== 'video') return
+    const clip = track.clips[ClipIndex]
+    if (clip.type !== 'video') return
 
     setRenderOption(newRenderOption)
-    setVideoRenderOption(item.id, newRenderOption)
+    setVideoRenderOption(clip.id, newRenderOption)
   }
 
   const handlePositionChange = (x: number, y: number) => {
     if (!selectedClip) return
 
-    const { clipIndex, itemIndex } = selectedClip
+    const { clipIndex, ClipIndex } = selectedClip
     if (clipIndex < 0 || clipIndex >= tracks.length) return
 
     const track = tracks[clipIndex]
-    if (!track || itemIndex < 0 || itemIndex >= track.items.length) return
+    if (!track || ClipIndex < 0 || ClipIndex >= track.clips.length) return
 
-    const item = track.items[itemIndex]
-    if (item.type !== 'video') return
+    const clip = track.clips[ClipIndex]
+    if (clip.type !== 'video') return
 
     setPositionX(x)
     setPositionY(y)
-    setVideoPosition(item.id, x, y)
+    setVideoPosition(clip.id, x, y)
   }
 
   // Only show controls if a video clip is selected
   if (!selectedClip) return null
 
   // Check if the selected clip is a video
-  const { clipIndex, itemIndex } = selectedClip
+  const { clipIndex, ClipIndex } = selectedClip
   if (clipIndex < 0 || clipIndex >= tracks.length) return null
 
   const track = tracks[clipIndex]
-  if (!track || itemIndex < 0 || itemIndex >= track.items.length) return null
+  if (!track || ClipIndex < 0 || ClipIndex >= track.clips.length) return null
 
-  const item = track.items[itemIndex]
-  if (item.type !== 'video') return null
+  const clip = track.clips[ClipIndex]
+  if (clip.type !== 'video') return null
 
   return (
     <div className="bg-background p-4 rounded-lg mb-6">

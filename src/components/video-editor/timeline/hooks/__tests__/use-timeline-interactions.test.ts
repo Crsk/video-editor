@@ -27,7 +27,7 @@ vi.mock('../../../context/video-editor-provider', () => {
       togglePlayPause: vi.fn(),
       toggleLoop: vi.fn(),
       handleTrackUpdate: vi.fn(),
-      moveItemToTrack: vi.fn().mockReturnValue(true),
+      moveClipToTrack: vi.fn().mockReturnValue(true),
       isPlaying: false,
       isLooping: false,
       currentTime: 0
@@ -47,23 +47,23 @@ describe('useTimelineInteractions', () => {
     // Check that all handlers are returned
     expect(result.current).toHaveProperty('handleTimelineClick')
     expect(result.current).toHaveProperty('handleMarkerDrag')
-    expect(result.current).toHaveProperty('handleItemSelect')
+    expect(result.current).toHaveProperty('handleClipSelect')
     expect(result.current).toHaveProperty('handleResizeStart')
 
     // Verify they are functions
     expect(typeof result.current.handleTimelineClick).toBe('function')
     expect(typeof result.current.handleMarkerDrag).toBe('function')
-    expect(typeof result.current.handleItemSelect).toBe('function')
+    expect(typeof result.current.handleClipSelect).toBe('function')
     expect(typeof result.current.handleResizeStart).toBe('function')
   })
 
-  it('should call handleItemSelect to select a clip', () => {
+  it('should call handleClipSelect to select a clip', () => {
     const timelineState = createMockTimelineState()
     const { result } = renderHook(() => useTimelineInteractions(timelineState))
 
-    act(() => void result.current.handleItemSelect(1, 2))
+    act(() => void result.current.handleClipSelect(1, 2))
 
-    expect(timelineState.setSelectedClip).toHaveBeenCalledWith({ clipIndex: 1, itemIndex: 2 })
+    expect(timelineState.setSelectedClip).toHaveBeenCalledWith({ clipIndex: 1, ClipIndex: 2 })
   })
 
   it('should handle timeline click when not dragging', () => {
@@ -136,7 +136,7 @@ describe('useTimelineInteractions', () => {
 
   it('should handle resize start', () => {
     const timelineState = createMockTimelineState()
-    timelineState.selectedClip = { clipIndex: 0, itemIndex: 0 } as any
+    timelineState.selectedClip = { clipIndex: 0, ClipIndex: 0 } as any
     const { result } = renderHook(() => useTimelineInteractions(timelineState))
 
     const mockEvent = {

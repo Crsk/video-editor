@@ -19,10 +19,10 @@ export interface ZoomLevel {
  */
 export function calculateMaxEndTime(tracks: Track[], filterType?: string): number {
   return tracks
-    .flatMap(t => t.items)
-    .filter(item => !filterType || item.type === filterType)
-    .reduce((max, item) => {
-      const endTime = (item.from + item.durationInFrames) / FPS
+    .flatMap(t => t.clips)
+    .filter(clip => !filterType || clip.type === filterType)
+    .reduce((max, clip) => {
+      const endTime = (clip.from + clip.durationInFrames) / FPS
       return Math.max(max, endTime)
     }, 0)
 }

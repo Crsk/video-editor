@@ -1,16 +1,16 @@
 import { FC } from 'react'
 import { AbsoluteFill, OffthreadVideo } from 'remotion'
-import { VideoItem as VideoItemType } from '../types'
+import { VideoClip as VideoClipType } from '../types'
 
-interface VideoItemProps {
-  item: VideoItemType
+interface VideoClipProps {
+  clip: VideoClipType
 }
 
-export const VideoItem: FC<VideoItemProps> = ({ item }) => {
+export const VideoClip: FC<VideoClipProps> = ({ clip }) => {
   return (
     <AbsoluteFill style={{ backgroundColor: '#000' }}>
       <OffthreadVideo
-        src={item.src}
+        src={clip.src}
         style={{
           width: '100%',
           height: '100%',
