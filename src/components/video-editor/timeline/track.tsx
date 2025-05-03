@@ -33,10 +33,10 @@ export const Track: FC<TrackProps> = ({
 }) => {
   // Setup droppable with dnd-kit
   const { setNodeRef, isOver } = useDroppable({
-    id: `clip-${clipIndex}`,
+    id: `track-${clipIndex}`,
     data: {
       clipIndex,
-      type: 'clip'
+      type: 'track'
     }
   })
 

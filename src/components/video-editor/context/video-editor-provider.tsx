@@ -279,6 +279,18 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
     newStartFrame: number
   ): boolean {
     setTracks(prevTracks => {
+      // Make sure we have valid indices
+      if (
+        sourceClipIndex < 0 ||
+        sourceClipIndex >= prevTracks.length ||
+        targetClipIndex < 0 ||
+        targetClipIndex >= prevTracks.length ||
+        ClipIndex < 0 ||
+        ClipIndex >= prevTracks[sourceClipIndex].clips.length
+      ) {
+        return prevTracks
+      }
+
       const sourceTrack = prevTracks[sourceClipIndex]
       const targetTrack = prevTracks[targetClipIndex]
       let movingClip = { ...sourceTrack.clips[ClipIndex], from: newStartFrame }
@@ -309,12 +321,12 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
       const gravitatedSourceClips = applyGravityToTrack(newSourceClips)
       const gravitatedTargetClips = applyGravityToTrack(newTargetClips)
 
-      const newTracks = prevTracks.map((track, idx) => {
+      // Create a new array of tracks with the updated source and target tracks
+      return prevTracks.map((track, idx) => {
         if (idx === sourceClipIndex) return { ...track, clips: gravitatedSourceClips }
         if (idx === targetClipIndex) return { ...track, clips: gravitatedTargetClips }
         return track
       })
-      return newTracks
     })
     return true
   }

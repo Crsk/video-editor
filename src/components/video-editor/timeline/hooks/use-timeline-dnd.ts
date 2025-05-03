@@ -57,9 +57,10 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
       const { clip, clipIndex, ClipIndex } = active.data.current
       setActiveClip(clip)
       setActiveClipIndex(clipIndex)
-      setActiveClipIndex(ClipIndex)
       setSelectedClip({ clipIndex, ClipIndex })
       setIsDragging(true)
+
+      console.log(`Drag start: Track ${clipIndex}, Clip ${ClipIndex}`)
     }
   }
 
@@ -85,17 +86,37 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, delta, over } = event
 
-    if (active.data.current?.type === 'clip' && activeClipIndex !== null && activeClipIndex !== null) {
-      const sourceClipIndex = activeClipIndex
-      const ClipIndex = activeClipIndex
-      const currentClip = tracks[sourceClipIndex].clips[ClipIndex]
+    if (active.data.current?.type === 'clip' && activeClipIndex !== null) {
+      // Get the source track index and clip index from the active element's data
+      const { clipIndex: sourceClipIndex, ClipIndex } = active.data.current
+      console.log(`Drag end: Source track ${sourceClipIndex}, Clip ${ClipIndex}`)
 
-      if (!currentClip) return
+      const currentClip = tracks[sourceClipIndex]?.clips[ClipIndex]
+      if (!currentClip) {
+        console.error('Current clip not found')
+        setIsDragging(false)
+        setActiveClip(null)
+        setActiveClipIndex(null)
+        return
+      }
 
+      // Default target is the same as source
       let targetClipIndex = sourceClipIndex
-      if (over && typeof over.id === 'string' && over.id.startsWith('clip-')) {
-        const parsed = parseInt(over.id.replace('clip-', ''), 10)
-        if (!isNaN(parsed)) targetClipIndex = parsed
+
+      // Check if we're dropping over a track
+      if (over) {
+        console.log(`Dropping over: ${over.id}`)
+        // Extract track index from over.id
+        if (typeof over.id === 'string') {
+          // Handle both formats: 'clip-X' and 'track-X'
+          if (over.id.startsWith('clip-')) {
+            const parsed = parseInt(over.id.replace('clip-', ''), 10)
+            if (!isNaN(parsed)) targetClipIndex = parsed
+          } else if (over.id.startsWith('track-')) {
+            const parsed = parseInt(over.id.replace('track-', ''), 10)
+            if (!isNaN(parsed)) targetClipIndex = parsed
+          }
+        }
       }
 
       const deltaXInPixels = delta.x
@@ -104,12 +125,11 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
       const newTrackStartFrame = Math.max(0, currentClip.from + deltaFrames)
 
       if (targetClipIndex !== sourceClipIndex) {
+        console.log(`Moving clip from track ${sourceClipIndex} to track ${targetClipIndex}`)
         const moveSucceeded = moveClipToTrack(sourceClipIndex, ClipIndex, targetClipIndex, newTrackStartFrame)
-
-        if (!moveSucceeded) {
-          // TODO: show visual feedback for collision
-        }
+        console.log(`Move succeeded: ${moveSucceeded}`)
       } else {
+        // Moving within the same track
         const updatedClips = [...tracks[sourceClipIndex].clips]
         const snappedGap = getSnappedDropPosition({
           clips: updatedClips,
@@ -129,8 +149,8 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
         }
       }
 
+      // Reset state
       setActiveClip(null)
-      setActiveClipIndex(null)
       setActiveClipIndex(null)
       setIsDragging(false)
     }
