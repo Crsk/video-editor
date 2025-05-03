@@ -11,7 +11,6 @@ import {
   type Clip
 } from '~/components/video-editor/types'
 
-import { SelectedClipVolumeControl } from '~/components/video-editor/controls/selected-clip-volume-control'
 import { SelectedVideoRenderSettingsControl } from '~/components/video-editor/controls/selected-video-render-settings-control'
 import { TimeDisplay } from '~/components/video-editor/controls/time-display'
 import { VideoLoopControl } from '~/components/video-editor/controls/video-loop-control'
@@ -27,7 +26,6 @@ export { VideoPlayer }
 export { Timeline }
 
 // Controls
-export { SelectedClipVolumeControl }
 export { SelectedVideoRenderSettingsControl }
 export { TimeDisplay }
 export { VideoLoopControl }
