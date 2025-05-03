@@ -4,12 +4,11 @@ import { Track } from './track'
 import '../styles/timeline.css'
 import { useEditor } from '../context/video-editor-provider'
 import { DndContext, DragOverlay, pointerWithin } from '@dnd-kit/core'
-import { FC, useState, useEffect } from 'react'
+import { FC } from 'react'
 import { useRemotionTimeline } from './context/remotion-timeline-context'
 import { VideoComposer } from './video-composer'
-import { TimelineStyle, VideoItem } from '../types'
+import { TimelineStyle } from '../types'
 import { cn } from '~/lib/utils'
-import { VideoControls } from './video-controls'
 
 const activeDragBase =
   'flex items-center justify-center h-7 rounded text-accent text-xs overflow-hidden truncate whitespace-nowrap bg-timeline-accent opacity-80 border-0 select-none dark:text-primary/40'
@@ -41,11 +40,8 @@ const defaultTimelineStyle: TimelineStyle = {
 }
 
 export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) => {
-  const { tracks, currentTime, handleVideoRenderOptionChange, handleVideoPositionChange } = useEditor()
+  const { tracks, currentTime } = useEditor()
   const { timelineState, timelineInteractions, timelineDnd } = useRemotionTimeline()
-  const [selectedVideoItem, setSelectedVideoItem] = useState<{ trackIndex: number; itemId: string } | null>(null)
-  const [positionX, setPositionX] = useState(0)
-  const [positionY, setPositionY] = useState(0)
 
   const _styles: TimelineStyle = {
     ...defaultTimelineStyle,
@@ -71,53 +67,14 @@ export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) =>
   const { handleTimelineClick, handleMarkerDrag, handleResizeStart } = timelineInteractions
   const { sensors, activeItem, handleDragStart, handleDragMove, handleDragEnd, modifiers } = timelineDnd
 
-  // Custom handler for item selection that also updates selectedVideoItem
+  // Use the original handler from timelineInteractions for item selection
   const handleItemSelectWithRenderOption = (trackIndex: number, itemIndex: number) => {
     // Call the original handler from timelineInteractions
     timelineInteractions.handleItemSelect(trackIndex, itemIndex)
-
-    // Set the selected video item if it's a video
-    const item = tracks[trackIndex]?.items[itemIndex]
-    if (item && item.type === 'video') {
-      setSelectedVideoItem({ trackIndex, itemId: item.id })
-      // Set initial position values from the item
-      setPositionX(item.positionX || 0)
-      setPositionY(item.positionY || 0)
-    } else {
-      setSelectedVideoItem(null)
-    }
   }
-
-  // Update position values when selected item changes
-  useEffect(() => {
-    if (selectedVideoItem) {
-      const track = tracks[selectedVideoItem.trackIndex]
-      const item = track?.items.find(item => item.id === selectedVideoItem.itemId) as VideoItem | undefined
-      if (item) {
-        setPositionX(item.positionX || 0)
-        setPositionY(item.positionY || 0)
-      }
-    }
-  }, [selectedVideoItem, tracks])
 
   return (
     <div>
-      {/* Video controls */}
-      {selectedVideoItem && (
-        <div className="mb-4">
-          <VideoControls
-            selectedVideoItem={selectedVideoItem}
-            tracks={tracks}
-            positionX={positionX}
-            setPositionX={setPositionX}
-            positionY={positionY}
-            setPositionY={setPositionY}
-            handleVideoRenderOptionChange={handleVideoRenderOptionChange}
-            handleVideoPositionChange={handleVideoPositionChange}
-          />
-        </div>
-      )}
-
       <DndContext
         sensors={sensors}
         onDragStart={handleDragStart}

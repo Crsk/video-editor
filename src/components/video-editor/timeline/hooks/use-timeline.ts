@@ -107,30 +107,6 @@ export const useTimeline = (): TimelineState => {
   const durationInSeconds = durationInFrames / FPS
   const originalVideoDurationInSeconds = originalVideoDuration ? originalVideoDuration / FPS : Infinity
 
-  // Global click listener to deselect the track when clicking outside
-  useEffect(() => {
-    if (selectedClip === null) return
-
-    // Small delay to ensure this doesn't interfere with track selection
-    const handleGlobalClick = (e: MouseEvent) => {
-      const originalTarget = e.target as HTMLElement
-
-      setTimeout(() => {
-        const isClip = originalTarget.closest('.timeline-item') !== null
-        const isResizeHandle = originalTarget.closest('.resize-handle') !== null
-        const isTimelinePopover = originalTarget.closest('.timeline-popover') !== null
-
-        if (!isClip && !isResizeHandle && !isTimelinePopover) setSelectedClip(null)
-      }, 0)
-    }
-
-    document.addEventListener('mousedown', handleGlobalClick)
-
-    return () => {
-      document.removeEventListener('mousedown', handleGlobalClick)
-    }
-  }, [selectedClip])
-
   // Update container width on resize
   useEffect(() => {
     const updateWidth = () => {

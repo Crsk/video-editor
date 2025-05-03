@@ -2,6 +2,7 @@ import { FC } from 'react'
 import { VideoEditorProvider } from '~/components/video-editor/context/video-editor-provider'
 import { Timeline } from '~/components/video-editor/timeline/timeline'
 import { VideoPlayer } from '~/components/video-editor/player'
+import { VideoRenderControls } from '~/components/video-editor/controls/video-render-controls'
 import { Track } from '~/components/video-editor/types'
 import { ZoomPlusControl } from '~/components/video-editor/controls/zoom-plus-control'
 import { ZoomMinusControl } from '~/components/video-editor/controls/zoom-minus-control'
@@ -33,7 +34,14 @@ export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
           <ZoomPlusControl />
         </div>
       </div>
-      <VideoUpload />
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <VideoUpload />
+        </div>
+        <div className="flex-1">
+          <VideoRenderControls />
+        </div>
+      </div>
       <Timeline
         styles={{
           root: 'bg-background p-4 rounded-lg mt-6',

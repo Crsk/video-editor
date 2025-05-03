@@ -50,15 +50,9 @@ export declare interface CompositionTrack {
 
 declare type Item = SolidItem | TextItem | VideoItem | AudioItem;
 
-export declare const loadVideoIntoTimeline: (file: File | string, trackIndex?: number) => Promise<void>;
-
 export declare const PlayPauseControl: FC;
 
-export declare const selectAndLoadVideo: (trackIndex?: number) => Promise<void>;
-
 export declare const SelectedClipVolumeControl: FC;
-
-export declare const selectVideoFile: () => Promise<File | null>;
 
 declare type SolidItem = BaseItem & {
     type: 'solid';
@@ -124,9 +118,15 @@ export declare function useTrackManager(): {
     hasPendingOperations: () => boolean;
 };
 
-export declare const VideoEditorContext: FC<VideoEditorContextProps>;
+export declare function useVideoUpload(): {
+    selectVideoFile: () => Promise<File | null>;
+    loadVideoIntoTimeline: (file: File | string, trackIndex?: number) => Promise<void>;
+    selectAndLoadVideo: (trackIndex?: number) => Promise<void>;
+};
 
-declare interface VideoEditorContextProps {
+export declare const VideoEditorProvider: FC<VideoEditorProviderProps>;
+
+declare interface VideoEditorProviderProps {
     children: ReactNode;
     initialTracks?: Track[];
 }

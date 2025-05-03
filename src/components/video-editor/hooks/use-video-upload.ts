@@ -1,9 +1,29 @@
-import { useCallback } from 'react'
+import { useState, useRef, ChangeEvent, useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { useEditor } from '../context/video-editor-provider'
 
-export function useVideoUpload() {
+export interface UseVideoUploadReturn {
+  selectedFile: File | null
+  selectedTrackIndex: number
+  useDefaultFile: boolean
+  defaultFileName: string
+  fileInputRef: React.RefObject<HTMLInputElement | null>
+  handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void
+  handleSelectClick: () => Promise<void>
+  handleTrackIndexChange: (index: number) => void
+  selectVideoFile: () => Promise<File | null>
+  loadVideoIntoTimeline: (file: File | string, trackIndex: number) => Promise<void>
+  selectAndLoadVideo: (trackIndex?: number) => Promise<void>
+}
+
+export function useVideoUpload(): UseVideoUploadReturn {
   const { setTracks } = useEditor()
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [selectedTrackIndex, setSelectedTrackIndex] = useState<number>(0)
+  const [useDefaultFile, setUseDefaultFile] = useState<boolean>(false)
+  const [defaultFileName] = useState<string>('manson_clone.mp4')
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const selectVideoFile = useCallback((): Promise<File | null> => {
     return new Promise(resolve => {
@@ -79,6 +99,27 @@ export function useVideoUpload() {
     [setTracks]
   )
 
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFile(e.target.files[0])
+      setUseDefaultFile(false)
+    }
+  }
+
+  const handleSelectClick = async () => {
+    const file = await selectVideoFile()
+    if (file) {
+      setSelectedFile(file)
+      setUseDefaultFile(false)
+    }
+  }
+
+  // Test file handlers moved to VideoUpload component
+
+  const handleTrackIndexChange = (index: number) => {
+    setSelectedTrackIndex(index)
+  }
+
   const selectAndLoadVideo = useCallback(
     async (trackIndex: number = 0): Promise<void> => {
       const file = await selectVideoFile()
@@ -91,6 +132,14 @@ export function useVideoUpload() {
   )
 
   return {
+    selectedFile,
+    selectedTrackIndex,
+    useDefaultFile,
+    defaultFileName,
+    fileInputRef,
+    handleFileChange,
+    handleSelectClick,
+    handleTrackIndexChange,
     selectVideoFile,
     loadVideoIntoTimeline,
     selectAndLoadVideo

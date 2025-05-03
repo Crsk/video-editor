@@ -86,7 +86,9 @@ export const useTimelineInteractions = (timelineState: TimelineState): TimelineI
   }
 
   const handleItemSelect = (clipIndex: number, itemIndex: number) => {
-    setSelectedClip({ clipIndex, itemIndex })
+    if (selectedClip && selectedClip.clipIndex === clipIndex && selectedClip.itemIndex === itemIndex) {
+      setSelectedClip(null)
+    } else setSelectedClip({ clipIndex, itemIndex })
   }
 
   const handleResizeStart = (e: React.MouseEvent, mode: 'left' | 'right') => {
