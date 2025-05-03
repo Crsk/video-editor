@@ -73,11 +73,6 @@ test.describe('Timeline Clip Delete and Add', () => {
     const trackSelector = page.locator('select')
     await trackSelector.waitFor({ state: 'visible', timeout: 10000 })
     await trackSelector.selectOption('0') // Select first option (Track 1)
-
-    // Click "Load into Timeline" button
-    const loadButton = page.getByText('Load into Timeline')
-    await loadButton.waitFor({ state: 'visible', timeout: 10000 })
-    await loadButton.click()
     
     // Wait for the loading state to appear and disappear
     const loadingText = page.getByText('Loading...')

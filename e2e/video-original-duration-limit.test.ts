@@ -24,8 +24,7 @@ test.describe('Video Original Duration Limit', () => {
     const trackSelector = page.locator('select')
     await trackSelector.selectOption('0')
 
-    const loadButton = page.getByText('Load into Timeline')
-    await loadButton.click()
+    // Video is automatically loaded when clicking the Use 43s File button
     await page.waitForTimeout(2000)
 
     const clipsCount = await track1.locator('.timeline-item').count()

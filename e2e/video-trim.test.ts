@@ -27,8 +27,6 @@ test.describe('Timeline Video Trim', () => {
     const trackSelector = page.locator('select')
     await trackSelector.selectOption('0')
 
-    const loadButton = page.getByText('Load into Timeline')
-    await loadButton.click()
     await page.waitForTimeout(2000)
 
     const clipsAfterAdd = await track1.locator('.timeline-item').count()
