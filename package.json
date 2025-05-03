@@ -4,7 +4,7 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "private": false,
-  "version": "0.1.61",
+  "version": "0.1.60",
   "type": "module",
   "types": "./dist/index.d.ts",
   "files": [
@@ -28,7 +28,10 @@
     "preview": "vite preview",
     "test:watch": "vitest",
     "test": "vitest --run",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "publish:patch": "npm version patch && npm publish",
+    "publish:minor": "npm version minor && npm publish",
+    "publish:major": "npm version major && npm publish"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
