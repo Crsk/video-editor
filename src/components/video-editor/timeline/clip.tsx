@@ -129,8 +129,6 @@ export const Clip: FC<ClipProps> = ({
               />
             )}
           </div>
-        ) : itemDurationSeconds * pixelsPerSecond > 30 ? (
-          item.type.charAt(0).toUpperCase() + item.type.slice(1)
         ) : (
           ''
         )}
