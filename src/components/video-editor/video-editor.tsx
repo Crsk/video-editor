@@ -12,6 +12,7 @@ import { VideoLoopControl } from '~/components/video-editor/controls/video-loop-
 import { PlayPauseControl } from '~/components/video-editor/controls/play-pause-control'
 import { DeleteClipControl } from '~/components/video-editor/controls/delete-clip-control'
 import { VideoUpload } from '~/components/video-editor/upload/video-upload'
+import { VideoComposer } from './timeline/video-composer'
 
 type EditorProps = { tracks: Track[] }
 export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
@@ -69,6 +70,8 @@ export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
           }
         }}
       />
+
+      <VideoComposer />
     </VideoEditorProvider>
   )
 }

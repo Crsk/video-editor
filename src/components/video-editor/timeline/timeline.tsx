@@ -6,7 +6,6 @@ import { useEditor } from '../context/video-editor-provider'
 import { DndContext, DragOverlay, pointerWithin } from '@dnd-kit/core'
 import { FC } from 'react'
 import { useRemotionTimeline } from './context/remotion-timeline-context'
-import { VideoComposer } from './video-composer'
 import { TimelineStyle } from '../types'
 import { cn } from '~/lib/utils'
 
@@ -168,8 +167,6 @@ export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) =>
           </DragOverlay>
         )}
       </DndContext>
-
-      <VideoComposer />
     </div>
   )
 }
