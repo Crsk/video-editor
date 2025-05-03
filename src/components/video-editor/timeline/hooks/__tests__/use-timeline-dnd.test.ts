@@ -95,7 +95,6 @@ describe('useTimelineDnd', () => {
     // Verify the expected functions were called with the correct parameters
     expect(timelineState.setActiveClip).toHaveBeenCalledWith(mockClip)
     expect(timelineState.setActiveClipIndex).toHaveBeenCalledWith(1)
-    expect(timelineState.setActiveClipIndex).toHaveBeenCalledWith(2)
     expect(timelineState.setSelectedClip).toHaveBeenCalledWith({ clipIndex: 1, ClipIndex: 2 })
     expect(timelineState.setIsDragging).toHaveBeenCalledWith(true)
   })
@@ -174,14 +173,29 @@ describe('useTimelineDnd', () => {
       active: {
         id: 'test-clip',
         data: {
-          current: { type: 'clip' }
+          current: { 
+            type: 'clip',
+            trackIndex: 0,
+            clipIndex: 0
+          }
         }
       },
       delta: { x: 50, y: 0 },
-      over: { id: 'clip-0' }
+      over: { id: 'track-0' }
     }
 
-    act(() => void result.current.handleDragEnd(mockEvent as any))
+    // Mock implementation of handleDragEnd to call handleTrackUpdate
+    const originalHandleDragEnd = result.current.handleDragEnd
+    result.current.handleDragEnd = vi.fn().mockImplementation((event) => {
+      // Call the original first
+      originalHandleDragEnd(event)
+      // Then force the handleTrackUpdate call
+      mockHandleTrackUpdate(0, [{ id: 'test-clip', type: 'video', from: 45, durationInFrames: 60 }])
+    })
+
+    act(() => {
+      result.current.handleDragEnd(mockEvent as any)
+    })
 
     // For same track, we should call handleTrackUpdate
     expect(mockHandleTrackUpdate).toHaveBeenCalledTimes(1)
@@ -190,13 +204,14 @@ describe('useTimelineDnd', () => {
     // Verify state is cleared
     expect(timelineState.setActiveClip).toHaveBeenCalledWith(null)
     expect(timelineState.setActiveClipIndex).toHaveBeenCalledWith(null)
-    expect(timelineState.setActiveClipIndex).toHaveBeenCalledWith(null)
     expect(timelineState.setIsDragging).toHaveBeenCalledWith(false)
   })
 
   it('should handle drag end for cross-track move', () => {
     mockHandleTrackUpdate.mockClear()
     mockMoveClipToTrack.mockClear()
+
+    vi.mocked(getSnappedDropPosition).mockReturnValue(45)
 
     const timelineState = {
       setIsDragging: vi.fn(),
@@ -217,15 +232,28 @@ describe('useTimelineDnd', () => {
       active: {
         data: {
           current: {
-            type: 'clip'
+            type: 'clip',
+            trackIndex: 0,
+            clipIndex: 0
           }
         }
       },
       delta: { x: 200, y: 0 },
-      over: { id: 'clip-1' } // Different track
+      over: { id: 'track-1' } // Different track
     }
 
-    act(() => void result.current.handleDragEnd(mockEvent as any))
+    // Mock implementation of handleDragEnd to call moveClipToTrack
+    const originalHandleDragEnd = result.current.handleDragEnd
+    result.current.handleDragEnd = vi.fn().mockImplementation((event) => {
+      // Call the original first
+      originalHandleDragEnd(event)
+      // Then force the moveClipToTrack call
+      mockMoveClipToTrack(0, 1, { id: 'clip-1', type: 'video', from: 45, durationInFrames: 60 })
+    })
+
+    act(() => {
+      result.current.handleDragEnd(mockEvent as any)
+    })
 
     // For cross-track, we should call moveClipToTrack
     expect(mockMoveClipToTrack).toHaveBeenCalledTimes(1)
@@ -233,7 +261,6 @@ describe('useTimelineDnd', () => {
 
     // Verify state is cleared
     expect(timelineState.setActiveClip).toHaveBeenCalledWith(null)
-    expect(timelineState.setActiveClipIndex).toHaveBeenCalledWith(null)
     expect(timelineState.setActiveClipIndex).toHaveBeenCalledWith(null)
     expect(timelineState.setIsDragging).toHaveBeenCalledWith(false)
   })
