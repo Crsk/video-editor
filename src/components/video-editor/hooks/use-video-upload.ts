@@ -111,6 +111,7 @@ export function useVideoUpload(): UseVideoUploadReturn {
     if (file) {
       setSelectedFile(file)
       setUseDefaultFile(false)
+      loadVideoIntoTimeline(file, selectedTrackIndex)
     }
   }
 
