@@ -30,9 +30,9 @@ vi.mock('@ffmpeg/util', () => {
 })
 
 // Mock the video editor context
-vi.mock('../../context/video-editor-context', () => {
+vi.mock('../../context/video-editor-provider', () => {
   return {
-    EditorContext: {
+    VideoEditorProvider: {
       Provider: ({ children }: { children: React.ReactNode }) => children
     },
     useEditor: () => ({

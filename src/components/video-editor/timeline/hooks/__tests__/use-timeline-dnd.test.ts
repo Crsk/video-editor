@@ -12,7 +12,7 @@ import { getSnappedDropPosition } from '../../find-gap-integration'
 const mockHandleTrackUpdate = vi.fn()
 const mockMoveItemToTrack = vi.fn().mockReturnValue(true)
 
-vi.mock('../../../context/video-editor-context', () => {
+vi.mock('../../../context/video-editor-provider', () => {
   return {
     useEditor: () => ({
       tracks: [
