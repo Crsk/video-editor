@@ -61,14 +61,14 @@ export const Clip: FC<ClipProps> = ({
     width: Math.max(4, ClipDurationSeconds * pixelsPerSecond),
     opacity: isDragging ? 0 : 1,
     zIndex: isDragging ? 50 : isSelected ? 30 : 10,
-    borderRadius: '100px'
+    borderRadius: '8px'
   }
 
   return (
     <div
       ref={setNodeRef}
       className={cn(
-        `absolute flex items-center justify-center h-7 top-0.5 text-accent text-xs cursor-grab overflow-hidden truncate whitespace-nowrap ${
+        `absolute flex items-center justify-center h-5 mt-[6.5px] text-accent text-xs cursor-grab overflow-hidden truncate whitespace-nowrap ${
           clip.type === 'audio' ? '' : 'bg-primary'
         } timeline-clip opacity-80 border-0 select-none`,
         styles?.root,

@@ -41,7 +41,7 @@ export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
       </div>
       <Timeline
         styles={{
-          root: 'bg-background p-4 rounded-lg mt-6',
+          root: 'pl-4',
           timeMarker: {
             handle: '',
             line: ''

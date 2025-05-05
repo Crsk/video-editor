@@ -47,13 +47,13 @@ export const Track: FC<TrackProps> = ({
     <div className={cn('flex items-center mb-2', styles?.root)} ref={trackRef}>
       <div
         ref={setNodeRef}
-        className={cn('relative h-8 pt-0 cursor-pointer', isOver ? 'bg-muted/80' : 'bg-transparent', styles?.root)}
+        className={cn('relative h-8 cursor-pointer', isOver ? 'bg-muted/80' : 'bg-transparent', styles?.root)}
         style={{ width: '100%' }}
       >
         {/* Overlay for non-playable regions on tracks */}
         {videoEndPosition > 0 && (
           <div
-            className="absolute top-0 bottom-0 bg-background/90 z-20"
+            className="absolute top-0 bottom-0 bg-background/70 z-20"
             style={{
               left: videoEndPosition,
               right: 0

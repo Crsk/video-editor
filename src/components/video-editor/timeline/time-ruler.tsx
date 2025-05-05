@@ -73,7 +73,10 @@ export const TimeRuler: FC<TimeRulerProps & { styles: TimeRulerStyle }> = ({
           return (
             <div
               key={seconds}
-              className={cn('absolute top-0 text-center -translate-x-1/2 whitespace-nowrap', styles?.label)}
+              className={cn(
+                'absolute top-0 text-center -translate-x-1/2 whitespace-nowrap text-xs text-foreground/50',
+                styles?.label
+              )}
               style={{
                 left: position,
                 ...(seconds === 0 ? { marginLeft: '8px' } : {})
