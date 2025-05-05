@@ -16,7 +16,7 @@ export const TimeMarker: FC<TimeMarkerProps> = ({ currentTime, pixelsPerSecond, 
       className={cn('absolute top-0 bottom-0 w-0.5 bg-timeline-accent z-30 group timeline-marker', styles?.line)}
       style={{
         left: currentTime * pixelsPerSecond + 'px',
-        height: '100%',
+        height: '110%',
         transition: isDragging ? 'none' : 'left 0s',
         willChange: 'left'
       }}

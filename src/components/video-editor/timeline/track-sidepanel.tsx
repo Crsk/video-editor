@@ -34,7 +34,7 @@ export const TrackSidePanel: FC<TrackSidePanelProps> = ({ tracks, className }) =
 
       <div className="mt-2">
         {tracks.map((track, index) => (
-          <div key={`track-icon-${index}`} className="flex items-center justify-center h-8 mb-2 w-8">
+          <div key={`track-icon-${index}`} className="flex items-center justify-start h-8 mb-2 w-10">
             {renderTrackIcon(track)}
           </div>
         ))}
