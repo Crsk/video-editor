@@ -1,19 +1,19 @@
 import { useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { useEditor } from '../context/video-editor-provider'
-import { Clip } from '../types'
+import { Clip, MediaType } from '../types'
 
 export function useMediaUpload() {
   const { setTracks, tracks } = useEditor()
 
-  const getTrackType = useCallback((trackIndex: number) => {
+  const getTrackType = useCallback((trackIndex: number): MediaType | 'generic' => {
     if (trackIndex < 0 || trackIndex >= tracks.length) return 'generic'
 
     const track = tracks[trackIndex]
     if (track.clips.some((clip: Clip) => clip.type === 'video')) return 'video'
     if (track.clips.some((clip: Clip) => clip.type === 'audio')) return 'audio'
     return 'generic'
-  }, [])
+  }, [tracks])
 
   const uploadMedia = useCallback(
     (trackIndex: number, file: File) => {
@@ -57,7 +57,7 @@ export function useMediaUpload() {
     [setTracks, getTrackType]
   )
 
-  const getAcceptedFileType = useCallback((trackType: 'video' | 'audio' | 'generic') => {
+  const getAcceptedFileType = useCallback((trackType: MediaType | 'generic') => {
     return trackType === 'video' ? 'video/mp4' : trackType === 'audio' ? 'audio/mpeg' : ''
   }, [])
 

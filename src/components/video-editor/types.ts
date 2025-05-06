@@ -35,6 +35,8 @@ export type AudioClip = BaseClip & {
 
 export type Clip = SolidClip | TextClip | VideoClip | AudioClip
 
+export type MediaType = 'video' | 'audio'
+
 export type AudibleClip = VideoClip | AudioClip
 
 export type Track = {

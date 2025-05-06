@@ -1,8 +1,7 @@
 import { createContext, useContext, useState, useRef, useEffect, ReactNode, FC, RefObject } from 'react'
 import { PlayerRef } from '@remotion/player'
 import { Track, Clip } from '../types'
-import { useVideoLoader } from '../hooks/use-video-loader'
-import { useAudioLoader } from '../hooks/use-audio-loader'
+import { useMediaLoader } from '../hooks/use-media-loader'
 import { applyGravityToTrack } from './gravity'
 import { RemotionTimelineProvider } from '../timeline/context/remotion-timeline-context'
 import { v4 as uuidv4 } from 'uuid'
@@ -111,11 +110,11 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
   const [originalVideoDuration, setOriginalVideoDuration] = useState<number | null>(null)
   const [originalAudioDuration, setOriginalAudioDuration] = useState<number | null>(null)
 
-  // Use the video loader hook to handle video loading and duration calculation
-  useVideoLoader(tracks, setTracks, setOriginalVideoDuration)
-
-  // Use the audio loader hook to handle audio loading and duration calculation
-  useAudioLoader(tracks, setTracks, setOriginalAudioDuration)
+  // Use the media loader hook to handle media loading and duration calculation
+  useMediaLoader(tracks, setTracks, {
+    video: setOriginalVideoDuration,
+    audio: setOriginalAudioDuration
+  })
 
   // Handle video playback with direct player control
   const togglePlayPause = () => {
