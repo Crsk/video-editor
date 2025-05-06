@@ -15,6 +15,7 @@ export const TimeRuler: FC<TimeRulerProps & { styles: TimeRulerStyle }> = ({
   timeMarkers,
   pixelsPerSecond,
   videoEndPosition,
+  nonPlayableWidth,
   hasVideoTracks,
   styles
 }) => {
@@ -28,7 +29,7 @@ export const TimeRuler: FC<TimeRulerProps & { styles: TimeRulerStyle }> = ({
               className="absolute top-0 bottom-0 bg-background/70 z-10"
               style={{
                 left: videoEndPosition,
-                right: -16
+                width: nonPlayableWidth
               }}
             />
           )}

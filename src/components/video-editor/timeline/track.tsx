@@ -26,6 +26,7 @@ export const Track: FC<TrackProps> = ({
   clipIndex,
   pixelsPerSecond,
   videoEndPosition,
+  nonPlayableWidth,
   selectedClip,
   /* originalVideoDuration, */
   onClipSelect,
@@ -59,7 +60,7 @@ export const Track: FC<TrackProps> = ({
             className="absolute top-0 bottom-0 bg-background/70 z-20"
             style={{
               left: videoEndPosition,
-              right: 0
+              width: nonPlayableWidth
             }}
           />
         )}
