@@ -62,7 +62,7 @@ const VideoCover = ({ clip, volume }: { clip: Clip; volume: number }) => {
           position: 'absolute',
           width: '100%',
           height: '100%',
-          objectFit: 'cover',
+          objectFit: 'contain',
           objectPosition,
           transform // Apply zoom with new scale
         }}

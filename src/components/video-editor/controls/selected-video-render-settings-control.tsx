@@ -159,8 +159,8 @@ export const SelectedVideoRenderSettingsControl: FC = () => {
                       orientation="horizontal"
                       defaultValue={[zoom]}
                       value={[zoom]}
-                      max={100}
-                      min={-100}
+                      max={400}
+                      min={0}
                       step={1}
                       className="w-32"
                       onValueChange={values => handleZoomChange(values[0])}
@@ -176,7 +176,7 @@ export const SelectedVideoRenderSettingsControl: FC = () => {
                         }
                       }}
                     />
-                    <span className="text-xs w-8 text-right text-white/80">{zoom}</span>
+                    <span className="text-xs w-8 text-right text-white/80">{Math.round(zoom / 4)}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -185,8 +185,8 @@ export const SelectedVideoRenderSettingsControl: FC = () => {
                     orientation="horizontal"
                     defaultValue={[positionX]}
                     value={[positionX]}
-                    min={-100}
-                    max={100}
+                    min={-1000}
+                    max={1000}
                     step={1}
                     className="w-32"
                     onValueChange={values => handlePositionChange(values[0], positionY)}
@@ -202,7 +202,7 @@ export const SelectedVideoRenderSettingsControl: FC = () => {
                       }
                     }}
                   />
-                  <span className="text-xs w-8 text-right text-white/80">{positionX}</span>
+                  <span className="text-xs w-8 text-right text-white/80">{Math.round(positionX / 10)}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs w-16 text-white/80">Vertical:</span>
@@ -210,8 +210,8 @@ export const SelectedVideoRenderSettingsControl: FC = () => {
                     orientation="horizontal"
                     defaultValue={[positionY]}
                     value={[positionY]}
-                    min={-100}
-                    max={100}
+                    min={-1000}
+                    max={1000}
                     step={1}
                     className="w-32"
                     onValueChange={values => handlePositionChange(positionX, values[0])}
@@ -227,7 +227,7 @@ export const SelectedVideoRenderSettingsControl: FC = () => {
                       }
                     }}
                   />
-                  <span className="text-xs w-8 text-right text-white/80">{positionY}</span>
+                  <span className="text-xs w-8 text-right text-white/80">{Math.round(positionY / 10)}</span>
                 </div>
               </div>
             )}
@@ -282,11 +282,11 @@ export const SelectedVideoRenderSettingsControl: FC = () => {
                 size="sm"
                 onClick={() => {
                   if (selectedClip) {
-                    const { clipIndex, ClipIndex } = selectedClip;
-                    const track = tracks[clipIndex];
+                    const { clipIndex, ClipIndex } = selectedClip
+                    const track = tracks[clipIndex]
                     if (track && ClipIndex >= 0 && ClipIndex < track.clips.length) {
-                      const clip = track.clips[ClipIndex];
-                      splitClip(clipIndex, clip.id);
+                      const clip = track.clips[ClipIndex]
+                      splitClip(clipIndex, clip.id)
                     }
                   }
                 }}
@@ -296,7 +296,7 @@ export const SelectedVideoRenderSettingsControl: FC = () => {
                 <ScissorsIcon className="h-4 w-4" />
                 Split Clip
               </Button>
-              
+
               <Button
                 size="sm"
                 variant="destructive"
