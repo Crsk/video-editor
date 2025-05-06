@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useEditor } from '../context/video-editor-provider'
-import { Clip, Track } from '../types'
+import { Clip, MediaType, Track } from '../types'
 import { v4 as uuidv4 } from 'uuid'
 import { applyGravityToTrack } from '../context/gravity'
 
@@ -335,6 +335,18 @@ export function useTrackManager() {
     [tracks, currentTime, handleSplitClip]
   )
 
+  const getTrackType = useCallback(
+    (trackIndex: number): MediaType | 'generic' => {
+      const track = tracks[trackIndex]
+      if (track.type === 'video' || track.type === 'audio') return track.type
+      if (track.clips.some((clip: Clip) => clip.type === 'video')) return 'video'
+      if (track.clips.some((clip: Clip) => clip.type === 'audio')) return 'audio'
+
+      return 'generic'
+    },
+    [tracks]
+  )
+
   return {
     // Track management
     tracks,
@@ -343,6 +355,7 @@ export function useTrackManager() {
     removeTrack,
     selectTrack,
     renameTrack,
+    getTrackType,
 
     // Clip management
     addVideoClip,

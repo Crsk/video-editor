@@ -43,6 +43,7 @@ export type Track = {
   name: string
   clips: Clip[]
   volume?: number
+  type?: Clip['type']
 }
 
 export type TimeRulerStyle = {

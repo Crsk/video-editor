@@ -4,6 +4,7 @@ import { DotIcon } from 'lucide-react'
 import { cn } from '~/lib/utils'
 import { VideoIcon } from '../icons/video-icon'
 import { MusicIcon } from '../icons/music-icon'
+import { useTrackManager } from '~/components/video-editor/hooks/use-track-manager'
 
 interface TrackSidePanelProps {
   tracks: TrackType[]
@@ -11,21 +12,16 @@ interface TrackSidePanelProps {
 }
 
 export const TrackSidePanel: FC<TrackSidePanelProps> = ({ tracks, className }) => {
-  const getTrackType = (track: TrackType) => {
-    if (track.clips.some(clip => clip.type === 'video')) return 'video'
-    if (track.clips.some(clip => clip.type === 'audio')) return 'audio'
+  const { getTrackType } = useTrackManager()
 
-    return 'generic'
-  }
-
-  const renderTrackIcon = (track: TrackType) => {
+  const renderTrackIcon = (trackIndex: number) => {
     const icons = {
       video: <VideoIcon />,
       audio: <MusicIcon />,
       generic: <DotIcon size={18} className="text-primary" />
     }
 
-    return icons[getTrackType(track)]
+    return icons[getTrackType(trackIndex)]
   }
 
   return (
@@ -33,9 +29,9 @@ export const TrackSidePanel: FC<TrackSidePanelProps> = ({ tracks, className }) =
       <div className="h-[21px]"></div>
 
       <div className="mt-2">
-        {tracks.map((track, index) => (
+        {tracks.map((_, index) => (
           <div key={`track-icon-${index}`} className="flex items-center justify-start h-8 mb-2 w-10">
-            {renderTrackIcon(track)}
+            {renderTrackIcon(index)}
           </div>
         ))}
       </div>
