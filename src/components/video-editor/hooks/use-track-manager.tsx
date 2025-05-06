@@ -352,6 +352,7 @@ export function useTrackManager() {
     removeClip,
     updateClip,
     splitClip,
+    calculateClipStartPosition,
 
     // Video controls
     setVideoRenderOption,

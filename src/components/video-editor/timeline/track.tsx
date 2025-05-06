@@ -4,6 +4,8 @@ import { Clip } from './clip'
 import { useDroppable } from '@dnd-kit/core'
 import { cn } from '~/lib/utils'
 import { useRemotionTimeline } from './context/remotion-timeline-context'
+import { UploadButton } from './upload-button'
+import { useMediaUpload } from '../hooks/use-media-upload'
 
 interface TrackProps {
   track: TrackType
@@ -42,6 +44,7 @@ export const Track: FC<TrackProps> = ({
 
   const { timelineState } = useRemotionTimeline()
   const { resizeMode, resizeOverlay } = timelineState
+  const { getUploadButtonPosition } = useMediaUpload()
 
   return (
     <div className={cn('flex items-center mb-2', styles?.root)} ref={trackRef}>
@@ -90,6 +93,20 @@ export const Track: FC<TrackProps> = ({
             )
           )
         })}
+
+        <div
+          className="absolute"
+          style={{
+            left: getUploadButtonPosition(track, pixelsPerSecond, videoEndPosition),
+            top: 4,
+            height: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            zIndex: 20
+          }}
+        >
+          <UploadButton trackIndex={clipIndex} />
+        </div>
       </div>
     </div>
   )
