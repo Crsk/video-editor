@@ -8,8 +8,13 @@ const FPS = 30
  *
  * @param tracks - The current tracks state
  * @param setTracks - Function to update tracks state
+ * @param setOriginalAudioDuration - Function to set the original audio duration
  */
-export const useAudioLoader = (_: Track[], setTracks: React.Dispatch<React.SetStateAction<Track[]>>) => {
+export const useAudioLoader = (
+  tracks: Track[],
+  setTracks: React.Dispatch<React.SetStateAction<Track[]>>,
+  setOriginalAudioDuration: React.Dispatch<React.SetStateAction<number | null>>
+) => {
   useEffect(() => {
     // Function to load audio and update duration
     const loadAudioAndUpdateDuration = (audioSrc: string) => {
@@ -31,54 +36,61 @@ export const useAudioLoader = (_: Track[], setTracks: React.Dispatch<React.SetSt
       })
     }
 
-    // Process all tracks and update audio durations
     const updateAllAudioDurations = async () => {
       try {
-        // Update all audio clips across all tracks
-        setTracks(prevTracks => {
-          const newTracks = [...prevTracks]
+        const firstAudioClip = tracks[0]?.clips[0]
+        if (firstAudioClip?.type === 'audio') {
+          const actualDurationInFrames = await loadAudioAndUpdateDuration(firstAudioClip.src)
 
-          // Process each track
-          for (let clipIndex = 0; clipIndex < newTracks.length; clipIndex++) {
-            const track = newTracks[clipIndex]
+          setOriginalAudioDuration(actualDurationInFrames)
+        }
 
-            // Process each clip in the track
-            for (let ClipIndex = 0; ClipIndex < track.clips.length; ClipIndex++) {
-              const clip = track.clips[ClipIndex]
+        const updatedClips = new Map()
 
-              // If it's an audio clip, update its duration
-              if (clip.type === 'audio') {
-                // Use a self-invoking async function to handle the async operation
-                ;(async () => {
-                  try {
-                    const actualDurationInFrames = await loadAudioAndUpdateDuration(clip.src)
+        // Process each track
+        for (let clipIndex = 0; clipIndex < tracks.length; clipIndex++) {
+          const track = tracks[clipIndex]
 
-                    // Update the clip with the actual duration
-                    setTracks(currentTracks => {
-                      const updatedTracks = [...currentTracks]
-                      if (updatedTracks[clipIndex]?.clips[ClipIndex]) {
-                        updatedTracks[clipIndex].clips[ClipIndex] = {
-                          ...updatedTracks[clipIndex].clips[ClipIndex],
-                          durationInFrames: actualDurationInFrames
-                        }
-                      }
-                      return updatedTracks
-                    })
-                  } catch (error) {
-                    console.error(`Error updating duration for clip ${clipIndex}, clip ${ClipIndex}:`, error)
-                  }
-                })()
+          // Process each clip in the track
+          for (let ClipIndex = 0; ClipIndex < track.clips.length; ClipIndex++) {
+            const clip = track.clips[ClipIndex]
+
+            if (clip.type === 'audio' && clip.durationInFrames <= 1) {
+              try {
+                const actualDurationInFrames = await loadAudioAndUpdateDuration(clip.src)
+                updatedClips.set(`${clipIndex}-${ClipIndex}`, {
+                  clipIndex,
+                  ClipIndex,
+                  duration: actualDurationInFrames,
+                  originalDuration: actualDurationInFrames
+                })
+              } catch (error) {
+                console.error(`Error updating duration for clip ${clipIndex}, clip ${ClipIndex}:`, error)
               }
             }
           }
+        }
 
-          return newTracks
-        })
+        if (updatedClips.size > 0) {
+          setTracks(currentTracks => {
+            const updatedTracks = JSON.parse(JSON.stringify(currentTracks))
+
+            updatedClips.forEach(update => {
+              const { clipIndex, ClipIndex, duration, originalDuration } = update
+              if (updatedTracks[clipIndex]?.clips[ClipIndex]) {
+                updatedTracks[clipIndex].clips[ClipIndex].durationInFrames = duration
+                updatedTracks[clipIndex].clips[ClipIndex].originalDuration = originalDuration
+              }
+            })
+
+            return updatedTracks
+          })
+        }
       } catch (error) {
         console.error('Error updating audio durations:', error)
       }
     }
 
     updateAllAudioDurations()
-  }, [])
+  }, [tracks])
 }

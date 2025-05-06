@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { AbsoluteFill, Audio, staticFile } from 'remotion'
+import { AbsoluteFill, Audio } from 'remotion'
 import { AudioClip as AudioClipType } from '../types'
 
 interface AudioClipProps {
@@ -26,7 +26,7 @@ export const AudioClip: FC<AudioClipProps> = ({
 }) => {
   return (
     <AbsoluteFill>
-      <Audio src={staticFile(clip.src)} volume={volume} />
+      <Audio src={clip.src} volume={volume} />
 
       {visualizationType !== 'none' && (
         <div

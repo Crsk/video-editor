@@ -19,6 +19,7 @@ interface EditorContextState {
   isLooping: boolean
   setIsLooping: (isLooping: boolean) => void
   originalVideoDuration: number | null
+  originalAudioDuration: number | null
 
   // Timeline state
   durationInFrames: number
@@ -108,12 +109,13 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
   const [currentTime, setCurrentTime] = useState(0)
   const [isLooping, setIsLooping] = useState(true)
   const [originalVideoDuration, setOriginalVideoDuration] = useState<number | null>(null)
+  const [originalAudioDuration, setOriginalAudioDuration] = useState<number | null>(null)
 
   // Use the video loader hook to handle video loading and duration calculation
   useVideoLoader(tracks, setTracks, setOriginalVideoDuration)
 
   // Use the audio loader hook to handle audio loading and duration calculation
-  useAudioLoader(tracks, setTracks)
+  useAudioLoader(tracks, setTracks, setOriginalAudioDuration)
 
   // Handle video playback with direct player control
   const togglePlayPause = () => {
@@ -517,6 +519,7 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
     isLooping,
     setIsLooping,
     originalVideoDuration,
+    originalAudioDuration,
     durationInFrames,
     togglePlayPause,
     handleTimeUpdate,

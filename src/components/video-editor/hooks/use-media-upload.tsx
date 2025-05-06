@@ -58,7 +58,7 @@ export function useMediaUpload() {
   )
 
   const getAcceptedFileType = useCallback((trackType: 'video' | 'audio' | 'generic') => {
-    return trackType === 'video' ? 'video/mp4' : trackType === 'audio' ? 'audio/mp3' : ''
+    return trackType === 'video' ? 'video/mp4' : trackType === 'audio' ? 'audio/mpeg' : ''
   }, [])
 
   const getUploadButtonPosition = useCallback((track: any, pixelsPerSecond: number, videoEndPosition: number) => {

@@ -1,6 +1,5 @@
 import { FC, useEffect, useState } from 'react'
 import { getAudioData, getWaveformPortion } from '@remotion/media-utils'
-import { staticFile } from 'remotion'
 
 interface AudioTrackVisualizerProps {
   src: string
@@ -20,7 +19,7 @@ export const AudioTrackVisualizer: FC<AudioTrackVisualizerProps> = ({
   useEffect(() => {
     const loadAudioData = async () => {
       try {
-        const audioData = await getAudioData(staticFile(src))
+        const audioData = await getAudioData(src)
         const samples = 1000
         const waveformData = getWaveformPortion({
           audioData,
