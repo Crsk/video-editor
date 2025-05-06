@@ -28,10 +28,15 @@ export const UploadButton: FC<UploadButtonProps> = ({ trackIndex, className }) =
   }
 
   return (
-    <div className={cn('flex items-center', className)}>
+    <div
+      className={cn('flex items-center', className)}
+      onMouseDown={e => {
+        e.stopPropagation()
+      }}
+      onClick={handleButtonClick}
+    >
       <Button
         variant="outline"
-        onClick={handleButtonClick}
         className="border-dashed border-primary/30 bg-background/10"
         title={`Upload ${trackType === 'video' ? 'MP4' : trackType === 'audio' ? 'MP3' : 'media'}`}
       >
