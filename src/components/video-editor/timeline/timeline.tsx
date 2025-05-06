@@ -88,7 +88,7 @@ export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) =>
           <div ref={containerRef} className="w-full">
             <div
               ref={timelineContainerRef}
-              className="overflow-x-auto timeline-scroll-container relative select-none"
+              className="overflow-x-hidden timeline-scroll-container relative select-none"
               onMouseDown={handleTimelineClick}
             >
               <div style={{ width: totalTimelineWidth, position: 'relative' }}>
