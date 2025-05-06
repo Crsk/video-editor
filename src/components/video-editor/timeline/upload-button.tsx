@@ -36,8 +36,8 @@ export const UploadButton: FC<UploadButtonProps> = ({ trackIndex, className }) =
       onClick={handleButtonClick}
     >
       <Button
-        variant="outline"
-        className="border-dashed border-primary/30 bg-background/10"
+        variant="secondary"
+        className="border border-primary/20 bg-background ml-2"
         title={`Upload ${trackType === 'video' ? 'MP4' : trackType === 'audio' ? 'MP3' : 'media'}`}
       >
         <PlusIcon size={14} className="text-primary" />

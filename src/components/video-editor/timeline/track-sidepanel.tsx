@@ -1,9 +1,7 @@
 import { FC } from 'react'
 import { Track as TrackType } from '../types'
-import { DotIcon } from 'lucide-react'
+import { DotIcon, Music2Icon, VideoIcon } from 'lucide-react'
 import { cn } from '~/lib/utils'
-import { VideoIcon } from '../icons/video-icon'
-import { MusicIcon } from '../icons/music-icon'
 import { useTrackManager } from '~/components/video-editor/hooks/use-track-manager'
 
 interface TrackSidePanelProps {
@@ -16,8 +14,8 @@ export const TrackSidePanel: FC<TrackSidePanelProps> = ({ tracks, className }) =
 
   const renderTrackIcon = (trackIndex: number) => {
     const icons = {
-      video: <VideoIcon />,
-      audio: <MusicIcon />,
+      video: <VideoIcon size={14} />,
+      audio: <Music2Icon size={14} />,
       generic: <DotIcon size={18} className="text-primary" />
     }
 
