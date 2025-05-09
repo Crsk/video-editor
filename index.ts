@@ -1,4 +1,4 @@
-import './src/components/video-editor/styles/timeline.css'
+import './src/index.css'
 import { VideoEditorProvider } from '~/components/video-editor/context/video-editor-provider'
 import { Timeline } from '~/components/video-editor/timeline/timeline'
 import { VideoPlayer } from '~/components/video-editor/player'
