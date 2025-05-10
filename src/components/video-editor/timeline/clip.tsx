@@ -69,7 +69,7 @@ export const Clip: FC<ClipProps> = ({
       ref={setNodeRef}
       className={cn(
         `absolute flex items-center justify-center h-5 mt-[6.5px] text-accent text-xs cursor-grab overflow-hidden truncate whitespace-nowrap ${
-          clip.type === 'audio' ? '' : 'bg-primary dark:bg-zinc-400'
+          clip.type === 'audio' ? '' : 'bg-clip-background'
         } timeline-clip opacity-80 border-0 select-none`,
         styles?.root,
         isSelected ? (styles?.active.root !== '' ? styles?.active.root : 'bg-[var(--color-timeline-accent)]') : ''
