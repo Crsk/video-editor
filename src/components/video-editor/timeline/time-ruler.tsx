@@ -26,7 +26,7 @@ export const TimeRuler: FC<TimeRulerProps & { styles: TimeRulerStyle }> = ({
           {/* Non-playable region */}
           {hasVideoTracks && (
             <div
-              className="absolute top-0 bottom-0 bg-background/70 z-10"
+              className="absolute top-0 bottom-0 bg-transparent z-10"
               style={{
                 left: videoEndPosition,
                 width: nonPlayableWidth
