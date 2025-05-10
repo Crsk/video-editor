@@ -96,7 +96,7 @@
 
   --light-blue: oklch(0.54 0.2234 262.29);
 
-  --clip-background: oklch(0.552 0.016 285.938);
+  --clip-background: oklch(0.66 0.016 285.938);
 }
 
 @theme inline {
