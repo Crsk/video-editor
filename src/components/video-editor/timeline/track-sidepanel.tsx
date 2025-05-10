@@ -24,7 +24,7 @@ export const TrackSidePanel: FC<TrackSidePanelProps> = ({ tracks, className }) =
 
   return (
     <div className={cn('flex flex-col', className)}>
-      <div className="h-[21px]"></div>
+      <div className="h-[20px]"></div>
 
       <div className="mt-2">
         {tracks.map((_, index) => (
