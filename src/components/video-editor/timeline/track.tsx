@@ -57,7 +57,7 @@ export const Track: FC<TrackProps> = ({
         {/* Overlay for non-playable regions on tracks */}
         {videoEndPosition > 0 && (
           <div
-            className="absolute top-0 bottom-0 bg-transparent z-20"
+            className="absolute top-0 bottom-0 bg-background/85 z-20"
             style={{
               left: videoEndPosition,
               width: nonPlayableWidth

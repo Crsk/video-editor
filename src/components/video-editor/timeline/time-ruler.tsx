@@ -20,13 +20,19 @@ export const TimeRuler: FC<TimeRulerProps & { styles: TimeRulerStyle }> = ({
   styles
 }) => {
   return (
-    <div className={cn('mb-2 text-muted-foreground text-xs cursor-pointer select-none bg-transparent', styles?.root)}>
+    <div
+      className={cn(
+        'mb-2 text-muted-foreground text-xs cursor-pointer select-none bg-background/85 z-50',
+        styles?.root
+      )}
+      style={{ width: nonPlayableWidth + videoEndPosition }}
+    >
       <div className="flex relative h-5">
         <div className="absolute inset-0 pointer-events-none">
           {/* Non-playable region */}
           {hasVideoTracks && (
             <div
-              className="absolute top-0 bottom-0 bg-transparent z-10"
+              className="absolute top-0 bottom-0 bg-background/85 z-50"
               style={{
                 left: videoEndPosition,
                 width: nonPlayableWidth
