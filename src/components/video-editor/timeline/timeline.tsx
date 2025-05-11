@@ -9,6 +9,7 @@ import { useRemotionTimeline } from './context/remotion-timeline-context'
 import { TimelineStyle } from '../types'
 import { cn } from '~/lib/utils'
 import { TrackSidePanel } from './track-sidepanel'
+import { MediaUploadProvider } from '../context/media-upload-context'
 
 const activeDragBase =
   'flex items-center justify-center h-7 rounded text-accent text-xs overflow-hidden truncate whitespace-nowrap bg-timeline-accent opacity-80 border-0 select-none dark:text-primary/40'
@@ -39,7 +40,10 @@ const defaultTimelineStyle: TimelineStyle = {
   }
 }
 
-export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) => {
+export const Timeline: FC<{
+  styles?: Partial<TimelineStyle>
+  onMediaLoad?: (trackIndex: number, file: File) => void
+}> = ({ styles, onMediaLoad }) => {
   const { tracks, currentTime } = useEditor()
   const { timelineState, timelineInteractions, timelineDnd } = useRemotionTimeline()
 
@@ -74,17 +78,18 @@ export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) =>
   }
 
   return (
-    <div className={cn('overflow-x-hidden', styles?.root)}>
-      <div className="flex">
-        <TrackSidePanel tracks={tracks} className="flex-shrink-0 " />
-        <DndContext
-          sensors={sensors}
-          onDragStart={handleDragStart}
-          onDragMove={handleDragMove}
-          onDragEnd={handleDragEnd}
-          modifiers={modifiers}
-          collisionDetection={pointerWithin}
-        >
+    <MediaUploadProvider onMediaLoad={onMediaLoad}>
+      <div className={cn('overflow-x-hidden', styles?.root)}>
+        <div className="flex">
+          <TrackSidePanel tracks={tracks} className="flex-shrink-0 " />
+          <DndContext
+            sensors={sensors}
+            onDragStart={handleDragStart}
+            onDragMove={handleDragMove}
+            onDragEnd={handleDragEnd}
+            modifiers={modifiers}
+            collisionDetection={pointerWithin}
+          >
           <div ref={containerRef} className="w-full">
             <div
               ref={timelineContainerRef}
@@ -170,8 +175,9 @@ export const Timeline: FC<{ styles?: Partial<TimelineStyle> }> = ({ styles }) =>
               )}
             </DragOverlay>
           )}
-        </DndContext>
+          </DndContext>
+        </div>
       </div>
-    </div>
+    </MediaUploadProvider>
   )
 }

@@ -1,12 +1,10 @@
 import { useCallback } from 'react'
-import { useEditor } from '../context/video-editor-provider'
 import { MediaType } from '../types'
 import { useTrackManager } from '~/components/video-editor/hooks/use-track-manager'
 import { useVideoUpload } from './use-video-upload'
 import { useAudioUpload } from './use-audio-upload'
 
 export function useMediaUpload() {
-  const { setTracks } = useEditor()
   const { getTrackType } = useTrackManager()
   const { loadVideoIntoTimeline } = useVideoUpload()
   const { loadAudioIntoTimeline } = useAudioUpload()
@@ -31,7 +29,7 @@ export function useMediaUpload() {
         loadAudioIntoTimeline(file, trackIndex)
       }
     },
-    [setTracks, getTrackType, loadVideoIntoTimeline, loadAudioIntoTimeline]
+    [getTrackType, loadVideoIntoTimeline, loadAudioIntoTimeline]
   )
 
   const getAcceptedFileType = useCallback((trackType: MediaType | 'generic') => {

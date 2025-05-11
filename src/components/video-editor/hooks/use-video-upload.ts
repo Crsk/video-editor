@@ -1,6 +1,7 @@
 import { useState, useRef, ChangeEvent, useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { useEditor } from '../context/video-editor-provider'
+import { useMediaUploadContext } from '../context/media-upload-context'
 
 export interface UseVideoUploadReturn {
   selectedFile: File | null
@@ -18,6 +19,7 @@ export interface UseVideoUploadReturn {
 
 export function useVideoUpload(): UseVideoUploadReturn {
   const { setTracks } = useEditor()
+  const { onMediaLoad } = useMediaUploadContext()
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [selectedTrackIndex, setSelectedTrackIndex] = useState<number>(0)
@@ -84,6 +86,8 @@ export function useVideoUpload(): UseVideoUploadReturn {
 
               return newTracks
             })
+
+            if (onMediaLoad && file instanceof File) onMediaLoad(trackIndex, file)
 
             resolve()
           }
