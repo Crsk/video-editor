@@ -1,53 +1,37 @@
 import { useCallback } from 'react'
-import { v4 as uuidv4 } from 'uuid'
 import { useEditor } from '../context/video-editor-provider'
 import { MediaType } from '../types'
 import { useTrackManager } from '~/components/video-editor/hooks/use-track-manager'
+import { useVideoUpload } from './use-video-upload'
+import { useAudioUpload } from './use-audio-upload'
 
 export function useMediaUpload() {
   const { setTracks } = useEditor()
   const { getTrackType } = useTrackManager()
+  const { loadVideoIntoTimeline } = useVideoUpload()
+  const { loadAudioIntoTimeline } = useAudioUpload()
 
   const uploadMedia = useCallback(
     (trackIndex: number, file: File) => {
       if (!file) return
 
-      setTracks(prevTracks => {
-        const trackType = getTrackType(trackIndex)
+      const trackType = getTrackType(trackIndex)
 
-        if (
-          (trackType === 'video' && file.type !== 'video/mp4') ||
-          (trackType === 'audio' && file.type !== 'audio/mpeg')
-        ) {
-          alert(`Please upload a ${trackType === 'video' ? 'MP4' : 'MP3'} file for this track.`)
-          return prevTracks
-        }
+      if (
+        (trackType === 'video' && file.type !== 'video/mp4') ||
+        (trackType === 'audio' && file.type !== 'audio/mpeg')
+      ) {
+        alert(`Please upload a ${trackType === 'video' ? 'MP4' : 'MP3'} file for this track.`)
+        return
+      }
 
-        const fileUrl = URL.createObjectURL(file)
-        const newTracks = [...prevTracks]
-        const track = newTracks[trackIndex]
-
-        let startPosition = 0
-        if (track.clips.length > 0) {
-          const lastClip = track.clips[track.clips.length - 1]
-          startPosition = lastClip.from + lastClip.durationInFrames
-        }
-
-        const newClip = {
-          id: uuidv4(),
-          from: startPosition,
-          durationInFrames: 1, // This will be updated by the video/audio loader
-          type: trackType === 'video' ? 'video' : 'audio',
-          src: fileUrl,
-          volume: 1
-        } as const
-
-        track.clips.push(newClip)
-
-        return newTracks
-      })
+      if (trackType === 'video' || file.type === 'video/mp4') {
+        loadVideoIntoTimeline(file, trackIndex)
+      } else if (trackType === 'audio' || file.type === 'audio/mpeg') {
+        loadAudioIntoTimeline(file, trackIndex)
+      }
     },
-    [setTracks, getTrackType]
+    [setTracks, getTrackType, loadVideoIntoTimeline, loadAudioIntoTimeline]
   )
 
   const getAcceptedFileType = useCallback((trackType: MediaType | 'generic') => {

@@ -18,6 +18,7 @@ import { PlayPauseControl } from '~/components/video-editor/controls/play-pause-
 import { useCompositionData } from '~/components/video-editor/hooks/use-composition-data'
 import { useTrackManager } from '~/components/video-editor/hooks/use-track-manager'
 import { useVideoUpload } from '~/components/video-editor/hooks/use-video-upload'
+import { useAudioUpload } from '~/components/video-editor/hooks/use-audio-upload'
 import { useVideoTransform } from '~/components/video-editor/hooks/use-video-transform'
 import { ZoomMinusControl } from '~/components/video-editor/controls/zoom-minus-control'
 import { ZoomPlusControl } from '~/components/video-editor/controls/zoom-plus-control'
@@ -47,4 +48,5 @@ export { type Clip }
 export { useCompositionData }
 export { useTrackManager }
 export { useVideoUpload }
+export { useAudioUpload }
 export { useVideoTransform }
