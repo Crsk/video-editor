@@ -19,7 +19,7 @@ export interface UseVideoUploadReturn {
 
 export function useVideoUpload(): UseVideoUploadReturn {
   const { setTracks } = useEditor()
-  const { onMediaLoad } = useMediaUploadContext()
+  const { onMediaLoaded } = useMediaUploadContext()
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [selectedTrackIndex, setSelectedTrackIndex] = useState<number>(0)
@@ -87,7 +87,7 @@ export function useVideoUpload(): UseVideoUploadReturn {
               return newTracks
             })
 
-            if (onMediaLoad && file instanceof File) onMediaLoad(trackIndex, file)
+            if (onMediaLoaded && file instanceof File) onMediaLoaded(trackIndex, file)
 
             resolve()
           }

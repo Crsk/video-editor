@@ -40,7 +40,7 @@ export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
         </div>
       </div>
       <Timeline
-        onMediaLoad={(trackIndex, file) => {
+        onMediaLoaded={(trackIndex, file) => {
           console.log('Media loaded:', trackIndex, file.name)
         }}
         styles={{

@@ -17,7 +17,7 @@ export interface UseAudioUploadReturn {
 
 export function useAudioUpload(): UseAudioUploadReturn {
   const { setTracks } = useEditor()
-  const { onMediaLoad } = useMediaUploadContext()
+  const { onMediaLoaded } = useMediaUploadContext()
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [selectedTrackIndex, setSelectedTrackIndex] = useState<number>(0)
@@ -84,7 +84,7 @@ export function useAudioUpload(): UseAudioUploadReturn {
               return newTracks
             })
 
-            if (onMediaLoad && file instanceof File) onMediaLoad(trackIndex, file)
+            if (onMediaLoaded && file instanceof File) onMediaLoaded(trackIndex, file)
 
             resolve()
           }
