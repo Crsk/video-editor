@@ -48,7 +48,7 @@ export const Track: FC<TrackProps> = ({
   const { getUploadButtonPosition } = useMediaUpload()
 
   return (
-    <div className={cn('flex items-center mb-2', styles?.root)} ref={trackRef}>
+    <div className={cn('flex items-center mb-2', styles?.root)} ref={trackRef} data-testid={`track-${clipIndex}`}>
       <div
         ref={setNodeRef}
         className={cn('relative h-8 cursor-pointer', isOver ? 'bg-muted/80' : 'bg-transparent', styles?.root)}

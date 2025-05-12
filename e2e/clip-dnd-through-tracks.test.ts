@@ -4,7 +4,7 @@ test.describe('Timeline Clip Movement', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:5173/')
     await page.waitForLoadState('domcontentloaded')
-    await page.waitForSelector('.mt-2 > div', { state: 'visible' })
+    await page.waitForSelector('[data-testid="track-0"]', { state: 'visible' })
   })
 
   test('should move a clip from track 1 to track 2', async ({ page }) => {
@@ -13,11 +13,11 @@ test.describe('Timeline Clip Movement', () => {
     })
     await page.waitForTimeout(1000)
 
-    const tracks = await page.locator('.mt-2 > div').all()
+    const tracks = await page.locator('[data-testid^="track-"]').all()
     expect(tracks.length).toBeGreaterThanOrEqual(2)
 
-    const sourceTrack = page.locator('.mt-2 > div').nth(0)
-    const targetTrack = page.locator('.mt-2 > div').nth(1)
+    const sourceTrack = page.locator('[data-testid="track-0"]')
+    const targetTrack = page.locator('[data-testid="track-1"]')
     const sourceTrackInitialClips = await sourceTrack.locator('.timeline-clip').count()
     const targetTrackInitialClips = await targetTrack.locator('.timeline-clip').count()
 
@@ -80,11 +80,11 @@ test.describe('Timeline Clip Movement', () => {
     })
     await page.waitForTimeout(1000)
 
-    const tracks = await page.locator('.mt-2 > div').all()
+    const tracks = await page.locator('[data-testid^="track-"]').all()
     expect(tracks.length).toBeGreaterThanOrEqual(2)
 
-    const sourceTrack = page.locator('.mt-2 > div').nth(1) // Track 2
-    const targetTrack = page.locator('.mt-2 > div').nth(0) // Track 1
+    const sourceTrack = page.locator('[data-testid="track-1"]') // Track 2
+    const targetTrack = page.locator('[data-testid="track-0"]') // Track 1
     const sourceTrackInitialClips = await sourceTrack.locator('.timeline-clip').count()
     const targetTrackInitialClips = await targetTrack.locator('.timeline-clip').count()
 

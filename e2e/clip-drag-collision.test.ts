@@ -6,7 +6,7 @@ test.describe('Clip Drag Collision', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:5173/')
     await page.waitForLoadState('domcontentloaded')
-    await page.waitForSelector('.mt-2 > div', { state: 'visible' })
+    await page.waitForSelector('[data-testid="track-0"]', { state: 'visible' })
     await page.waitForTimeout(2000)
   })
 
@@ -15,7 +15,7 @@ test.describe('Clip Drag Collision', () => {
     await page.waitForTimeout(1000)
 
     // Get the first track
-    const track = page.locator('.mt-2 > div').nth(0)
+    const track = page.locator('[data-testid="track-0"]')
     await track.waitFor({ state: 'visible', timeout: 10000 })
 
     // Add two clips to the same track

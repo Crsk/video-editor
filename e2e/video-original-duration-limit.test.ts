@@ -14,7 +14,7 @@ test.describe('Video Original Duration Limit', () => {
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
     await page.waitForTimeout(1000)
 
-    const track1 = page.locator('.mt-2 > div').nth(0)
+    const track1 = page.locator('[data-testid="track-0"]')
     await track1.waitFor({ state: 'visible', timeout: 10000 })
 
     const use43sFileButton = page.getByText('Use 43s File')

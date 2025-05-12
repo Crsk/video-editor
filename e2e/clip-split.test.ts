@@ -16,7 +16,7 @@ test.describe('Timeline Clip Split', () => {
     await page.waitForTimeout(1000)
 
     // Get the first track
-    const track1 = page.locator('.mt-2 > div').nth(0)
+    const track1 = page.locator('[data-testid="track-0"]')
     await track1.waitFor({ state: 'visible', timeout: 10000 })
 
     // Count initial clips
