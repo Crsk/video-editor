@@ -48,11 +48,21 @@ jobs:
           echo "Waiting for server to start..."
           sleep 10
           
-          # Run the tests with explicit project
-          npx playwright test --project webkit
+          # Run just a single test file first to identify issues
+          echo "Running a single test file to identify potential issues"
+          timeout 3m npx playwright test e2e/clip-type-validation.test.ts --project webkit --debug --trace on
+          TEST_EXIT_CODE=$?
           
           # Kill the server process
           kill $SERVER_PID || true
+          
+          # Exit with the test exit code or timeout code
+          if [ $TEST_EXIT_CODE -eq 124 ]; then
+            echo "Tests timed out after 5 minutes"
+            exit 1
+          else
+            exit $TEST_EXIT_CODE
+          fi
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
