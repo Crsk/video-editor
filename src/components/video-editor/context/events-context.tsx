@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useRef, useEffect, ReactNode, FC } from 'react'
+import { createContext, useCallback, useContext, useRef, useEffect, useState, ReactNode, FC } from 'react'
 
 export type MediaLoadedEvent = {
   trackIndex: number
@@ -61,19 +61,46 @@ const useEventsContext = () => {
   return context
 }
 
+function createEventHook<T extends Record<string, any>>(registry: EventRegistry<T>) {
+  return () => {
+    const [lastEvent, setLastEvent] = useState<T | null>(null)
+
+    useEffect(() => {
+      const handler = (event: T) => void setLastEvent(event)
+
+      return registry.register(handler)
+    }, [])
+
+    const notify = useCallback(
+      (...args: any[]) => {
+        // @ts-ignore
+        if (typeof registry.notify === 'function') registry.notify(...args)
+      },
+      [registry]
+    )
+
+    return {
+      lastEvent,
+      notify
+    }
+  }
+}
+
 export const useEvents = () => {
   const { mediaLoaded } = useEventsContext()
-  const useOnMediaLoaded = (handler: EventHandler<MediaLoadedEvent>) => {
-    useEffect(() => {
-      const cleanup = mediaLoaded.register(handler)
+  const useOnMediaLoaded = (handler?: EventHandler<MediaLoadedEvent>) => {
+    const hookResult = createEventHook<MediaLoadedEvent>(mediaLoaded)()
 
-      return cleanup
-    }, [handler])
+    useEffect(() => handler && mediaLoaded.register(handler), [handler])
+
+    return {
+      trackIndex: hookResult.lastEvent?.trackIndex,
+      file: hookResult.lastEvent?.file,
+      notifyMediaLoaded: (trackIndex: number, file: File) => mediaLoaded.notify({ trackIndex, file })
+    }
   }
 
-  const notifyMediaLoaded = (trackIndex: number, file: File) => {
-    mediaLoaded.notify({ trackIndex, file })
-  }
+  const notifyMediaLoaded = (trackIndex: number, file: File) => mediaLoaded.notify({ trackIndex, file })
 
   return {
     useOnMediaLoaded,

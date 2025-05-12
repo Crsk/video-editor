@@ -4,7 +4,9 @@
 
 ### Listening for Events
 
-To listen for events in your components, use the `useEvents` hook to access event-specific hooks:
+The events system provides multiple ways to interact with events:
+
+#### 1. Using a handler function
 
 ```tsx
 import { useEvents } from 'video-timeline'
@@ -17,15 +19,49 @@ function MyComponent() {
 }
 ```
 
+#### 2. Accessing event data directly
+
+```tsx
+import { useEvents } from 'video-timeline'
+import { useEffect } from 'react'
+
+function MediaTracker() {
+  const { useOnMediaLoaded } = useEvents()
+  const { trackIndex, file } = useOnMediaLoaded()
+  
+  useEffect(() => {
+    console.log(`Media loaded: ${file.name} in track ${trackIndex}`)
+  }, [trackIndex, file])
+  
+  return <div>Media Tracker</div>
+}
+```
+
 ### Triggering Events
 
-To trigger events from your components, use the notification functions from the same `useEvents` hook:
+You can trigger events in two ways:
+
+#### 1. Using the global notification function
 
 ```tsx
 import { useEvents } from 'video-timeline'
 
 function UploadButton() {
   const { notifyMediaLoaded } = useEvents()
+  const handleFileUpload = (file) => notifyMediaLoaded(0, file)
+
+  return <button onClick={handleFileSelect}>Upload Media</button>
+}
+```
+
+#### 2. Using the notification function from the hook
+
+```tsx
+import { useEvents } from 'video-timeline'
+
+function UploadButton() {
+  const { useOnMediaLoaded } = useEvents()
+  const { notifyMediaLoaded } = useOnMediaLoaded()
   const handleFileUpload = (file) => notifyMediaLoaded(0, file)
 
   return <button onClick={handleFileSelect}>Upload Media</button>
@@ -59,17 +95,33 @@ export const EventsProvider: FC<EventsProviderProps> = ({ children }) => {
     mediaLoaded: mediaLoadedRegistry,
     trackAdded: trackAddedRegistry // add this
   }
+  
+  return <EventsContext.Provider value={contextValue}>{children}</EventsContext.Provider>
 }
 
 // 4. Add Hook and Notification Functions
 export const useEvents = () => {
   const { mediaLoaded, trackAdded } = useEventsContext()
   
-  const useOnTrackAdded = (handler: EventHandler<TrackAddedEvent>) => {
+  // Create a hook for track added events
+  const useOnTrackAdded = (handler?: EventHandler<TrackAddedEvent>) => {
+    const hookResult = createEventHook<TrackAddedEvent>(trackAdded)()
+    
+    // Register external handler if provided
     useEffect(() => {
-      const cleanup = trackAdded.register(handler)
-      return cleanup
+      if (handler) {
+        return trackAdded.register(handler)
+      }
     }, [handler])
+    
+    return {
+      trackIndex: hookResult.lastEvent?.trackIndex,
+      name: hookResult.lastEvent?.name,
+      type: hookResult.lastEvent?.type,
+      notifyTrackAdded: (trackIndex: number, name: string, type: 'video' | 'audio') => {
+        trackAdded.notify({ trackIndex, name, type })
+      }
+    }
   }
   
   const notifyTrackAdded = (trackIndex: number, name: string, type: 'video' | 'audio') => {
@@ -78,7 +130,8 @@ export const useEvents = () => {
   
   return {
     useOnTrackAdded,
-    notifyTrackAdded
+    notifyTrackAdded,
+    // ... other hooks and notification functions
   }
 }
 ```
