@@ -79,14 +79,13 @@ export default defineConfig({
     // },
   ],
 
-  /* We handle the web server in the GitHub workflow for CI environments */
-  /* This is only used for local development */
-  webServer: process.env.CI ? undefined : {
+  /* Configure the web server for both local development and CI */
+  webServer: {
     command: 'npm run preview',
     url: 'http://localhost:4173',
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
     stdout: 'pipe',
     stderr: 'pipe',
-    timeout: 60000
+    timeout: process.env.CI ? 30000 : 60000
   }
 })
