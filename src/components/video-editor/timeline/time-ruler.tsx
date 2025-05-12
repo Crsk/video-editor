@@ -25,6 +25,7 @@ export const TimeRuler: FC<TimeRulerProps & { styles: TimeRulerStyle }> = ({
         'mb-2 text-muted-foreground text-xs cursor-pointer select-none bg-background/85 z-50',
         styles?.root
       )}
+      data-testid="time-ruler"
       style={{ width: nonPlayableWidth + videoEndPosition }}
     >
       <div className="flex relative h-5">

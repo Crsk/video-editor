@@ -75,7 +75,7 @@ export const Timeline: FC<{
   }
 
   return (
-    <div className={cn('overflow-x-hidden', styles?.root)}>
+    <div className={cn('overflow-x-hidden', styles?.root)} data-testid="timeline-root">
       <div className="flex">
         <TrackSidePanel tracks={tracks} className="flex-shrink-0 " />
         <DndContext
@@ -86,10 +86,11 @@ export const Timeline: FC<{
           modifiers={modifiers}
           collisionDetection={pointerWithin}
         >
-          <div ref={containerRef} className="w-full">
+          <div ref={containerRef} className="w-full" data-testid="timeline-container">
             <div
               ref={timelineContainerRef}
               className="overflow-x-hidden timeline-scroll-container relative select-none"
+              data-testid="timeline-scroll-container"
               onMouseDown={handleTimelineClick}
             >
               <div style={{ width: totalTimelineWidth, position: 'relative' }}>
@@ -110,7 +111,7 @@ export const Timeline: FC<{
                   styles={_styles.timeMarker}
                 />
 
-                <div className="mt-2">
+                <div className="mt-2" data-testid="tracks-container">
                   {tracks.map((track, clipIndex) => (
                     <Track
                       key={`clip-${clipIndex}`}

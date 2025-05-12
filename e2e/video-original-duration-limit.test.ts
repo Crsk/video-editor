@@ -27,8 +27,8 @@ test.describe('Video Original Duration Limit', () => {
     // Video is automatically loaded when clicking the Use 43s File button
     await page.waitForTimeout(2000)
 
-    const clipsCount = await track1.locator('.timeline-clip').count()
-    const clip = track1.locator('.timeline-clip').nth(clipsCount - 1)
+    const clipsCount = await track1.locator('[data-testid^="clip-"]').count()
+    const clip = track1.locator('[data-testid^="clip-"]').nth(clipsCount - 1)
 
     // Click to select the clip
     await clip.click({ force: true })

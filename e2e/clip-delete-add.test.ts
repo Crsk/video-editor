@@ -20,7 +20,7 @@ test.describe('Timeline Clip Delete and Add', () => {
     const track1 = page.locator('[data-testid="track-0"]')
     await track1.waitFor({ state: 'visible', timeout: 10000 })
 
-    const initialClipsCount = await track1.locator('.timeline-clip').count()
+    const initialClipsCount = await track1.locator('[data-testid^="clip-"]').count()
     console.log(`Initial clips in track 1: ${initialClipsCount}`)
 
     if (initialClipsCount > 0) {
@@ -28,7 +28,7 @@ test.describe('Timeline Clip Delete and Add', () => {
         console.log(`Attempting to delete clip ${i + 1} of ${initialClipsCount}`)
 
         // Get the current count before deletion
-        const currentCount = await track1.locator('.timeline-clip').count()
+        const currentCount = await track1.locator('[data-testid^="clip-"]').count()
         console.log(`Current clip count before deletion: ${currentCount}`)
 
         // If we've already deleted all clips, break out of the loop
@@ -38,7 +38,7 @@ test.describe('Timeline Clip Delete and Add', () => {
         }
 
         // Select the first clip
-        const clip = track1.locator('.timeline-clip').first()
+        const clip = track1.locator('[data-testid^="clip-"]').first()
         await clip.waitFor({ state: 'visible', timeout: 10000 })
         await page.waitForTimeout(500)
         await clip.click({ force: true })
@@ -82,7 +82,7 @@ test.describe('Timeline Clip Delete and Add', () => {
         await page.waitForTimeout(2000)
 
         // Verify the clip was actually deleted
-        const countAfterThisDeletion = await track1.locator('.timeline-clip').count()
+        const countAfterThisDeletion = await track1.locator('[data-testid^="clip-"]').count()
         console.log(`Clip count after this deletion: ${countAfterThisDeletion}`)
 
         // Expect the count to be reduced by 1
@@ -90,7 +90,7 @@ test.describe('Timeline Clip Delete and Add', () => {
       }
     }
 
-    const clipsAfterDelete = await track1.locator('.timeline-clip').count()
+    const clipsAfterDelete = await track1.locator('[data-testid^="clip-"]').count()
     console.log(`Clips in track 1 after deletion: ${clipsAfterDelete}`)
 
     // Verify all clips were deleted
@@ -125,7 +125,7 @@ test.describe('Timeline Clip Delete and Add', () => {
     // Wait for the clip to appear with retries
     let clipsAfterAdd = 0
     for (let attempt = 0; attempt < 5; attempt++) {
-      clipsAfterAdd = await track1.locator('.timeline-clip').count()
+      clipsAfterAdd = await track1.locator('[data-testid^="clip-"]').count()
       console.log(`Attempt ${attempt + 1}: Clips in track 1 after adding new clip: ${clipsAfterAdd}`)
 
       if (clipsAfterAdd > 0) break

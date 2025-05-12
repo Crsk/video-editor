@@ -20,7 +20,7 @@ test.describe('Timeline Clip Split', () => {
     await track1.waitFor({ state: 'visible', timeout: 10000 })
 
     // Count initial clips
-    const initialClipsCount = await track1.locator('.timeline-clip').count()
+    const initialClipsCount = await track1.locator('[data-testid^="clip-"]').count()
     console.log(`Initial clips in track 1: ${initialClipsCount}`)
 
     // Add a test video file to the track
@@ -36,12 +36,12 @@ test.describe('Timeline Clip Split', () => {
     await page.waitForTimeout(2000)
 
     // Verify the clip was added
-    const clipsAfterAdd = await track1.locator('.timeline-clip').count()
+    const clipsAfterAdd = await track1.locator('[data-testid^="clip-"]').count()
     console.log(`Clips in track 1 after adding new clip: ${clipsAfterAdd}`)
     expect(clipsAfterAdd).toBeGreaterThan(initialClipsCount)
 
     // Get the clip's bounding box
-    const clip = track1.locator('.timeline-clip').nth(clipsAfterAdd - 1)
+    const clip = track1.locator('[data-testid^="clip-"]').nth(clipsAfterAdd - 1)
     const clipBoundingBox = await clip.boundingBox()
     if (!clipBoundingBox) throw new Error('Could not get clip bounding box')
     console.log(`Original clip dimensions: ${JSON.stringify(clipBoundingBox)}`)
@@ -188,7 +188,7 @@ test.describe('Timeline Clip Split', () => {
     // Verify the UI has been updated with the correct number of clips
     // Note: The UI might show different clips than what we expect due to how the app renders
     // So we'll just verify that there are more clips than before
-    const clipsAfterSplit = await track1.locator('.timeline-clip').count()
+    const clipsAfterSplit = await track1.locator('[data-testid^="clip-"]').count()
     console.log(`Clips in track 1 after splitting: ${clipsAfterSplit}`)
 
     // The UI should show at least the same number of clips as before
@@ -198,8 +198,8 @@ test.describe('Timeline Clip Split', () => {
     // If we can see the clips in the UI, let's verify they exist
     if (clipsAfterSplit >= 2) {
       // Get the first two clips
-      const firstClip = track1.locator('.timeline-clip').nth(0)
-      const secondClip = track1.locator('.timeline-clip').nth(1)
+      const firstClip = track1.locator('[data-testid^="clip-"]').nth(0)
+      const secondClip = track1.locator('[data-testid^="clip-"]').nth(1)
 
       // Verify they exist
       expect(await firstClip.isVisible()).toBe(true)

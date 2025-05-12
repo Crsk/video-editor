@@ -14,6 +14,7 @@ export const TimeMarker: FC<TimeMarkerProps> = ({ currentTime, pixelsPerSecond, 
   return (
     <div
       className={cn('absolute top-0 bottom-0 w-0.5 bg-timeline-accent z-30 group timeline-marker', styles?.line)}
+      data-testid="time-marker"
       style={{
         left: currentTime * pixelsPerSecond + 'px',
         height: '110%',
@@ -22,7 +23,7 @@ export const TimeMarker: FC<TimeMarkerProps> = ({ currentTime, pixelsPerSecond, 
       }}
       onMouseDown={onMarkerDrag}
     >
-      <div className={cn('time-marker-handle', 'bg-[#0059ff]', styles?.handle)}></div>
+      <div className={cn('time-marker-handle', 'bg-[#0059ff]', styles?.handle)} data-testid="time-marker-handle"></div>
     </div>
   )
 }

@@ -74,6 +74,7 @@ export const Clip: FC<ClipProps> = ({
         styles?.root,
         isSelected ? (styles?.active.root !== '' ? styles?.active.root : 'bg-[var(--color-timeline-accent)]') : ''
       )}
+      data-testid={`clip-${clipIndex}-${ClipIndex}`}
       style={style}
       title={`${clip.type} (${formatTimeCode(ClipStartSeconds)}-${formatTimeCode(
         ClipStartSeconds + ClipDurationSeconds
@@ -91,6 +92,7 @@ export const Clip: FC<ClipProps> = ({
             'absolute left-0 top-0 bottom-0 w-4 flex items-center justify-center bg-blue-500/0 hover:bg-blue-500/50 cursor-ew-resize z-40 resize-handle text-secondary dark:text-primary',
             styles?.active.resizeHandle
           )}
+          data-testid={`clip-resize-left-${clipIndex}-${ClipIndex}`}
           onMouseDown={e => {
             e.stopPropagation()
             onResizeStart(e, 'left')
@@ -137,6 +139,7 @@ export const Clip: FC<ClipProps> = ({
             'absolute right-0 top-0 bottom-0 w-4 flex items-center justify-center bg-blue-500/0 hover:bg-blue-500/50 cursor-ew-resize z-40 resize-handle text-secondary dark:text-primary',
             styles?.active.resizeHandle
           )}
+          data-testid={`clip-resize-right-${clipIndex}-${ClipIndex}`}
           onMouseDown={e => {
             e.stopPropagation()
             onResizeStart(e, 'right')

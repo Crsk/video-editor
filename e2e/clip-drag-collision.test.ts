@@ -32,13 +32,13 @@ test.describe('Clip Drag Collision', () => {
     }
 
     // Verify we have at least 2 clips
-    const clipsCount = await track.locator('.timeline-clip').count()
+    const clipsCount = await track.locator('[data-testid^="clip-"]').count()
     expect(clipsCount).toBeGreaterThanOrEqual(2)
     console.log(`Number of clips in track: ${clipsCount}`)
 
     // Get the first and second clips
-    const firstClip = track.locator('.timeline-clip').nth(0)
-    const secondClip = track.locator('.timeline-clip').nth(1)
+    const firstClip = track.locator('[data-testid^="clip-"]').nth(0)
+    const secondClip = track.locator('[data-testid^="clip-"]').nth(1)
 
     // Get initial positions
     const firstClipBox = await firstClip.boundingBox()

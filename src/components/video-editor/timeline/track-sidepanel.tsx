@@ -23,12 +23,12 @@ export const TrackSidePanel: FC<TrackSidePanelProps> = ({ tracks, className }) =
   }
 
   return (
-    <div className={cn('flex flex-col', className)}>
+    <div className={cn('flex flex-col', className)} data-testid="track-sidepanel">
       <div className="h-[20px]"></div>
 
-      <div className="mt-2">
+      <div className="mt-2" data-testid="track-icons-container">
         {tracks.map((_, index) => (
-          <div key={`track-icon-${index}`} className="flex items-center justify-start h-8 mb-2 w-10">
+          <div key={`track-icon-${index}`} className="flex items-center justify-start h-8 mb-2 w-10" data-testid={`track-icon-${index}`}>
             {renderTrackIcon(index)}
           </div>
         ))}
