@@ -4,7 +4,7 @@ test.setTimeout(60000)
 
 test.describe('Timeline Video Trim', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:5173/')
+    await page.goto('/')
     await page.waitForLoadState('networkidle')
     await page.waitForSelector('body', { state: 'visible' })
     await page.waitForTimeout(2000)

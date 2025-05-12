@@ -4,7 +4,7 @@ test.setTimeout(60000)
 
 test.describe('Clip Drag Collision', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:5173/')
+    await page.goto('/')
     await page.waitForLoadState('domcontentloaded')
     await page.waitForSelector('[data-testid="track-0"]', { state: 'visible' })
     await page.waitForTimeout(2000)
