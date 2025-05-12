@@ -36,7 +36,8 @@ export default defineConfig({
     actionTimeout: 15000,
     navigationTimeout: 15000,
     launchOptions: {
-      slowMo: 500
+      slowMo: 500,
+      headless: process.env.CI ? true : false
     }
   },
 

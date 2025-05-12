@@ -48,9 +48,9 @@ jobs:
           echo "Waiting for server to start..."
           sleep 10
           
-          # Run just a single test file first to identify issues
-          echo "Running a single test file to identify potential issues"
-          timeout 3m npx playwright test e2e/clip-type-validation.test.ts --project webkit --debug --trace on
+          # Run all tests with headless mode enabled in the config
+          echo "Running all tests in headless mode"
+          timeout 5m npx playwright test --project webkit
           TEST_EXIT_CODE=$?
           
           # Kill the server process
