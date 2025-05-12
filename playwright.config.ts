@@ -81,7 +81,7 @@ export default defineConfig({
 
   /* Configure the web server for both local development and CI */
   webServer: {
-    command: 'npm run preview',
+    command: 'npx vite preview --host 0.0.0.0 --port 4173',
     url: 'http://localhost:4173',
     reuseExistingServer: !process.env.CI,
     stdout: 'pipe',
