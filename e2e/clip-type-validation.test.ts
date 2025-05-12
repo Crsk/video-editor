@@ -1,5 +1,8 @@
 import { test, expect } from '@playwright/test'
 
+// Helper function to determine wait times based on environment
+const getWaitTime = (ms: number): number => process.env.CI ? Math.min(ms, 300) : ms
+
 interface VideoEditor {
   tracks: Array<{
     clips: Array<{
@@ -20,7 +23,7 @@ declare global {
   }
 }
 
-test.setTimeout(60000)
+test.setTimeout(process.env.CI ? 30000 : 60000)
 
 test.describe('Timeline Clip Type Validation', () => {
   test.beforeEach(async ({ page }) => {

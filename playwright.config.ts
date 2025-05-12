@@ -32,11 +32,11 @@ export default defineConfig({
     trace: 'on-first-retry',
     video: 'on',
 
-    /* Slow down all interactions to make them more visible */
-    actionTimeout: 15000,
-    navigationTimeout: 15000,
+    /* Adjust timeouts based on environment */
+    actionTimeout: process.env.CI ? 10000 : 15000,
+    navigationTimeout: process.env.CI ? 10000 : 15000,
     launchOptions: {
-      slowMo: 500,
+      slowMo: process.env.CI ? 100 : 500,
       headless: process.env.CI ? true : false
     }
   },
