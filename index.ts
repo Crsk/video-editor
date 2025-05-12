@@ -20,6 +20,7 @@ import { useTrackManager } from '~/components/video-editor/hooks/use-track-manag
 import { useVideoUpload } from '~/components/video-editor/hooks/use-video-upload'
 import { useAudioUpload } from '~/components/video-editor/hooks/use-audio-upload'
 import { useVideoTransform } from '~/components/video-editor/hooks/use-video-transform'
+import { useEvents } from '~/components/video-editor/hooks/use-events'
 import { ZoomMinusControl } from '~/components/video-editor/controls/zoom-minus-control'
 import { ZoomPlusControl } from '~/components/video-editor/controls/zoom-plus-control'
 
@@ -50,3 +51,4 @@ export { useTrackManager }
 export { useVideoUpload }
 export { useAudioUpload }
 export { useVideoTransform }
+export { useEvents }

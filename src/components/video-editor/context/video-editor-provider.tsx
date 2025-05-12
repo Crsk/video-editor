@@ -4,6 +4,7 @@ import { Track, Clip } from '../types'
 import { useMediaLoader } from '../hooks/use-media-loader'
 import { applyGravityToTrack } from './gravity'
 import { RemotionTimelineProvider } from '../timeline/context/remotion-timeline-context'
+import { EventsProvider } from './events-context'
 import { v4 as uuidv4 } from 'uuid'
 
 interface EditorContextState {
@@ -109,7 +110,6 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
   const [isLooping, setIsLooping] = useState(true)
   const [originalVideoDuration, setOriginalVideoDuration] = useState<number | null>(null)
   const [originalAudioDuration, setOriginalAudioDuration] = useState<number | null>(null)
-
   // Use the media loader hook to handle media loading and duration calculation
   useMediaLoader(tracks, setTracks, {
     video: setOriginalVideoDuration,
@@ -536,7 +536,9 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
 
   return (
     <EditorContext.Provider value={contextValue}>
-      <RemotionTimelineProvider>{children}</RemotionTimelineProvider>
+      <EventsProvider>
+        <RemotionTimelineProvider>{children}</RemotionTimelineProvider>
+      </EventsProvider>
     </EditorContext.Provider>
   )
 }
