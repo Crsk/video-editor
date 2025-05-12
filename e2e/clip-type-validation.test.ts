@@ -1,8 +1,5 @@
 import { test, expect } from '@playwright/test'
 
-// Helper function to determine wait times based on environment
-const getWaitTime = (ms: number): number => process.env.CI ? Math.min(ms, 300) : ms
-
 interface VideoEditor {
   tracks: Array<{
     clips: Array<{
