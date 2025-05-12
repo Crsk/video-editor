@@ -4,7 +4,7 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "private": false,
-  "version": "0.1.81",
+  "version": "0.1.82",
   "type": "module",
   "types": "./dist/index.d.ts",
   "files": [
