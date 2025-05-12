@@ -19,6 +19,7 @@ interface TrackProps {
   onResizeStart: (e: React.MouseEvent, mode: 'left' | 'right') => void
   trackRef?: (el: HTMLDivElement | null) => void
   styles?: TrackStyle
+  isIncompatible?: boolean
 }
 
 export const Track: FC<TrackProps> = ({
@@ -32,7 +33,8 @@ export const Track: FC<TrackProps> = ({
   onClipSelect,
   onResizeStart,
   trackRef,
-  styles
+  styles,
+  isIncompatible = false
 }) => {
   // Setup droppable with dnd-kit
   const { setNodeRef, isOver } = useDroppable({
@@ -51,7 +53,11 @@ export const Track: FC<TrackProps> = ({
     <div className={cn('flex items-center mb-2', styles?.root)} ref={trackRef} data-testid={`track-${clipIndex}`}>
       <div
         ref={setNodeRef}
-        className={cn('relative h-8 cursor-pointer', isOver ? 'bg-muted/80' : 'bg-transparent', styles?.root)}
+        className={cn(
+          'relative h-8 cursor-pointer',
+          isIncompatible && isOver ? 'bg-destructive/20' : isOver ? 'bg-muted/80' : 'bg-transparent',
+          styles?.root
+        )}
         style={{ width: '100%' }}
       >
         {/* Overlay for non-playable regions on tracks */}

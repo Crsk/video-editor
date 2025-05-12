@@ -4,6 +4,8 @@ import { useEditor } from '../../context/video-editor-provider'
 import { getSnappedDropPosition } from '../find-gap-integration'
 import type { Clip } from '../../types'
 import type { TimelineState } from './use-timeline'
+import { useTrackManager } from '~/components/video-editor/hooks/use-track-manager'
+import { useState } from 'react'
 
 const FPS = 30
 
@@ -14,10 +16,15 @@ export interface TimelineDnd {
   handleDragEnd: (event: DragEndEvent) => void
   modifiers: Modifier[]
   activeClip: Clip | null
+  incompatibleTrackIndices: number[]
 }
 
 export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
   const { moveClipToTrack, handleTrackUpdate, tracks } = useEditor()
+  const { getTrackType } = useTrackManager()
+
+  // State to track incompatible tracks during drag
+  const [incompatibleTrackIndices, setIncompatibleTrackIndices] = useState<number[]>([])
 
   const {
     setIsDragging,
@@ -60,6 +67,18 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
       setSelectedClip({ clipIndex, ClipIndex })
       setIsDragging(true)
 
+      // Find incompatible tracks based on clip type
+      if (clip) {
+        const incompatibleIndices = tracks
+          .map((_, index) => {
+            const trackType = getTrackType(index)
+            return trackType !== 'generic' && trackType !== clip.type ? index : -1
+          })
+          .filter(index => index !== -1)
+
+        setIncompatibleTrackIndices(incompatibleIndices)
+      }
+
       console.log(`Drag start: Track ${clipIndex}, Clip ${ClipIndex}`)
     }
   }
@@ -84,6 +103,7 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
+    setIncompatibleTrackIndices([])
     const { active, delta, over } = event
 
     if (active.data.current?.type === 'clip' && activeClipIndex !== null) {
@@ -126,6 +146,16 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
 
       if (targetClipIndex !== sourceClipIndex) {
         console.log(`Moving clip from track ${sourceClipIndex} to track ${targetClipIndex}`)
+
+        const targetTrackType = getTrackType(targetClipIndex)
+        if (targetTrackType && currentClip.type !== targetTrackType) {
+          console.log(`Cannot move ${currentClip.type} clip to ${targetTrackType} track`)
+          setActiveClip(null)
+          setActiveClipIndex(null)
+          setIsDragging(false)
+          return
+        }
+
         const moveSucceeded = moveClipToTrack(sourceClipIndex, ClipIndex, targetClipIndex, newTrackStartFrame)
         console.log(`Move succeeded: ${moveSucceeded}`)
       } else {
@@ -162,6 +192,7 @@ export const useTimelineDnd = (timelineState: TimelineState): TimelineDnd => {
     handleDragMove,
     handleDragEnd,
     modifiers,
-    activeClip
+    activeClip,
+    incompatibleTrackIndices
   }
 }

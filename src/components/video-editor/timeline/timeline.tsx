@@ -66,7 +66,8 @@ export const Timeline: FC<{
   } = timelineState
 
   const { handleTimelineClick, handleMarkerDrag, handleResizeStart } = timelineInteractions
-  const { sensors, activeClip, handleDragStart, handleDragMove, handleDragEnd, modifiers } = timelineDnd
+  const { sensors, activeClip, handleDragStart, handleDragMove, handleDragEnd, modifiers, incompatibleTrackIndices } =
+    timelineDnd
 
   // Use the original handler from timelineInteractions for clip selection
   const handleClipSelectWithRenderOption = (trackIndex: number, ClipIndex: number) => {
@@ -126,6 +127,7 @@ export const Timeline: FC<{
                       onResizeStart={handleResizeStart}
                       trackRef={el => (trackRefs.current[clipIndex] = el)}
                       styles={_styles.track}
+                      isIncompatible={isDragging && incompatibleTrackIndices.includes(clipIndex)}
                     />
                   ))}
                 </div>
