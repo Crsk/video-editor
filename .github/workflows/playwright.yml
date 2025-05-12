@@ -40,14 +40,19 @@ jobs:
         run: npm run build
       - name: Start preview server and run tests
         run: |
-          # Start the preview server in the background
-          npx vite preview --port 4173 &
-          # Give the server a moment to start
-          sleep 5
-          # Check if the server is running
-          curl -I http://localhost:4173 || (echo "Server failed to start" && exit 1)
-          # Run the tests
-          npx playwright test
+          # Start the preview server with explicit host in the background
+          npx vite preview --port 4173 --host 0.0.0.0 &
+          SERVER_PID=$!
+          
+          # Give the server time to start
+          echo "Waiting for server to start..."
+          sleep 10
+          
+          # Run the tests with explicit project
+          npx playwright test --project webkit
+          
+          # Kill the server process
+          kill $SERVER_PID || true
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
