@@ -79,11 +79,13 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: {
+  webServer: process.env.CI ? undefined : {
     command: 'npm run preview',
     url: 'http://localhost:4173',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
     stdout: 'pipe',
-    stderr: 'pipe'
+    stderr: 'pipe',
+    timeout: 60000,
+    ignoreHTTPSErrors: true
   }
 })

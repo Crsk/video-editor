@@ -38,8 +38,16 @@ jobs:
         run: npx playwright install --with-deps
       - name: Build the application
         run: npm run build
-      - name: Run Playwright tests
-        run: npx playwright test
+      - name: Start preview server and run tests
+        run: |
+          # Start the preview server in the background
+          npx vite preview --port 4173 &
+          # Give the server a moment to start
+          sleep 5
+          # Check if the server is running
+          curl -I http://localhost:4173 || (echo "Server failed to start" && exit 1)
+          # Run the tests
+          npx playwright test
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
