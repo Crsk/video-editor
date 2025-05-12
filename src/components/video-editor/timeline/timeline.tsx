@@ -3,7 +3,6 @@ import { TimeMarker } from './time-marker'
 import { Track } from './track'
 import '../styles/timeline.css'
 import { useEditor } from '../context/video-editor-provider'
-import { useEvents, MediaLoadedEvent } from '../hooks/use-events'
 import { DndContext, DragOverlay, pointerWithin } from '@dnd-kit/core'
 import { FC } from 'react'
 import { useRemotionTimeline } from './context/remotion-timeline-context'
@@ -45,12 +44,6 @@ export const Timeline: FC<{
 }> = ({ styles }) => {
   const { tracks, currentTime } = useEditor()
   const { timelineState, timelineInteractions, timelineDnd } = useRemotionTimeline()
-  const { useOnMediaLoaded } = useEvents()
-
-  useOnMediaLoaded((event: MediaLoadedEvent) => {
-    console.log('Media loaded in Timeline:', event.trackIndex, event.file.name)
-  })
-
   const _styles: TimelineStyle = {
     ...defaultTimelineStyle,
     ...styles
