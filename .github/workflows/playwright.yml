@@ -1,9 +1,9 @@
 name: Tests
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
-    branches: [main, master]
+    branches: [main]
 jobs:
   unit:
     runs-on: ubuntu-latest
@@ -23,7 +23,6 @@ jobs:
           name: coverage-report
           path: coverage/
           retention-days: 30
-
   e2e:
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -35,91 +34,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - name: Build the application
-        run: npm run build
-      - name: Create HTTP connectivity test
-        run: |
-          # Create a simple Node.js test that just checks server connectivity
-          cat > connectivity.js << 'EOL'
-          import { get } from 'node:http';
-          
-          console.log('Starting HTTP connectivity test...');
-          
-          // Simple test to verify server is accessible
-          get('http://localhost:4173/', (res) => {
-            console.log('Response status:', res.statusCode);
-            console.log('Headers:', JSON.stringify(res.headers, null, 2));
-            
-            const chunks = [];
-            res.on('data', (chunk) => chunks.push(chunk));
-            res.on('end', () => {
-              const body = Buffer.concat(chunks);
-              console.log('Response body length:', body.length);
-              console.log('Response body preview:', body.toString().slice(0, 200) + '...');
-              console.log('Test PASSED');
-              process.exit(0);
-            });
-          }).on('error', (e) => {
-            console.error('Test FAILED. Error:', e.message);
-            process.exit(1);
-          });
-          EOL
-          
-      - name: Verify server availability
-        run: |
-          # Start the preview server with explicit host in the background
-          npx vite preview --port 4173 --host 0.0.0.0 &
-          SERVER_PID=$!
-          
-          # Give the server time to start
-          echo "Waiting for server to start..."
-          sleep 10
-          
-          # Quick check that server is available
-          curl -sI http://localhost:4173
-          
-          # Try the Node.js connectivity test
-          echo "Running Node.js connectivity test"
-          node connectivity.js
-          CONNECT_EXIT_CODE=$?
-          
-          # Kill the server before trying to run the actual tests
-          kill $SERVER_PID || true
-          
-          echo "Connectivity test exited with code: $CONNECT_EXIT_CODE"
-          
-          # If the server wasn't reachable, exit now
-          if [ $CONNECT_EXIT_CODE -ne 0 ]; then
-            echo "Server connectivity test failed, skipping e2e tests"
-            exit 0
-          fi
-          
-      - name: Run actual e2e tests
-        run: |
-          # Install xvfb for headless browser support
-          sudo apt-get update
-          sudo apt-get install -y xvfb
-          
-          # Run the actual tests with xvfb
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" npx playwright test --project webkit
-          TEST_EXIT_CODE=$?
-          
-          # Report test results but don't fail the build
-          echo "E2E tests completed with exit code: $TEST_EXIT_CODE"
-          exit 0
+        run: npx playwright install --with-deps webkit
+      - name: Run Playwright tests
+        run: npx playwright test --project webkit
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-      
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: debug-artifacts
-          path: |
-            screenshot.png
-            test-results/
-          retention-days: 7

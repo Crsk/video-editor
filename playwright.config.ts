@@ -26,19 +26,10 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:4173',
+    baseURL: 'http://localhost:5173',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
-    video: 'on',
-
-    /* Adjust timeouts based on environment */
-    actionTimeout: process.env.CI ? 10000 : 15000,
-    navigationTimeout: process.env.CI ? 10000 : 15000,
-    launchOptions: {
-      slowMo: process.env.CI ? 100 : 500,
-      headless: process.env.CI ? true : false
-    }
+    trace: 'on-first-retry'
   },
 
   /* Configure projects for major browsers */
@@ -79,13 +70,12 @@ export default defineConfig({
     // },
   ],
 
-  /* Configure the web server for both local development and CI */
+  /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npx vite preview --host 0.0.0.0 --port 4173',
-    url: 'http://localhost:4173',
+    // command: 'npm run build && npm run start', // TODO fix
+    command: 'npm run dev',
+    url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
-    stdout: 'pipe',
-    stderr: 'pipe',
-    timeout: process.env.CI ? 30000 : 60000
+    timeout: 120 * 1000
   }
 })
