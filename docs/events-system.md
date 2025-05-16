@@ -48,7 +48,7 @@ import { useEvents } from 'video-timeline'
 
 function UploadButton() {
   const { notifyMediaLoaded } = useEvents()
-  const handleFileUpload = (file) => notifyMediaLoaded(0, file)
+  const handleFileUpload = (file) => notifyMediaLoaded({ trackIndex: 0, file })
 
   return <button onClick={handleFileSelect}>Upload Media</button>
 }
@@ -62,7 +62,7 @@ import { useEvents } from 'video-timeline'
 function UploadButton() {
   const { useOnMediaLoaded } = useEvents()
   const { notifyMediaLoaded } = useOnMediaLoaded()
-  const handleFileUpload = (file) => notifyMediaLoaded(0, file)
+  const handleFileUpload = (file) => notifyMediaLoaded({ trackIndex: 0, file })
 
   return <button onClick={handleFileSelect}>Upload Media</button>
 }

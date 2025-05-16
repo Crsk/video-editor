@@ -103,7 +103,7 @@ export function useVideoUpload(): UseVideoUploadReturn {
               return newTracks
             })
 
-            if (file instanceof File && notify) notifyMediaLoaded(trackIndex, file)
+            if (file instanceof File && notify) notifyMediaLoaded({ trackIndex, file })
 
             resolve()
           }

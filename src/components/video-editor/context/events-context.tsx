@@ -96,11 +96,13 @@ export const useEvents = () => {
     return {
       trackIndex: hookResult.lastEvent?.trackIndex,
       file: hookResult.lastEvent?.file,
-      notifyMediaLoaded: (trackIndex: number, file: File) => mediaLoaded.notify({ trackIndex, file })
+      notifyMediaLoaded: ({ trackIndex, file }: { trackIndex: number; file: File }) =>
+        mediaLoaded.notify({ trackIndex, file })
     }
   }
 
-  const notifyMediaLoaded = (trackIndex: number, file: File) => mediaLoaded.notify({ trackIndex, file })
+  const notifyMediaLoaded = ({ trackIndex, file }: { trackIndex: number; file: File }) =>
+    mediaLoaded.notify({ trackIndex, file })
 
   return {
     useOnMediaLoaded,
