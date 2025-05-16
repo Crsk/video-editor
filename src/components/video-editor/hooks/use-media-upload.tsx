@@ -24,9 +24,9 @@ export function useMediaUpload() {
       }
 
       if (trackType === 'video' || file.type === 'video/mp4') {
-        loadVideoIntoTimeline(file, trackIndex)
+        loadVideoIntoTimeline({ file, trackIndex })
       } else if (trackType === 'audio' || file.type === 'audio/mpeg') {
-        loadAudioIntoTimeline(file, trackIndex)
+        loadAudioIntoTimeline({ file, trackIndex })
       }
     },
     [getTrackType, loadVideoIntoTimeline, loadAudioIntoTimeline]

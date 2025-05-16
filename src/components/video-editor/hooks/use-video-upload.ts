@@ -13,7 +13,15 @@ export interface UseVideoUploadReturn {
   handleSelectClick: () => Promise<void>
   handleTrackIndexChange: (index: number) => void
   selectVideoFile: () => Promise<File | null>
-  loadVideoIntoTimeline: (file: File | string, trackIndex: number) => Promise<void>
+  loadVideoIntoTimeline: ({
+    file,
+    trackIndex,
+    notify
+  }: {
+    file: File | string
+    trackIndex: number
+    notify?: boolean
+  }) => Promise<void>
   selectAndLoadVideo: (trackIndex?: number) => Promise<void>
 }
 
@@ -52,7 +60,15 @@ export function useVideoUpload(): UseVideoUploadReturn {
   }, [])
 
   const loadVideoIntoTimeline = useCallback(
-    (file: File | string, trackIndex: number = 0): Promise<void> => {
+    ({
+      file,
+      trackIndex,
+      notify = true
+    }: {
+      file: File | string
+      trackIndex: number
+      notify?: boolean
+    }): Promise<void> => {
       return new Promise((resolve, reject) => {
         try {
           const src = typeof file === 'string' ? file : URL.createObjectURL(file)
@@ -87,7 +103,7 @@ export function useVideoUpload(): UseVideoUploadReturn {
               return newTracks
             })
 
-            if (file instanceof File) notifyMediaLoaded(trackIndex, file)
+            if (file instanceof File && notify) notifyMediaLoaded(trackIndex, file)
 
             resolve()
           }
@@ -115,7 +131,7 @@ export function useVideoUpload(): UseVideoUploadReturn {
     if (file) {
       setSelectedFile(file)
       setUseDefaultFile(false)
-      loadVideoIntoTimeline(file, selectedTrackIndex)
+      loadVideoIntoTimeline({ file, trackIndex: selectedTrackIndex })
     }
   }
 
@@ -129,7 +145,7 @@ export function useVideoUpload(): UseVideoUploadReturn {
     async (trackIndex: number = 0): Promise<void> => {
       const file = await selectVideoFile()
       if (file) {
-        return loadVideoIntoTimeline(file, trackIndex)
+        return loadVideoIntoTimeline({ file, trackIndex })
       }
       return Promise.resolve()
     },

@@ -19,12 +19,12 @@ export const VideoUpload = () => {
   // Internal test file handlers
   const handleUseTestFile = () => {
     handleTrackIndexChange(selectedTrackIndex)
-    loadVideoIntoTimeline('manson_clone.mp4', selectedTrackIndex)
+    loadVideoIntoTimeline({ file: 'manson_clone.mp4', trackIndex: selectedTrackIndex })
   }
 
   const handleUse43sFile = () => {
     handleTrackIndexChange(selectedTrackIndex)
-    loadVideoIntoTimeline('43s.mp4', selectedTrackIndex)
+    loadVideoIntoTimeline({ file: '43s.mp4', trackIndex: selectedTrackIndex })
   }
 
   return (

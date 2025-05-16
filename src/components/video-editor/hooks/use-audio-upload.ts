@@ -11,7 +11,15 @@ export interface UseAudioUploadReturn {
   handleSelectClick: () => Promise<void>
   handleTrackIndexChange: (index: number) => void
   selectAudioFile: () => Promise<File | null>
-  loadAudioIntoTimeline: (file: File | string, trackIndex: number) => Promise<void>
+  loadAudioIntoTimeline: ({
+    file,
+    trackIndex,
+    notify
+  }: {
+    file: File | string
+    trackIndex: number
+    notify?: boolean
+  }) => Promise<void>
   selectAndLoadAudio: (trackIndex?: number) => Promise<void>
 }
 
@@ -48,7 +56,15 @@ export function useAudioUpload(): UseAudioUploadReturn {
   }, [])
 
   const loadAudioIntoTimeline = useCallback(
-    (file: File | string, trackIndex: number = 0): Promise<void> => {
+    ({
+      file,
+      trackIndex,
+      notify = true
+    }: {
+      file: File | string
+      trackIndex: number
+      notify?: boolean
+    }): Promise<void> => {
       return new Promise((resolve, reject) => {
         try {
           const src = typeof file === 'string' ? file : URL.createObjectURL(file)
@@ -84,7 +100,7 @@ export function useAudioUpload(): UseAudioUploadReturn {
               return newTracks
             })
 
-            if (file instanceof File) notifyMediaLoaded(trackIndex, file)
+            if (file instanceof File && notify) notifyMediaLoaded(trackIndex, file)
 
             resolve()
           }
@@ -110,7 +126,7 @@ export function useAudioUpload(): UseAudioUploadReturn {
     const file = await selectAudioFile()
     if (file) {
       setSelectedFile(file)
-      loadAudioIntoTimeline(file, selectedTrackIndex)
+      loadAudioIntoTimeline({ file, trackIndex: selectedTrackIndex })
     }
   }
 
@@ -122,7 +138,7 @@ export function useAudioUpload(): UseAudioUploadReturn {
     async (trackIndex: number = 0): Promise<void> => {
       const file = await selectAudioFile()
       if (file) {
-        return loadAudioIntoTimeline(file, trackIndex)
+        return loadAudioIntoTimeline({ file, trackIndex })
       }
       return Promise.resolve()
     },
