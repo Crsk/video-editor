@@ -4,7 +4,7 @@ import { Track, Clip } from '../types'
 import { useMediaLoader } from '../hooks/use-media-loader'
 import { applyGravityToTrack } from './gravity'
 import { RemotionTimelineProvider } from '../timeline/context/remotion-timeline-context'
-import { EventsProvider } from './events-context'
+import { EventsProvider } from './events/events-context'
 import { v4 as uuidv4 } from 'uuid'
 
 interface EditorContextState {

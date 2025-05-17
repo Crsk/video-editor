@@ -1,7 +1,7 @@
 import { useState, useRef, ChangeEvent, useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { useEditor } from '../context/video-editor-provider'
-import { useEvents } from '../context/events-context'
+import { useEvents } from '../context/events/events-context'
 
 export interface UseAudioUploadReturn {
   selectedFile: File | null

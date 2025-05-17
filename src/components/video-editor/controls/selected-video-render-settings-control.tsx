@@ -9,6 +9,7 @@ import { Button } from '~/components/ui/button'
 import { useTrackManager } from '../hooks/use-track-manager'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { useVolumeControl } from '../hooks/use-volume-control'
+import { useEvents } from '../hooks/use-events'
 
 export const SelectedVideoRenderSettingsControl: FC = () => {
   const { tracks, handleDeleteClip } = useEditor()
@@ -23,6 +24,7 @@ export const SelectedVideoRenderSettingsControl: FC = () => {
   const [zoom, setZoom] = useState(0)
   const [volume, setVolume] = useState(1)
   const [renderOption, setRenderOption] = useState<'default' | 'contain-blur' | 'cover'>('default')
+  const { notifyClipDeleted } = useEvents()
 
   // Get the selected video clip when the selection changes
   useEffect(() => {
@@ -302,7 +304,13 @@ export const SelectedVideoRenderSettingsControl: FC = () => {
                 variant="destructive"
                 onClick={() => {
                   if (selectedClip) {
-                    handleDeleteClip(selectedClip.clipIndex, selectedClip.ClipIndex)
+                    const { clipIndex, ClipIndex } = selectedClip
+                    const track = tracks[clipIndex]
+                    if (track && ClipIndex >= 0 && ClipIndex < track.clips.length) {
+                      handleDeleteClip(clipIndex, ClipIndex)
+                      const clipId = track.clips[ClipIndex].id
+                      notifyClipDeleted({ trackIndex: clipIndex, clipIndex: ClipIndex, clipId }) // TODO: correct track and clip index names
+                    }
                   }
                 }}
                 className="text-xs bg-white/30 dark:bg-white/10 text-white hover:bg-red-500 dark:hover:bg-red-500 hover:text-white w-full"
