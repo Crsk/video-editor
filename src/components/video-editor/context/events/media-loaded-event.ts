@@ -18,6 +18,7 @@ export const useMediaLoadedEvent = () => {
 
     return {
       trackIndex: hookResult.lastEvent?.trackIndex,
+      clipIndex: hookResult.lastEvent?.clipIndex,
       file: hookResult.lastEvent?.file,
       notifyMediaLoaded: ({
         trackIndex,
