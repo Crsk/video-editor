@@ -3,6 +3,7 @@ import { createContext, useCallback, useContext, useRef, useEffect, useState, Re
 export type MediaLoadedEvent = {
   trackIndex: number
   file: File
+  notify?: boolean
 }
 
 type EventHandler<T> = (event: T) => void
@@ -96,13 +97,20 @@ export const useEvents = () => {
     return {
       trackIndex: hookResult.lastEvent?.trackIndex,
       file: hookResult.lastEvent?.file,
-      notifyMediaLoaded: ({ trackIndex, file }: { trackIndex: number; file: File }) =>
-        mediaLoaded.notify({ trackIndex, file })
+      notifyMediaLoaded: ({ trackIndex, file, notify = true }: { trackIndex: number; file: File; notify?: boolean }) =>
+        notify && mediaLoaded.notify({ trackIndex, file, notify })
     }
   }
 
-  const notifyMediaLoaded = ({ trackIndex, file }: { trackIndex: number; file: File }) =>
-    mediaLoaded.notify({ trackIndex, file })
+  const notifyMediaLoaded = ({
+    trackIndex,
+    file,
+    notify = true
+  }: {
+    trackIndex: number
+    file: File
+    notify?: boolean
+  }) => notify && mediaLoaded.notify({ trackIndex, file, notify })
 
   return {
     useOnMediaLoaded,
