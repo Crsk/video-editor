@@ -4,6 +4,7 @@ import { createEventHook, createEventRegistry } from './utils'
 
 export type MediaLoadedEvent = {
   trackIndex: number
+  clipIndex: number
   file: File
   notify?: boolean
 }
@@ -18,14 +19,32 @@ export const useMediaLoadedEvent = () => {
     return {
       trackIndex: hookResult.lastEvent?.trackIndex,
       file: hookResult.lastEvent?.file,
-      notifyMediaLoaded: ({ trackIndex, file, notify = true }: { trackIndex: number; file: File; notify?: boolean }) =>
-        notify && registry.notify({ trackIndex, file, notify })
+      notifyMediaLoaded: ({
+        trackIndex,
+        clipIndex,
+        file,
+        notify = true
+      }: {
+        trackIndex: number
+        clipIndex: number
+        file: File
+        notify?: boolean
+      }) => notify && registry.notify({ trackIndex, clipIndex, file, notify })
     }
   }
 
   const notifyMediaLoaded = useCallback(
-    ({ trackIndex, file, notify = true }: { trackIndex: number; file: File; notify?: boolean }) =>
-      notify && registry.notify({ trackIndex, file, notify }),
+    ({
+      trackIndex,
+      clipIndex,
+      file,
+      notify = true
+    }: {
+      trackIndex: number
+      clipIndex: number
+      file: File
+      notify?: boolean
+    }) => notify && registry.notify({ trackIndex, clipIndex, file, notify }),
     [registry]
   )
 
