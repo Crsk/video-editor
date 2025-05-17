@@ -81,13 +81,12 @@ export function useVideoUpload(): UseVideoUploadReturn {
             const FPS = 30
             const durationInSeconds = video.duration
             const durationInFrames = Math.ceil(durationInSeconds * FPS)
-            let clipIndex: number = -1
 
             setTracks(prevTracks => {
               const newTracks = JSON.parse(JSON.stringify(prevTracks))
               const clips = newTracks[trackIndex].clips
+              const newClipIndex = clips.length
               const lastClipIndex = clips.length - 1
-              clipIndex = lastClipIndex
               const lastClip = lastClipIndex >= 0 ? clips[lastClipIndex] : null
               const startFrame = lastClip ? lastClip.from + lastClip.durationInFrames : 0
               const newClipId = uuidv4()
@@ -101,11 +100,10 @@ export function useVideoUpload(): UseVideoUploadReturn {
               }
 
               newTracks[trackIndex].clips = [...newTracks[trackIndex].clips, newClip]
+              if (file instanceof File && notify) notifyMediaLoaded({ trackIndex, clipIndex: newClipIndex, file })
 
               return newTracks
             })
-
-            if (file instanceof File && notify) notifyMediaLoaded({ trackIndex, clipIndex, file })
 
             resolve()
           }
