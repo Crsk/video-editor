@@ -85,7 +85,7 @@ export function useVideoUpload(): UseVideoUploadReturn {
             setTracks(prevTracks => {
               const newTracks = JSON.parse(JSON.stringify(prevTracks))
               const clips = newTracks[trackIndex].clips
-              const newClipIndex = clips.length
+              const newClipIndex = clips.length || 0
               const lastClipIndex = clips.length - 1
               const lastClip = lastClipIndex >= 0 ? clips[lastClipIndex] : null
               const startFrame = lastClip ? lastClip.from + lastClip.durationInFrames : 0

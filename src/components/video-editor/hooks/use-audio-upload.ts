@@ -81,7 +81,7 @@ export function useAudioUpload(): UseAudioUploadReturn {
             setTracks(prevTracks => {
               const newTracks = JSON.parse(JSON.stringify(prevTracks))
               const clips = newTracks[trackIndex].clips
-              const newClipIndex: number = clips.length
+              const newClipIndex: number = clips.length || 0
               const lastClipIndex = clips.length - 1
               const lastClip = lastClipIndex >= 0 ? clips[lastClipIndex] : null
               const startFrame = lastClip ? lastClip.from + lastClip.durationInFrames : 0
