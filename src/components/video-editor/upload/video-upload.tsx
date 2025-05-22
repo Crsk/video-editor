@@ -16,15 +16,63 @@ export const VideoUpload = () => {
     loadVideoIntoTimeline
   } = useVideoUpload()
 
+  // Sample transcript data for demo videos
+  const mansonWords = [
+    { word: 'I', start: 0, end: 0.14 },
+    { word: 'launched', start: 0.14, end: 0.4 },
+    { word: '15', start: 0.4, end: 0.96 },
+    { word: 'different', start: 0.96, end: 1.26 },
+    { word: 'video', start: 1.26, end: 1.56 },
+    { word: 'ads', start: 1.56, end: 1.8 },
+    { word: 'last', start: 1.8, end: 2.04 },
+    { word: 'week', start: 2.04, end: 2.3 },
+    { word: 'and', start: 2.3, end: 2.54 },
+    { word: 'found', start: 2.54, end: 2.7 },
+    { word: 'her', start: 2.7, end: 2.86 },
+    { word: 'winner', start: 2.86, end: 3.08 },
+    { word: 'in', start: 3.08, end: 3.32 },
+    { word: 'just', start: 3.32, end: 3.46 },
+    { word: '3', start: 3.46, end: 3.72 },
+    { word: 'days.', start: 3.72, end: 4.46 },
+    { word: 'Discover', start: 4.46, end: 4.82 },
+    { word: 'how', start: 4.82, end: 5.24 },
+    { word: 'Silverance', start: 5.24, end: 5.68 },
+    { word: 'customer', start: 5.68, end: 6.08 },
+    { word: 'achieved', start: 6.08, end: 6.4 },
+    { word: 'this.', start: 6.4, end: 6.72 }
+  ]
+
+  const sample43sWords = [
+    { word: 'This', start: 0.5, end: 0.7 },
+    { word: 'is', start: 0.7, end: 0.9 },
+    { word: 'a', start: 0.9, end: 1.0 },
+    { word: 'sample', start: 1.0, end: 1.5 },
+    { word: 'transcript', start: 1.5, end: 2.2 },
+    { word: 'for', start: 2.2, end: 2.4 },
+    { word: 'the', start: 2.4, end: 2.6 },
+    { word: '43', start: 2.6, end: 3.0 },
+    { word: 'second', start: 3.0, end: 3.4 },
+    { word: 'video', start: 3.4, end: 3.9 },
+    { word: 'clip', start: 3.9, end: 4.3 }
+  ]
+
   // Internal test file handlers
   const handleUseTestFile = () => {
     handleTrackIndexChange(selectedTrackIndex)
-    loadVideoIntoTimeline({ file: 'manson_clone.mp4', trackIndex: selectedTrackIndex })
+    loadVideoIntoTimeline({
+      file: 'manson_clone.mp4',
+      trackIndex: selectedTrackIndex,
+      words: mansonWords
+    })
   }
 
   const handleUse43sFile = () => {
     handleTrackIndexChange(selectedTrackIndex)
-    loadVideoIntoTimeline({ file: '43s.mp4', trackIndex: selectedTrackIndex })
+    loadVideoIntoTimeline({
+      file: '43s.mp4',
+      trackIndex: selectedTrackIndex,
+      words: sample43sWords
+    })
   }
 
   return (

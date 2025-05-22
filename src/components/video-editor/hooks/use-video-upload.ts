@@ -3,28 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { useEditor } from '../context/video-editor-provider'
 import { useEvents } from '../context/events/events-context'
 import { parseMedia } from '@remotion/media-parser'
-
-export interface UseVideoUploadReturn {
-  selectedFile: File | null
-  selectedTrackIndex: number
-  useDefaultFile: boolean
-  defaultFileName: string
-  fileInputRef: React.RefObject<HTMLInputElement | null>
-  handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void
-  handleSelectClick: () => Promise<void>
-  handleTrackIndexChange: (index: number) => void
-  selectVideoFile: () => Promise<File | null>
-  loadVideoIntoTimeline: ({
-    file,
-    trackIndex,
-    notify
-  }: {
-    file: File | string
-    trackIndex: number
-    notify?: boolean
-  }) => Promise<void>
-  selectAndLoadVideo: (trackIndex?: number) => Promise<void>
-}
+import { LoadVideoIntoTimelineParams, UseVideoUploadReturn } from './use-video-upload.types'
 
 export function useVideoUpload(): UseVideoUploadReturn {
   const { setTracks } = useEditor()
@@ -61,15 +40,7 @@ export function useVideoUpload(): UseVideoUploadReturn {
   }, [])
 
   const loadVideoIntoTimeline = useCallback(
-    async ({
-      file,
-      trackIndex,
-      notify = true
-    }: {
-      file: File | string
-      trackIndex: number
-      notify?: boolean
-    }): Promise<void> => {
+    async ({ file, trackIndex, notify = true, words }: LoadVideoIntoTimelineParams): Promise<void> => {
       try {
         const src = typeof file === 'string' ? file : URL.createObjectURL(file)
 
@@ -101,11 +72,12 @@ export function useVideoUpload(): UseVideoUploadReturn {
             durationInFrames: durationInFrames,
             originalDuration: durationInFrames,
             type: 'video',
-            src
+            src,
+            words
           }
 
           newTracks[trackIndex].clips = [...newTracks[trackIndex].clips, newClip]
-          if (file instanceof File && notify) notifyMediaLoaded({ trackIndex, clipIndex: newClipIndex, file })
+          if (file instanceof File && notify) notifyMediaLoaded({ trackIndex, clipIndex: newClipIndex, file, words })
 
           return newTracks
         })

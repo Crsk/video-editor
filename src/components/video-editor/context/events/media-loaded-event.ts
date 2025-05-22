@@ -7,6 +7,7 @@ export type MediaLoadedEvent = {
   clipIndex: number
   file: File
   notify?: boolean
+  words?: { word: string; start: number; end: number }[]
 }
 
 export const useMediaLoadedEvent = () => {
@@ -20,17 +21,20 @@ export const useMediaLoadedEvent = () => {
       trackIndex: hookResult.lastEvent?.trackIndex,
       clipIndex: hookResult.lastEvent?.clipIndex,
       file: hookResult.lastEvent?.file,
+      words: hookResult.lastEvent?.words,
       notifyMediaLoaded: ({
         trackIndex,
         clipIndex,
         file,
-        notify = true
+        notify = true,
+        words
       }: {
         trackIndex: number
         clipIndex: number
         file: File
         notify?: boolean
-      }) => notify && registry.notify({ trackIndex, clipIndex, file, notify })
+        words?: { word: string; start: number; end: number }[]
+      }) => notify && registry.notify({ trackIndex, clipIndex, file, notify, words })
     }
   }
 
@@ -39,13 +43,15 @@ export const useMediaLoadedEvent = () => {
       trackIndex,
       clipIndex,
       file,
-      notify = true
+      notify = true,
+      words
     }: {
       trackIndex: number
       clipIndex: number
       file: File
       notify?: boolean
-    }) => notify && registry.notify({ trackIndex, clipIndex, file, notify }),
+      words?: { word: string; start: number; end: number }[]
+    }) => notify && registry.notify({ trackIndex, clipIndex, file, notify, words }),
     [registry]
   )
 
