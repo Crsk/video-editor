@@ -23,6 +23,7 @@ import { useVideoTransform } from '~/components/video-editor/hooks/use-video-tra
 import { useEvents } from '~/components/video-editor/hooks/use-events'
 import { ZoomMinusControl } from '~/components/video-editor/controls/zoom-minus-control'
 import { ZoomPlusControl } from '~/components/video-editor/controls/zoom-plus-control'
+import { useTranscript } from '~/components/video-editor/hooks/use-transcript'
 
 // Core components
 export { VideoEditorProvider }
@@ -52,3 +53,4 @@ export { useVideoUpload }
 export { useAudioUpload }
 export { useVideoTransform }
 export { useEvents }
+export { useTranscript }
