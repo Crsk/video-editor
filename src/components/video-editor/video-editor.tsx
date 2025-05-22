@@ -11,11 +11,13 @@ import { VideoUpload } from '~/components/video-editor/upload/video-upload'
 import { VideoComposer } from './timeline/video-composer'
 import { ZoomMinusControl } from './controls/zoom-minus-control'
 import { ZoomPlusControl } from './controls/zoom-plus-control'
+import { Transcript } from './transcript'
 
 type EditorProps = { tracks: Track[] }
 export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
   return (
     <VideoEditorProvider initialTracks={tracks}>
+      <Transcript />
       <div className="h-[calc(100vh-200px)]">
         <VideoPlayer />
       </div>
