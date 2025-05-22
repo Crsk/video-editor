@@ -2,6 +2,7 @@ import { useState, useRef, ChangeEvent, useCallback } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { useEditor } from '../context/video-editor-provider'
 import { useEvents } from '../context/events/events-context'
+import { parseMedia } from '@remotion/media-parser'
 
 export interface UseVideoUploadReturn {
   selectedFile: File | null
@@ -60,7 +61,7 @@ export function useVideoUpload(): UseVideoUploadReturn {
   }, [])
 
   const loadVideoIntoTimeline = useCallback(
-    ({
+    async ({
       file,
       trackIndex,
       notify = true
@@ -69,54 +70,51 @@ export function useVideoUpload(): UseVideoUploadReturn {
       trackIndex: number
       notify?: boolean
     }): Promise<void> => {
-      return new Promise((resolve, reject) => {
-        try {
-          const src = typeof file === 'string' ? file : URL.createObjectURL(file)
+      try {
+        const src = typeof file === 'string' ? file : URL.createObjectURL(file)
 
-          const video = document.createElement('video')
-          video.preload = 'metadata'
-          video.src = src
+        const { durationInSeconds } = await parseMedia({
+          acknowledgeRemotionLicense: true,
+          src: typeof file === 'string' ? file : file,
+          fields: {
+            durationInSeconds: true
+          }
+        })
 
-          video.onloadedmetadata = () => {
-            const FPS = 30
-            const durationInSeconds = video.duration
-            const durationInFrames = Math.ceil(durationInSeconds * FPS)
+        if (durationInSeconds === undefined || durationInSeconds === null)
+          throw new Error('Failed to get video duration using media-parser')
 
-            setTracks(prevTracks => {
-              const newTracks = JSON.parse(JSON.stringify(prevTracks))
-              const clips = newTracks[trackIndex].clips
-              const newClipIndex = clips.length || 0
-              const lastClipIndex = clips.length - 1
-              const lastClip = lastClipIndex >= 0 ? clips[lastClipIndex] : null
-              const startFrame = lastClip ? lastClip.from + lastClip.durationInFrames : 0
-              const newClipId = uuidv4()
-              const newClip = {
-                id: newClipId,
-                from: startFrame,
-                durationInFrames: durationInFrames,
-                originalDuration: durationInFrames,
-                type: 'video',
-                src
-              }
+        const FPS = 30
+        const durationInFrames = Math.ceil(durationInSeconds * FPS)
 
-              newTracks[trackIndex].clips = [...newTracks[trackIndex].clips, newClip]
-              if (file instanceof File && notify) notifyMediaLoaded({ trackIndex, clipIndex: newClipIndex, file })
-
-              return newTracks
-            })
-
-            resolve()
+        setTracks(prevTracks => {
+          const newTracks = JSON.parse(JSON.stringify(prevTracks))
+          const clips = newTracks[trackIndex].clips
+          const newClipIndex = clips.length || 0
+          const lastClipIndex = clips.length - 1
+          const lastClip = lastClipIndex >= 0 ? clips[lastClipIndex] : null
+          const startFrame = lastClip ? lastClip.from + lastClip.durationInFrames : 0
+          const newClipId = uuidv4()
+          const newClip = {
+            id: newClipId,
+            from: startFrame,
+            durationInFrames: durationInFrames,
+            originalDuration: durationInFrames,
+            type: 'video',
+            src
           }
 
-          video.onerror = () => {
-            reject(new Error('Failed to load video'))
-          }
-        } catch (error) {
-          reject(error)
-        }
-      })
+          newTracks[trackIndex].clips = [...newTracks[trackIndex].clips, newClip]
+          if (file instanceof File && notify) notifyMediaLoaded({ trackIndex, clipIndex: newClipIndex, file })
+
+          return newTracks
+        })
+      } catch (error) {
+        console.error('Error loading video into timeline:', error)
+        throw error
+      }
     },
-    [setTracks]
+    [setTracks, notifyMediaLoaded]
   )
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -131,11 +129,9 @@ export function useVideoUpload(): UseVideoUploadReturn {
     if (file) {
       setSelectedFile(file)
       setUseDefaultFile(false)
-      loadVideoIntoTimeline({ file, trackIndex: selectedTrackIndex })
+      await loadVideoIntoTimeline({ file, trackIndex: selectedTrackIndex })
     }
   }
-
-  // Test file handlers moved to VideoUpload component
 
   const handleTrackIndexChange = (index: number) => {
     setSelectedTrackIndex(index)
@@ -144,10 +140,7 @@ export function useVideoUpload(): UseVideoUploadReturn {
   const selectAndLoadVideo = useCallback(
     async (trackIndex: number = 0): Promise<void> => {
       const file = await selectVideoFile()
-      if (file) {
-        return loadVideoIntoTimeline({ file, trackIndex })
-      }
-      return Promise.resolve()
+      if (file) return await loadVideoIntoTimeline({ file, trackIndex })
     },
     [selectVideoFile, loadVideoIntoTimeline]
   )
