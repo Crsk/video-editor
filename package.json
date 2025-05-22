@@ -1,8 +1,5 @@
 {
   "name": "@crsk/video-editor",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "private": false,
   "version": "0.1.91",
   "type": "module",
