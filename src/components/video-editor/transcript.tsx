@@ -138,7 +138,7 @@ export const Transcript = () => {
             onClick={() => {
               setActiveWordIndex(index)
               const wordMidpoint = (start + end) / 2
-              handleTimeUpdate(wordMidpoint)
+              handleTimeUpdate(wordMidpoint, false)
             }}
           >
             {word}{' '}

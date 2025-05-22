@@ -26,7 +26,7 @@ interface EditorContextState {
 
   // Player controls
   togglePlayPause: () => void
-  handleTimeUpdate: (newTimeInSeconds: number) => void
+  handleTimeUpdate: (newTimeInSeconds: number, shouldPause?: boolean) => void
   toggleLoop: () => void
   handleTrackUpdate: (clipIndex: number, updatedClips: Clip[]) => void
   handleTrackVolumeChange: (clipIndex: number, volume: number) => void
@@ -135,17 +135,16 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
   }
 
   // Handle time update from timeline marker drag
-  const handleTimeUpdate = (newTimeInSeconds: number) => {
+  const handleTimeUpdate = (newTimeInSeconds: number, shouldPause = true) => {
     if (playerRef.current) {
-      // If video is playing, pause it during scrubbing
-      if (isPlaying) {
-        playerRef.current.pause()
-        setIsPlaying(false)
-      }
-
       // Convert seconds to frames and seek to that position
       const framePosition = Math.round(newTimeInSeconds * FPS)
       playerRef.current.seekTo(framePosition)
+
+      if (shouldPause) {
+        playerRef.current.pause()
+        setIsPlaying(false)
+      }
 
       // Update the current time state
       setCurrentTime(newTimeInSeconds)
