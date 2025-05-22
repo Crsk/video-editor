@@ -1,6 +1,5 @@
-import { useEffect, useState, useRef, useMemo } from 'react'
-import { useEditor } from './context/video-editor-provider'
-import { VideoClip } from './types'
+import { useEffect, useState, useRef } from 'react'
+import { useTranscript } from './hooks/use-transcript'
 
 export function formatVTTTime(totalSeconds: number): string {
   const hours = Math.floor(totalSeconds / 3600)
@@ -60,17 +59,8 @@ export const wordsToVTT = (
   return vttContent
 }
 
-type WordWithClipInfo = {
-  word: string
-  start: number
-  end: number
-  clipId: string
-  clipStart: number
-  clipOffset: number
-}
-
 export const Transcript = () => {
-  const { tracks, currentTime, handleTimeUpdate } = useEditor()
+  const { text, currentTime, seekToWord } = useTranscript()
   const [activeWordIndex, setActiveWordIndex] = useState<number | null>(null)
   const wordRefs = useRef<(HTMLSpanElement | null)[]>([])
   const [highlightStyle, setHighlightStyle] = useState({
@@ -81,46 +71,16 @@ export const Transcript = () => {
     opacity: 0
   })
 
-  const allWords = useMemo(() => {
-    const wordsWithClipInfo: WordWithClipInfo[] = []
-
-    tracks.forEach(track => {
-      track.clips.forEach(clip => {
-        if (clip.type === 'video' && (clip as VideoClip).words) {
-          const videoClip = clip as VideoClip
-          const clipStart = videoClip.from / 30 // Convert frames to seconds (FPS = 30)
-          const clipOffset = videoClip.offset || 0
-
-          videoClip.words?.forEach(word => {
-            const adjustedStart = clipStart + (word.start - clipOffset / 30)
-            const adjustedEnd = clipStart + (word.end - clipOffset / 30)
-
-            wordsWithClipInfo.push({
-              word: word.word,
-              start: adjustedStart,
-              end: adjustedEnd,
-              clipId: videoClip.id,
-              clipStart: clipStart,
-              clipOffset: clipOffset / 30
-            })
-          })
-        }
-      })
-    })
-
-    return wordsWithClipInfo.sort((a, b) => a.start - b.start)
-  }, [tracks])
-
   useEffect(() => {
     if (currentTime === undefined) return
 
-    const index = allWords.findIndex(word => {
+    const index = text.findIndex(word => {
       const buffer = 0.05
       return currentTime >= word.start - buffer && currentTime <= word.end + buffer
     })
 
     setActiveWordIndex(index !== -1 ? index : null)
-  }, [currentTime, allWords])
+  }, [currentTime, text])
 
   useEffect(() => {
     if (activeWordIndex === null) {
@@ -146,8 +106,8 @@ export const Transcript = () => {
   }, [activeWordIndex])
 
   useEffect(() => {
-    wordRefs.current = wordRefs.current.slice(0, allWords.length)
-  }, [allWords])
+    wordRefs.current = wordRefs.current.slice(0, text.length)
+  }, [text])
 
   return (
     <div className="p-4 w-96">
@@ -163,7 +123,7 @@ export const Transcript = () => {
           }}
         />
 
-        {allWords.map(({ word, start, end }, index) => (
+        {text.map(({ word, start, end }, index) => (
           <span
             title={`${formatVTTTime(start)} - ${formatVTTTime(end)}`}
             key={`${word}-${index}`}
@@ -176,8 +136,7 @@ export const Transcript = () => {
             }}
             onClick={() => {
               setActiveWordIndex(index)
-              const wordMidpoint = (start + end) / 2
-              handleTimeUpdate(wordMidpoint, false)
+              seekToWord(index, false)
             }}
           >
             {word}{' '}
