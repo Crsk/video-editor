@@ -25,6 +25,7 @@ export type VideoClip = BaseClip & {
   zoom?: number
   originalDuration?: number
   offset?: number
+  words?: { word: string; start: number; end: number }[]
 }
 
 export type AudioClip = BaseClip & {
