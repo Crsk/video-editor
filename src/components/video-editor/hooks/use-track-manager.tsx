@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useEditor } from '../context/video-editor-provider'
-import { Clip, MediaType, Track } from '../types'
+import { Clip, MediaType, Track, VideoClip } from '../types'
 import { v4 as uuidv4 } from 'uuid'
 import { applyGravityToTrack } from '../context/gravity'
 
@@ -347,6 +347,52 @@ export function useTrackManager() {
     [tracks]
   )
 
+  const findClipsBySrc = useCallback(
+    ({ src }: { src: string }): { trackIndex: number; clip: Clip }[] => {
+      const results: { trackIndex: number; clip: Clip }[] = []
+
+      tracks.forEach((track, trackIndex) => {
+        track.clips.forEach(clip => {
+          if ('src' in clip && clip.src === src) results.push({ trackIndex, clip })
+        })
+      })
+
+      return results
+    },
+    [tracks]
+  )
+
+  const loadTranscriptForSrc = useCallback(
+    ({ src, words }: { src: string; words: { word: string; start: number; end: number }[] }): void => {
+      const matchingClips = findClipsBySrc({ src })
+
+      if (matchingClips.length === 0) {
+        console.warn(`No clips found with src: ${src}`)
+
+        return
+      }
+
+      setTracks(prevTracks => {
+        const updatedTracks = [...prevTracks]
+
+        matchingClips.forEach(({ trackIndex, clip }) => {
+          if (clip.type !== 'video') return
+
+          const trackClips = [...updatedTracks[trackIndex].clips]
+          const clipIndex = trackClips.findIndex(c => c.id === clip.id)
+
+          if (clipIndex !== -1) {
+            trackClips[clipIndex] = { ...trackClips[clipIndex], words } as VideoClip
+            updatedTracks[trackIndex] = { ...updatedTracks[trackIndex], clips: trackClips }
+          }
+        })
+
+        return updatedTracks
+      })
+    },
+    [findClipsBySrc, setTracks]
+  )
+
   return {
     // Track management
     tracks,
@@ -366,6 +412,8 @@ export function useTrackManager() {
     updateClip,
     splitClip,
     calculateClipStartPosition,
+    findClipsBySrc,
+    loadTranscriptForSrc,
 
     // Video controls
     setVideoRenderOption,
