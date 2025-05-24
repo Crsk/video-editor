@@ -9,7 +9,8 @@ describe('findNextAvailableGap', () => {
       from,
       durationInFrames: duration,
       type: 'video',
-      src: '/dummy.mp4'
+      src: '/dummy.mp4',
+      url: '/dummy.mp4'
     })
     // Clips at 10-20 and 30-40, gap at 0-10 and 20-30
     const clips = [make(10, 10, 'a'), make(30, 10, 'b')]
@@ -23,7 +24,8 @@ describe('findNextAvailableGap', () => {
       from,
       durationInFrames: duration,
       type: 'video',
-      src: '/dummy.mp4'
+      src: '/dummy.mp4',
+      url: '/dummy.mp4'
     })
     // Clips at 0-10 and 20-30, gap at 10-20
     const clips = [make(0, 10, 'a'), make(20, 10, 'b')]
@@ -37,7 +39,8 @@ describe('findNextAvailableGap', () => {
       from,
       durationInFrames: duration,
       type: 'video',
-      src: '/dummy.mp4'
+      src: '/dummy.mp4',
+      url: '/dummy.mp4'
     })
     // Clips fill the whole timeline
     const clips = [make(0, 10, 'a'), make(10, 10, 'b')]
@@ -49,7 +52,8 @@ describe('findNextAvailableGap', () => {
     from,
     durationInFrames: duration,
     type: 'video',
-    src: '/dummy.mp4'
+    src: '/dummy.mp4',
+    url: '/dummy.mp4'
   })
 
   it('returns earliest available gap even if desired position would fit', () => {

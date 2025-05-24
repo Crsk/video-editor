@@ -8,7 +8,8 @@ describe('moveClipToTrack (collision handling)', () => {
     from,
     durationInFrames: duration,
     type: 'video',
-    src: '/dummy.mp4'
+    src: '/dummy.mp4',
+    url: '/dummy.mp4'
   })
 
   it('places clip next to last if colliding on cross-track move', () => {

@@ -17,7 +17,8 @@ function App() {
           durationInFrames: 1,
           type: 'video',
           src: 'manson_clone.mp4',
-          words
+          words,
+          url: 'manson_clone.mp4'
         }
       ]
     },
@@ -30,7 +31,8 @@ function App() {
           durationInFrames: 1,
           type: 'video',
           src: 'manson_clone.mp4',
-          words
+          words,
+          url: 'manson_clone.mp4'
         }
       ]
     },
@@ -43,7 +45,8 @@ function App() {
           from: 0,
           durationInFrames: 1,
           type: 'audio',
-          src: 'spectre.mp3'
+          src: 'spectre.mp3',
+          url: 'spectre.mp3'
         }
       ]
     }
