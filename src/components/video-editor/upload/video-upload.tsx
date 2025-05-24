@@ -2,7 +2,8 @@ import { Button } from '~/components/ui/button'
 import { useEditor } from '~/components/video-editor/context/video-editor-provider'
 import { useVideoUpload } from '~/components/video-editor/hooks/use-video-upload'
 import { useTrackManager } from '~/components/video-editor/hooks/use-track-manager'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
+import { useEvents } from '~/components/video-editor/hooks/use-events'
 
 export const VideoUpload = () => {
   const { tracks } = useEditor()
@@ -58,35 +59,39 @@ export const VideoUpload = () => {
     { word: 'video', start: 3.4, end: 3.9 },
     { word: 'clip', start: 3.9, end: 4.3 }
   ]
-  const [testFileLoaded, setTestFileLoaded] = useState(false)
-  const [test43sFileLoaded, setTest43sFileLoaded] = useState(false)
+  const { notifyMediaLoaded, useOnMediaLoaded } = useEvents()
+  const mediaLoaded = useOnMediaLoaded()
 
   // Internal test file handlers
   const handleUseTestFile = useCallback(async () => {
     handleTrackIndexChange(selectedTrackIndex)
     await loadVideoIntoTimeline({ file: 'manson_clone.mp4', trackIndex: selectedTrackIndex })
-    setTestFileLoaded(true)
-  }, [handleTrackIndexChange, loadVideoIntoTimeline, selectedTrackIndex])
+    notifyMediaLoaded({
+      trackIndex: selectedTrackIndex,
+      clipIndex: tracks[selectedTrackIndex]?.clips.length || 0,
+      file: new File([], 'manson_clone.mp4'),
+      words: mansonWords
+    })
+  }, [handleTrackIndexChange, loadVideoIntoTimeline, selectedTrackIndex, notifyMediaLoaded, tracks])
 
   const handleUse43sFile = useCallback(async () => {
     handleTrackIndexChange(selectedTrackIndex)
     await loadVideoIntoTimeline({ file: '43s.mp4', trackIndex: selectedTrackIndex })
-    setTest43sFileLoaded(true)
-  }, [handleTrackIndexChange, loadVideoIntoTimeline, selectedTrackIndex])
+    notifyMediaLoaded({
+      trackIndex: selectedTrackIndex,
+      clipIndex: tracks[selectedTrackIndex]?.clips.length || 0,
+      file: new File([], '43s.mp4'),
+      words: sample43sWords
+    })
+  }, [handleTrackIndexChange, loadVideoIntoTimeline, selectedTrackIndex, notifyMediaLoaded, tracks])
 
   useEffect(() => {
-    if (testFileLoaded) {
-      loadTranscriptForSrc({ src: 'manson_clone.mp4', words: mansonWords })
-      setTestFileLoaded(false)
-    }
-  }, [testFileLoaded])
+    const { file, words } = mediaLoaded
+    if (!file || !words) return
+    const src = file.name
 
-  useEffect(() => {
-    if (test43sFileLoaded) {
-      loadTranscriptForSrc({ src: '43s.mp4', words: sample43sWords })
-      setTest43sFileLoaded(false)
-    }
-  }, [test43sFileLoaded])
+    loadTranscriptForSrc({ src, words })
+  }, [mediaLoaded])
 
   return (
     <div className="bg-background p-4 rounded-lg mb-6">
