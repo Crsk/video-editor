@@ -26,12 +26,14 @@ export type VideoClip = BaseClip & {
   originalDuration?: number
   offset?: number
   words?: { word: string; start: number; end: number }[]
+  url: string
 }
 
 export type AudioClip = BaseClip & {
   type: 'audio'
   src: string
   volume?: number
+  url: string
 }
 
 export type Clip = SolidClip | TextClip | VideoClip | AudioClip
@@ -88,6 +90,7 @@ export interface CompositionClip {
   durationInFrames: number
   src: string
   volume?: number
+  url: string
 }
 
 export interface CompositionTrack {

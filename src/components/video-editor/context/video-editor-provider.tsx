@@ -68,7 +68,8 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
           from: 0,
           durationInFrames: 1,
           type: 'video',
-          src: '/manson_clone.mp4'
+          src: '/manson_clone.mp4',
+          url: '/manson_clone.mp4'
         }
       ],
       volume: 1
@@ -81,7 +82,8 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
           from: 0,
           durationInFrames: 1,
           type: 'video',
-          src: '/manson_clone.mp4'
+          src: '/manson_clone.mp4',
+          url: '/manson_clone.mp4'
         }
       ],
       volume: 1
@@ -94,7 +96,8 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
           from: 0,
           durationInFrames: 1, // This will be updated by the audio loader
           type: 'audio',
-          src: '/spectre.mp3'
+          src: '/spectre.mp3',
+          url: '/spectre.mp3'
         }
       ],
       volume: 1
