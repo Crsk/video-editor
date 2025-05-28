@@ -364,13 +364,22 @@ export function useTrackManager() {
 
   const loadTranscriptForSrc = useCallback(
     ({ src, words }: { src: string; words: { word: string; start: number; end: number }[] }): void => {
+      if (!src || !words || !Array.isArray(words) || words.length === 0) return
+
       const matchingClips = findClipsBySrc({ src })
 
       if (matchingClips.length === 0) {
         console.warn(`No clips found with src: ${src}`)
-
         return
       }
+
+      const needsUpdate = matchingClips.some(
+        ({ clip }) =>
+          clip.type === 'video' &&
+          (!('words' in clip) || JSON.stringify((clip as VideoClip).words) !== JSON.stringify(words))
+      )
+
+      if (!needsUpdate) return
 
       setTracks(prevTracks => {
         const updatedTracks = [...prevTracks]

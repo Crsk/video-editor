@@ -86,11 +86,12 @@ export const VideoUpload = () => {
   }, [handleTrackIndexChange, loadVideoIntoTimeline, selectedTrackIndex, notifyMediaLoaded, tracks])
 
   useEffect(() => {
-    const { file, words } = mediaLoaded
-    if (!file || !words) return
-    const src = file.name
+    if (!mediaLoaded || !mediaLoaded.file) return
 
-    loadTranscriptForSrc({ src, words })
+    const { file, words } = mediaLoaded
+    const src = file.name
+    const wordsExist = words && Array.isArray(words) && words.length > 0
+    if (wordsExist) loadTranscriptForSrc({ src, words })
   }, [mediaLoaded])
 
   return (
