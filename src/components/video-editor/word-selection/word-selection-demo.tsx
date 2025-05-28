@@ -7,8 +7,9 @@ import { useKeyboardInteractions } from './use-keyboard-interactions'
 import { useWordElements } from './use-word-elements'
 import { useSelectionChange } from './use-selection-change'
 import { Popover, PopoverContent, PopoverAnchor } from '~/components/ui/popover'
-import { XIcon } from 'lucide-react'
+import { HighlighterIcon, XIcon } from 'lucide-react'
 import { Button } from '~/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip'
 
 const WordSelectionContent = () => {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -112,10 +113,19 @@ const WordSelectionContent = () => {
               />
             </PopoverAnchor>
           )}
-          <PopoverContent side="top" align="center" sideOffset={5}>
-            <Button className="focus-visible:ring-0" onClick={handleSelection}>
-              Highlight
-            </Button>
+          <PopoverContent side="top" align="center" sideOffset={5} className="w-auto p-0 border-0">
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button className="focus-visible:ring-0" onClick={handleSelection}>
+                    <HighlighterIcon className="w-4 h-4 mr-2" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-sm bg-primary text-primary-foreground p-2 rounded-md">Highlight</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </PopoverContent>
         </Popover>
 
