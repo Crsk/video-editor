@@ -25,6 +25,7 @@ export const TranscriptProvider = ({ children }: { children: ReactNode }) => {
 
   const text = useMemo(() => {
     const wordsWithClipInfo: TranscriptWord[] = []
+    const wordTimeMap = new Map<string, boolean>()
 
     tracks.forEach(track => {
       track.clips.forEach(clip => {
@@ -37,14 +38,20 @@ export const TranscriptProvider = ({ children }: { children: ReactNode }) => {
             const adjustedStart = clipStart + (word.start - clipOffset / 30)
             const adjustedEnd = clipStart + (word.end - clipOffset / 30)
 
-            wordsWithClipInfo.push({
-              word: word.word,
-              start: adjustedStart,
-              end: adjustedEnd,
-              clipId: videoClip.id,
-              clipStart: clipStart,
-              clipOffset: clipOffset / 30
-            })
+            const wordKey = `${word.word}_${adjustedStart.toFixed(3)}_${adjustedEnd.toFixed(3)}`
+
+            if (!wordTimeMap.has(wordKey)) {
+              wordTimeMap.set(wordKey, true)
+
+              wordsWithClipInfo.push({
+                word: word.word,
+                start: adjustedStart,
+                end: adjustedEnd,
+                clipId: videoClip.id,
+                clipStart: clipStart,
+                clipOffset: clipOffset / 30
+              })
+            }
           })
         }
       })
