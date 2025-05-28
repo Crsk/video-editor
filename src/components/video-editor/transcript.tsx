@@ -96,7 +96,7 @@ export const Transcript = () => {
   )
 
   return (
-    <div className="p-4 w-full max-w-4xl">
+    <div className="p-4 w-full max-w-4xl overflow-y-auto">
       <WordSelectionDemo
         words={mappedWords}
         onWordClick={handleWordClick}

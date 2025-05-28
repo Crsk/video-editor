@@ -8,13 +8,13 @@ import { useEvents } from '~/components/video-editor/hooks/use-events'
 export const VideoUpload = () => {
   const { tracks } = useEditor()
   const {
-    selectedFile,
     selectedTrackIndex,
+    /* selectedFile,
     useDefaultFile,
     defaultFileName,
     fileInputRef,
     handleFileChange,
-    handleSelectClick,
+    handleSelectClick, */
     handleTrackIndexChange,
     loadVideoIntoTimeline
   } = useVideoUpload()
@@ -88,7 +88,7 @@ export const VideoUpload = () => {
       <h3 className="text-lg font-medium mb-4">Test</h3>
 
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <Button onClick={handleSelectClick} variant="outline">
             Select Video
           </Button>
@@ -96,7 +96,7 @@ export const VideoUpload = () => {
           <span className="text-sm">
             {selectedFile ? selectedFile.name : useDefaultFile ? defaultFileName : 'No file selected'}
           </span>
-        </div>
+        </div> */}
 
         <div className="flex items-center gap-4">
           <select
