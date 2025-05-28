@@ -22,16 +22,14 @@ describe('Timeline Calculations', () => {
           from: 0,
           durationInFrames: 300, // 10 seconds at 30fps
           type: 'video',
-          src: '/test-video.mp4',
-          url: '/test-video.mp4'
+          src: '/test-video.mp4'
         },
         {
           id: 'video-2',
           from: 450, // 15 seconds at 30fps
           durationInFrames: 150, // 5 seconds at 30fps
           type: 'video',
-          src: '/test-video2.mp4',
-          url: '/test-video2.mp4'
+          src: '/test-video2.mp4'
         }
       ]
     },
@@ -43,8 +41,7 @@ describe('Timeline Calculations', () => {
           from: 0,
           durationInFrames: 900, // 30 seconds at 30fps
           type: 'audio',
-          src: '/test-audio.mp3',
-          url: '/test-audio.mp3'
+          src: '/test-audio.mp3'
         }
       ]
     }
@@ -86,8 +83,7 @@ describe('Timeline Calculations', () => {
               from: 0,
               durationInFrames: 30, // 1 second at 30fps
               type: 'video',
-              src: '/short.mp4',
-              url: '/short.mp4'
+              src: '/short.mp4'
             }
           ]
         }

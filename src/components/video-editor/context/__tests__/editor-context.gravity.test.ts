@@ -8,8 +8,7 @@ describe('applyGravityToTrack', () => {
     from,
     durationInFrames: duration,
     type: 'video',
-    src: '/dummy.mp4',
-    url: '/dummy.mp4'
+    src: '/dummy.mp4'
   })
 
   it('shifts all clips left to fill gaps', () => {

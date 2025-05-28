@@ -26,8 +26,7 @@ export function useCompositionData(): CompositionData {
               from: clip.from,
               durationInFrames: clip.durationInFrames,
               src: clip.src.split('/').pop()!,
-              volume: clip.volume || 1,
-              url: clip.url
+              volume: clip.volume || 1
             }))
         })),
       currentTime: currentTime

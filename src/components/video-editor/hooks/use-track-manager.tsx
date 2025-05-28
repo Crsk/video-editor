@@ -87,8 +87,7 @@ export function useTrackManager() {
           from: calculateClipStartPosition(track.clips),
           durationInFrames,
           src,
-          volume: 1,
-          url: src
+          volume: 1
         }
 
         // Add the clip and apply gravity to ensure no gaps
@@ -125,8 +124,7 @@ export function useTrackManager() {
           from: calculateClipStartPosition(track.clips),
           durationInFrames,
           src,
-          volume: 1,
-          url: src
+          volume: 1
         }
 
         const updatedClips = applyGravityToTrack([...track.clips, newClip])
@@ -212,8 +210,7 @@ export function useTrackManager() {
           from: 0,
           durationInFrames,
           src,
-          volume: 1,
-          url: src
+          volume: 1
         }
 
         const updatedClips = applyGravityToTrack([newClip, ...track.clips])
@@ -251,8 +248,7 @@ export function useTrackManager() {
           from: endPosition,
           durationInFrames,
           src,
-          volume: 1,
-          url: src
+          volume: 1
         }
 
         updatedTracks[trackIndex] = {
@@ -357,8 +353,7 @@ export function useTrackManager() {
 
       tracks.forEach((track, trackIndex) => {
         track.clips.forEach(clip => {
-          if (('src' in clip && clip.src === src) || ('url' in clip && clip.url === src))
-            results.push({ trackIndex, clip })
+          if ('src' in clip && clip.src === src) results.push({ trackIndex, clip })
         })
       })
 
