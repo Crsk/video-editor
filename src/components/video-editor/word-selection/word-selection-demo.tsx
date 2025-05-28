@@ -60,7 +60,7 @@ const WordSelectionContent = () => {
           ? 'var(--subtle-xl)'
           : isSelected
           ? 'var(--highlight)'
-          : 'transparent',
+          : '',
 
         zIndex: isCurrent ? 10 : 'auto',
         position: 'relative' as const,
