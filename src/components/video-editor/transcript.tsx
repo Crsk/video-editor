@@ -1,5 +1,7 @@
-import { useEffect, useState, useRef } from 'react'
+import { useState, useCallback } from 'react'
 import { useTranscript } from './hooks/use-transcript'
+import WordSelectionDemo from './word-selection/word-selection-demo'
+import { SelectionRange, Word } from './word-selection/types'
 
 export function formatVTTTime(totalSeconds: number): string {
   const hours = Math.floor(totalSeconds / 3600)
@@ -61,88 +63,49 @@ export const wordsToVTT = (
 
 export const Transcript = () => {
   const { text, currentTime, seekToWord } = useTranscript()
-  const [activeWordIndex, setActiveWordIndex] = useState<number | null>(null)
-  const wordRefs = useRef<(HTMLSpanElement | null)[]>([])
-  const [highlightStyle, setHighlightStyle] = useState({
-    left: 0,
-    top: 0,
-    width: 0,
-    height: 0,
-    opacity: 0
-  })
+  const [savedSelections, setSavedSelections] = useState<SelectionRange[]>([])
 
-  useEffect(() => {
-    if (currentTime === undefined) return
-
-    const index = text.findIndex(word => {
-      const buffer = 0.05
-      return currentTime >= word.start - buffer && currentTime <= word.end + buffer
-    })
-
-    setActiveWordIndex(index !== -1 ? index : null)
-  }, [currentTime, text])
-
-  useEffect(() => {
-    if (activeWordIndex === null) {
-      setHighlightStyle(prev => ({ ...prev, opacity: 0 }))
-      return
+  const mappedWords: Word[] = text.map(word => ({
+    text: word.word,
+    metadata: {
+      start: word.start,
+      end: word.end
     }
+  }))
 
-    const wordElement = wordRefs.current[activeWordIndex]
-    if (!wordElement) return
+  const handleWordClick = useCallback(
+    (_: Word, index: number) => {
+      seekToWord(index, false)
+    },
+    [seekToWord]
+  )
 
-    const rect = wordElement.getBoundingClientRect()
-    const parentRect = wordElement.parentElement?.getBoundingClientRect()
+  const handleSelectionEnd = useCallback((_: string, range: SelectionRange) => {
+    setSavedSelections(prev => [...prev, range])
+  }, [])
 
-    if (!parentRect) return
+  const handleSelectionDelete = useCallback((range: SelectionRange) => {
+    setSavedSelections(prev => prev.filter(r => !(r.start === range.start && r.end === range.end)))
+  }, [])
 
-    setHighlightStyle({
-      left: rect.left - parentRect.left,
-      top: rect.top - parentRect.top,
-      width: rect.width,
-      height: rect.height,
-      opacity: 1
-    })
-  }, [activeWordIndex])
-
-  useEffect(() => {
-    wordRefs.current = wordRefs.current.slice(0, text.length)
-  }, [text])
+  const handleSeekToWord = useCallback(
+    (index: number) => {
+      seekToWord(index, false)
+    },
+    [seekToWord]
+  )
 
   return (
-    <div className="p-4 w-96">
-      <div className="relative">
-        {/* Animated highlight rectangle */}
-        <div
-          className="absolute bg-black rounded-md pointer-events-none transition-all duration-120 ease-in-out z-0"
-          style={{
-            transform: `translate(${highlightStyle.left}px, ${highlightStyle.top}px)`,
-            width: `${highlightStyle.width}px`,
-            height: `${highlightStyle.height}px`,
-            opacity: highlightStyle.opacity
-          }}
-        />
-
-        {text.map(({ word, start, end }, index) => (
-          <span
-            title={`${formatVTTTime(start)} - ${formatVTTTime(end)}`}
-            key={`${word}-${index}`}
-            ref={el => {
-              wordRefs.current[index] = el
-            }}
-            className="cursor-pointer inline-block px-0.5 relative z-10 transition-colors duration-120 ease-in-out"
-            style={{
-              color: activeWordIndex === index ? 'white' : 'black'
-            }}
-            onClick={() => {
-              setActiveWordIndex(index)
-              seekToWord(index, false)
-            }}
-          >
-            {word}{' '}
-          </span>
-        ))}
-      </div>
+    <div className="p-4 w-full max-w-4xl">
+      <WordSelectionDemo
+        words={mappedWords}
+        onWordClick={handleWordClick}
+        onSelectionEnd={handleSelectionEnd}
+        savedSelections={savedSelections}
+        onSelectionDelete={handleSelectionDelete}
+        onSeekToWord={handleSeekToWord}
+        currentTime={currentTime}
+      />
     </div>
   )
 }
