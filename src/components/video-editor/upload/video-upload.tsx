@@ -32,7 +32,7 @@ export const VideoUpload = () => {
     { word: 'week', start: 2.04, end: 2.3 },
     { word: 'and', start: 2.3, end: 2.54 },
     { word: 'found', start: 2.54, end: 2.7 },
-    { word: 'her', start: 2.7, end: 2.86 },
+    { word: 'a', start: 2.7, end: 2.86 },
     { word: 'winner', start: 2.86, end: 3.08 },
     { word: 'in', start: 3.08, end: 3.32 },
     { word: 'just', start: 3.32, end: 3.46 },
@@ -40,7 +40,7 @@ export const VideoUpload = () => {
     { word: 'days.', start: 3.72, end: 4.46 },
     { word: 'Discover', start: 4.46, end: 4.82 },
     { word: 'how', start: 4.82, end: 5.24 },
-    { word: 'Silverance', start: 5.24, end: 5.68 },
+    { word: "Sovran's", start: 5.24, end: 5.68 },
     { word: 'customer', start: 5.68, end: 6.08 },
     { word: 'achieved', start: 6.08, end: 6.4 },
     { word: 'this.', start: 6.4, end: 6.72 }
@@ -96,7 +96,7 @@ export const VideoUpload = () => {
 
   return (
     <div className="bg-background p-4 rounded-lg mb-6">
-      <h3 className="text-lg font-medium mb-4">Video Upload</h3>
+      <h3 className="text-lg font-medium mb-4">Test</h3>
 
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-4">
