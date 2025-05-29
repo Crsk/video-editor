@@ -89,7 +89,7 @@ export const Clip: FC<ClipProps> = ({
       {showResizeControls && (
         <div
           className={cn(
-            'absolute left-0 top-0 bottom-0 w-4 flex items-center justify-center bg-blue-500/0 hover:bg-blue-500/50 cursor-ew-resize z-40 resize-handle text-secondary dark:text-primary',
+            'absolute left-0 top-0 bottom-0 w-4 flex items-center justify-center bg-blue-500/0 hover:bg-blue-500/50 cursor-ew-resize z-40 resize-handle text-secondary',
             styles?.active.resizeHandle
           )}
           data-testid={`clip-resize-left-${clipIndex}-${ClipIndex}`}
@@ -136,7 +136,7 @@ export const Clip: FC<ClipProps> = ({
       {showResizeControls && (
         <div
           className={cn(
-            'absolute right-0 top-0 bottom-0 w-4 flex items-center justify-center bg-blue-500/0 hover:bg-blue-500/50 cursor-ew-resize z-40 resize-handle text-secondary dark:text-primary',
+            'absolute right-0 top-0 bottom-0 w-4 flex items-center justify-center bg-blue-500/0 hover:bg-blue-500/50 cursor-ew-resize z-40 resize-handle text-secondary',
             styles?.active.resizeHandle
           )}
           data-testid={`clip-resize-right-${clipIndex}-${ClipIndex}`}

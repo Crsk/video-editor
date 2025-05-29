@@ -127,10 +127,10 @@ export const SelectedVideoRenderSettingsControl: FC = () => {
         <PopoverContent
           side="bottom"
           align="start"
-          className="timeline-popover w-auto flex flex-col gap-2 bg-light-blue rounded-2xl border-0 overflow-y-auto p-4 items-center"
+          className="timeline-popover w-auto flex flex-col gap-2 bg-popover-background rounded-3xl border-1 overflow-y-auto p-4 items-center"
           onClick={(e: React.MouseEvent) => e.stopPropagation()}
         >
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 py-2 px-1">
             {isVideo && (
               <div>
                 <h4 className="text-xs font-medium mb-1 text-white/80">Render Style</h4>

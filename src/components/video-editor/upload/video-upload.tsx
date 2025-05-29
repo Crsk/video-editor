@@ -85,8 +85,6 @@ export const VideoUpload = () => {
 
   return (
     <div className="bg-background p-4 rounded-lg mb-6">
-      <h3 className="text-lg font-medium mb-4">Test</h3>
-
       <div className="flex flex-col gap-4">
         {/* <div className="flex items-center gap-4">
           <Button onClick={handleSelectClick} variant="outline">
@@ -112,11 +110,11 @@ export const VideoUpload = () => {
           </select>
 
           <Button onClick={handleUseTestFile} variant="outline" className="mr-2">
-            Use Test File
+            6s
           </Button>
 
           <Button onClick={handleUse43sFile} variant="outline" className="mr-2">
-            Use 43s File
+            43s
           </Button>
         </div>
       </div>

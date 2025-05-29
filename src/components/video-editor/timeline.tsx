@@ -32,8 +32,8 @@ export const TimelineComponent = () => {
               styles={{
                 root: '',
                 timeMarker: {
-                  handle: 'bg-brand-p3',
-                  line: 'bg-brand-p3'
+                  handle: 'bg-primary',
+                  line: 'bg-primary'
                 },
                 timeRuler: {
                   root: '',
@@ -45,8 +45,8 @@ export const TimelineComponent = () => {
                     root: '',
                     content: '',
                     active: {
-                      root: 'bg-brand',
-                      resizeHandle: '',
+                      root: 'bg-brand-p3',
+                      resizeHandle: 'text-black',
                       content: '',
                       dragOrResize: ''
                     }
