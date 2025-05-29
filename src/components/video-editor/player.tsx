@@ -16,8 +16,7 @@ export const VideoPlayer: FC = () => {
         margin: '0 auto',
         background: '#111',
         borderRadius: 12,
-        overflow: 'hidden',
-        border: '1px solid var(--accent)'
+        overflow: 'hidden'
       }}
     >
       <div style={{ width: '100%', height: '100%', position: 'relative' }}>

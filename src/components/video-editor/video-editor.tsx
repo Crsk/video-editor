@@ -16,7 +16,7 @@ export const VideoEditor: FC<EditorProps> = ({ tracks }) => {
           <ResizablePanel defaultSize={70}>
             <ResizablePanelGroup direction="horizontal" autoSaveId="video-editor-panel-horizontal">
               <ResizablePanel
-                defaultSize={22}
+                defaultSize={24}
                 minSize={15}
                 maxSize={50}
                 collapsible
