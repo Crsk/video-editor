@@ -54,7 +54,7 @@
   --brand-p3: oklch(0.772 0.1986 64.55);
   --brand: #ff9900;
 
-  --clip-background: #121212;
+  --clip-background: oklch(0.705 0.015 286.067);
 
   --highlight: oklch(0.9206 0.1855 99.03);
 
@@ -106,7 +106,7 @@
   --brand-p3: oklch(0.772 0.1986 64.55);
   --brand: #ff9900;
 
-  --clip-background: rgb(150, 151, 162);
+  --clip-background: oklch(0.552 0.016 285.938);
 
   --highlight: oklch(0.9206 0.1855 99.03);
 

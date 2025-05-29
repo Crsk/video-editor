@@ -45,8 +45,8 @@ export const TimelineComponent = () => {
                     root: '',
                     content: '',
                     active: {
-                      root: 'bg-brand-p3',
-                      resizeHandle: 'text-black',
+                      root: 'bg-primary',
+                      resizeHandle: 'text-primary-foreground',
                       content: '',
                       dragOrResize: ''
                     }
