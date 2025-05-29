@@ -1,11 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App'
-import TestHTML5App from './test-full-editor'
+import TestRealComposition from './test-real-composition'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <TestHTML5App />
+    <TestRealComposition />
   </StrictMode>
 )
