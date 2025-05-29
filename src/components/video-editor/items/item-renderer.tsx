@@ -3,6 +3,7 @@ import { AbsoluteFill, OffthreadVideo } from 'remotion'
 import { Clip, VideoClip } from '../types'
 import { AudioClip } from './audio-item'
 import { useVideoTransform } from '../hooks/use-video-transform'
+import { AnimatedCaptions } from '../captions/animated-captions'
 
 interface ClipRendererProps {
   clip: Clip
@@ -77,11 +78,22 @@ export const ClipRenderer: FC<ClipRendererProps> = ({ clip, volume = 1 }) => {
     case 'video':
       const { getVideoTransform } = useVideoTransform()
       const { transform, finalVolume } = getVideoTransform(clip as VideoClip, volume)
+      const videoClip = clip as VideoClip
 
       if (clip.renderOption === 'contain-blur') {
-        return <VideoContainBlurBackground clip={clip} volume={volume} />
+        return (
+          <AbsoluteFill>
+            <VideoContainBlurBackground clip={clip} volume={volume} />
+            {videoClip.words && <AnimatedCaptions words={videoClip.words} />}
+          </AbsoluteFill>
+        )
       } else if (clip.renderOption === 'cover') {
-        return <VideoCover clip={clip} volume={volume} />
+        return (
+          <AbsoluteFill>
+            <VideoCover clip={clip} volume={volume} />
+            {videoClip.words && <AnimatedCaptions words={videoClip.words} />}
+          </AbsoluteFill>
+        )
       } else {
         return (
           <AbsoluteFill style={{ backgroundColor: '#000' }}>
@@ -96,6 +108,7 @@ export const ClipRenderer: FC<ClipRendererProps> = ({ clip, volume = 1 }) => {
               }}
               volume={finalVolume}
             />
+            {videoClip.words && <AnimatedCaptions words={videoClip.words} />}
           </AbsoluteFill>
         )
       }
