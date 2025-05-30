@@ -32,7 +32,8 @@ export function useMediaUpload() {
     [getTrackType, loadVideoIntoTimeline, loadAudioIntoTimeline]
   )
 
-  const getAcceptedFileType = useCallback((trackType: MediaType | 'generic') => {
+  const getAcceptedFileType = useCallback((trackType: MediaType | 'generic' | 'caption') => {
+    if (trackType === 'caption') return '' // Caption tracks don't accept file uploads
     return trackType === 'video' ? 'video/mp4' : trackType === 'audio' ? 'audio/mpeg' : ''
   }, [])
 

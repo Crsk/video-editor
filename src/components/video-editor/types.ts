@@ -34,7 +34,17 @@ export type AudioClip = BaseClip & {
   volume?: number
 }
 
-export type Clip = SolidClip | TextClip | VideoClip | AudioClip
+export type CaptionClip = BaseClip & {
+  type: 'caption'
+  text: string
+  color?: string
+  fontSize?: number
+  fontWeight?: number
+  textAlign?: 'left' | 'center' | 'right'
+  positionY?: number
+}
+
+export type Clip = SolidClip | TextClip | VideoClip | AudioClip | CaptionClip
 
 export type MediaType = 'video' | 'audio'
 

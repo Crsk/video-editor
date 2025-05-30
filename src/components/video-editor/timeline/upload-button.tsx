@@ -15,6 +15,8 @@ export const UploadButton: FC<UploadButtonProps> = ({ trackIndex, className }) =
   const trackType = getTrackType(trackIndex)
   const acceptedFileTypes = getAcceptedFileType(trackType)
 
+  if (trackType === 'caption') return null
+
   const handleButtonClick = () => {
     if (fileInputRef.current) fileInputRef.current.click()
   }

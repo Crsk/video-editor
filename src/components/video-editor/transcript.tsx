@@ -1,7 +1,9 @@
 import { useState, useCallback } from 'react'
 import { useTranscript } from './hooks/use-transcript'
+import { useTrackManager } from './hooks/use-track-manager'
 import WordSelectionDemo from './word-selection/word-selection-demo'
 import { SelectionRange, Word } from './word-selection/types'
+import { Button } from '~/components/ui/button'
 
 export function formatVTTTime(totalSeconds: number): string {
   const hours = Math.floor(totalSeconds / 3600)
@@ -63,6 +65,7 @@ export const wordsToVTT = (
 
 export const Transcript = () => {
   const { text, currentTime, seekToWord } = useTranscript()
+  const { replaceAllCaptionTracks } = useTrackManager()
   const [savedSelections, setSavedSelections] = useState<SelectionRange[]>([])
 
   const mappedWords: Word[] = text.map(word => ({
@@ -95,8 +98,31 @@ export const Transcript = () => {
     [seekToWord]
   )
 
+  const handleCreateCaptionTrack = useCallback(() => {
+    if (text.length === 0) {
+      console.warn('No transcript available to create captions')
+      return
+    }
+
+    const words = text.map(word => ({
+      word: word.word,
+      start: word.start,
+      end: word.end
+    }))
+
+    replaceAllCaptionTracks(words)
+  }, [text, replaceAllCaptionTracks])
+
   return (
     <div className="p-4 w-full max-w-4xl overflow-y-auto">
+      <div className="mb-4 flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Transcript</h3>
+        {text.length > 0 && (
+          <Button onClick={handleCreateCaptionTrack} variant="outline" size="sm" className="z-1000">
+            Add Captions
+          </Button>
+        )}
+      </div>
       <WordSelectionDemo
         words={mappedWords}
         onWordClick={handleWordClick}

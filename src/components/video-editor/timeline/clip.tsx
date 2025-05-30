@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { ClipStyle, Clip as ClipType } from '../types'
+import { ClipStyle, Clip as ClipType, CaptionClip } from '../types'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { formatTimeCode } from '../utils/format-time'
 import { useDraggable } from '@dnd-kit/core'
@@ -7,6 +7,75 @@ import { AudioTrackVisualizer } from './audio-track-visualizer'
 import { cn } from '~/lib/utils'
 
 const FPS = 30
+
+const CaptionContent: FC<{ clip: CaptionClip; clipWidth: number }> = ({ clip, clipWidth }) => {
+  const text = clip.text
+
+  if (clipWidth < 40) return <div title={text}></div>
+
+  if (clipWidth < 80) {
+    const maxChars = Math.floor(clipWidth / 8) - 1 // Rough estimate of character width
+    const shortText = maxChars > 0 ? text.substring(0, Math.max(1, maxChars)) : text.charAt(0)
+
+    return (
+      <div
+        className="text-foreground text-xs w-full flex pl-3"
+        style={{
+          overflow: 'hidden',
+          fontSize: '10px',
+          lineHeight: '1'
+        }}
+        title={text}
+      >
+        {shortText}
+        {maxChars < text.length ? '…' : ''}
+      </div>
+    )
+  }
+
+  if (clipWidth < 120) {
+    const words = text.split(' ')
+    const maxChars = Math.floor(clipWidth / 6) - 3
+
+    let displayText = ''
+    for (const word of words) {
+      if ((displayText + word).length <= maxChars) displayText += (displayText ? ' ' : '') + word
+      else break
+    }
+
+    if (!displayText && words[0]) displayText = words[0].substring(0, Math.max(1, maxChars))
+
+    return (
+      <div
+        className="text-foreground text-xs w-full pl-3 text-center"
+        style={{
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          fontSize: '11px'
+        }}
+        title={text}
+      >
+        {displayText}
+        {displayText.length < text.length ? '…' : ''}
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className="text-foreground text-xs w-full pl-2 text-center"
+      style={{
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap'
+      }}
+      title={text}
+    >
+      {text}
+    </div>
+  )
+}
 
 interface ClipProps {
   clip: ClipType
@@ -68,8 +137,8 @@ export const Clip: FC<ClipProps> = ({
     <div
       ref={setNodeRef}
       className={cn(
-        `absolute flex items-center justify-center h-5 mt-[6.5px] text-accent text-xs cursor-grab overflow-hidden truncate whitespace-nowrap ${
-          clip.type === 'audio' ? '' : 'bg-clip-background'
+        `absolute flex items-center h-5 mt-[6.5px] text-accent text-xs cursor-grab ${
+          clip.type === 'audio' ? '' : clip.type === 'caption' ? 'bg-subtle-xl' : 'bg-clip-background'
         } timeline-clip opacity-80 border-0 select-none`,
         styles?.root,
         isSelected ? (styles?.active.root !== '' ? styles?.active.root : 'bg-[var(--color-timeline-accent)]') : ''
@@ -105,7 +174,7 @@ export const Clip: FC<ClipProps> = ({
       {/* Clip content */}
       <div
         className={cn(
-          'flex-1 text-center text-secondary',
+          'flex-1 flex items-center justify-center text-secondary min-w-0',
           styles?.content,
           isSelected
             ? styles?.active.content !== ''
@@ -127,6 +196,8 @@ export const Clip: FC<ClipProps> = ({
               />
             )}
           </div>
+        ) : clip.type === 'caption' ? (
+          <CaptionContent clip={clip as CaptionClip} clipWidth={ClipDurationSeconds * pixelsPerSecond} />
         ) : (
           ''
         )}

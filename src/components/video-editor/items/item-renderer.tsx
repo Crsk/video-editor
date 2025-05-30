@@ -1,9 +1,8 @@
 import { FC } from 'react'
-import { AbsoluteFill, OffthreadVideo } from 'remotion'
-import { Clip, VideoClip } from '../types'
+import { AbsoluteFill, OffthreadVideo, useCurrentFrame, useVideoConfig, interpolate, spring } from 'remotion'
+import { Clip, VideoClip, CaptionClip } from '../types'
 import { AudioClip } from './audio-item'
 import { useVideoTransform } from '../hooks/use-video-transform'
-import { AnimatedCaptions } from '../captions/animated-captions'
 
 interface ClipRendererProps {
   clip: Clip
@@ -84,14 +83,12 @@ export const ClipRenderer: FC<ClipRendererProps> = ({ clip, volume = 1 }) => {
         return (
           <AbsoluteFill>
             <VideoContainBlurBackground clip={clip} volume={volume} />
-            {videoClip.words && <AnimatedCaptions words={videoClip.words} />}
           </AbsoluteFill>
         )
       } else if (clip.renderOption === 'cover') {
         return (
           <AbsoluteFill>
             <VideoCover clip={clip} volume={volume} />
-            {videoClip.words && <AnimatedCaptions words={videoClip.words} />}
           </AbsoluteFill>
         )
       } else {
@@ -108,7 +105,6 @@ export const ClipRenderer: FC<ClipRendererProps> = ({ clip, volume = 1 }) => {
               }}
               volume={finalVolume}
             />
-            {videoClip.words && <AnimatedCaptions words={videoClip.words} />}
           </AbsoluteFill>
         )
       }
@@ -123,6 +119,83 @@ export const ClipRenderer: FC<ClipRendererProps> = ({ clip, volume = 1 }) => {
           }}
         >
           <h1>{clip.text}</h1>
+        </AbsoluteFill>
+      )
+    case 'caption':
+      const captionClip = clip as CaptionClip
+      const frame = useCurrentFrame()
+      const { fps } = useVideoConfig()
+
+      // For individual clips, frame starts at 0 for each clip
+      // Calculate relative progress within this clip's duration
+      const clipDurationFrames = captionClip.durationInFrames
+      const relativeFrame = frame // frame is already relative to clip start
+      const wordProgress = relativeFrame / clipDurationFrames
+
+      // Spring animation for entrance (using relative frame)
+      const entranceAnimation = spring({
+        frame: relativeFrame,
+        fps,
+        config: {
+          damping: 200,
+          stiffness: 400,
+          mass: 0.8
+        }
+      })
+
+      // Scale animation (same as animated-captions)
+      const scale = interpolate(entranceAnimation, [0, 1], [0.8, 1], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp'
+      })
+
+      // Opacity animation (using wordProgress based on relative timing)
+      const opacity = interpolate(wordProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp'
+      })
+
+      // Bounce animation (using relative frame)
+      const bounce = interpolate(entranceAnimation, [0, 0.5, 1], [0, -5, 0], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp'
+      })
+
+      return (
+        <AbsoluteFill
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0
+          }}
+        >
+          <div
+            style={{
+              fontSize: captionClip.fontSize || 56,
+              fontWeight: captionClip.fontWeight || 900,
+              color: captionClip.color || '#ffffff',
+              textAlign: 'center',
+              textShadow: '0 4px 8px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6)',
+              opacity,
+              padding: '24px 48px',
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              letterSpacing: '0.02em',
+              textTransform: 'uppercase' as const,
+              maxWidth: '90%',
+              position: 'absolute',
+              bottom: captionClip.positionY !== undefined ? `${captionClip.positionY}px` : '80px',
+              left: '50%',
+              transform: `translateX(-50%) scale(${scale}) translateY(${bounce}px)`,
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {captionClip.text}
+          </div>
         </AbsoluteFill>
       )
     case 'solid':

@@ -18,7 +18,7 @@ export const VideoUpload = () => {
     handleTrackIndexChange,
     loadVideoIntoTimeline
   } = useVideoUpload()
-  const { loadTranscriptForSrc } = useTrackManager()
+  const { loadTranscriptForSrc, autoUpdateCaptionsIfExist } = useTrackManager()
 
   // Sample transcript data for demo videos
   const mansonWords = [
@@ -80,8 +80,13 @@ export const VideoUpload = () => {
     const { file, words } = mediaLoaded
     const src = file.name
     const wordsExist = words && Array.isArray(words) && words.length > 0
-    if (wordsExist) loadTranscriptForSrc({ src, words })
-  }, [mediaLoaded])
+
+    if (wordsExist) {
+      loadTranscriptForSrc({ src, words })
+
+      setTimeout(() => autoUpdateCaptionsIfExist, 100) // Small delay to ensure transcript is loaded first
+    }
+  }, [mediaLoaded, loadTranscriptForSrc, autoUpdateCaptionsIfExist])
 
   return (
     <div className="bg-background p-4 rounded-lg mb-6">

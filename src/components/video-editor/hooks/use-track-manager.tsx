@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useEditor } from '../context/video-editor-provider'
-import { Clip, MediaType, Track, VideoClip } from '../types'
+import { Clip, MediaType, Track, VideoClip, CaptionClip } from '../types'
 import { v4 as uuidv4 } from 'uuid'
 import { applyGravityToTrack } from '../context/gravity'
 
@@ -37,20 +37,86 @@ export function useTrackManager() {
     [setTracks]
   )
 
+  const hasCaptionTracks = useCallback((): boolean => {
+    return tracks.some(track => track.type === 'caption')
+  }, [tracks])
+
+  const autoUpdateCaptionsIfExist = useCallback((): void => {
+    if (!hasCaptionTracks()) return
+
+    const allWords: { word: string; start: number; end: number }[] = []
+
+    tracks.forEach(track => {
+      track.clips.forEach(clip => {
+        if (clip.type === 'video' && (clip as VideoClip).words) {
+          const videoClip = clip as VideoClip
+          const clipStartInSeconds = videoClip.from / 30
+          const clipOffset = (videoClip.offset || 0) / 30
+
+          videoClip.words?.forEach(word => {
+            allWords.push({
+              word: word.word,
+              start: clipStartInSeconds + (word.start - clipOffset),
+              end: clipStartInSeconds + (word.end - clipOffset)
+            })
+          })
+        }
+      })
+    })
+
+    allWords.sort((a, b) => a.start - b.start)
+
+    if (allWords.length > 0) {
+      setTracks(prevTracks => {
+        // Remove all existing caption tracks
+        const tracksWithoutCaptions = prevTracks.filter(track => track.type !== 'caption')
+
+        const captionClips: CaptionClip[] = allWords.map(word => ({
+          id: uuidv4(),
+          type: 'caption',
+          from: Math.round(word.start * 30),
+          durationInFrames: Math.round((word.end - word.start) * 30),
+          text: word.word,
+          color: '#ffffff',
+          fontSize: 56,
+          fontWeight: 900,
+          textAlign: 'center',
+          positionY: 80
+        }))
+
+        const newCaptionTrack: Track = {
+          name: 'Captions',
+          clips: captionClips,
+          volume: 1,
+          type: 'caption'
+        }
+
+        return [...tracksWithoutCaptions, newCaptionTrack]
+      })
+    }
+  }, [tracks, hasCaptionTracks, setTracks])
+
   const removeTrack = useCallback(
     (trackIndex: number): void => {
+      let removedTrackHadVideoClips = false
+
       setTracks(prevTracks => {
         if (trackIndex < 0 || trackIndex >= prevTracks.length) {
           console.warn(`Track index ${trackIndex} is out of bounds`)
           return prevTracks
         }
 
+        const trackToRemove = prevTracks[trackIndex]
+        removedTrackHadVideoClips = trackToRemove.clips.some(clip => clip.type === 'video' && (clip as VideoClip).words)
+
         const updatedTracks = [...prevTracks]
         updatedTracks.splice(trackIndex, 1)
         return updatedTracks
       })
+
+      if (removedTrackHadVideoClips) setTimeout(autoUpdateCaptionsIfExist, 100)
     },
-    [setTracks]
+    [setTracks, autoUpdateCaptionsIfExist]
   )
 
   const calculateClipStartPosition = useCallback((clips: Clip[]): number => {
@@ -160,8 +226,10 @@ export function useTrackManager() {
 
         return updatedTracks
       })
+
+      setTimeout(() => autoUpdateCaptionsIfExist, 100)
     },
-    [setTracks]
+    [setTracks, autoUpdateCaptionsIfExist]
   )
 
   const updateClip = useCallback(
@@ -336,8 +404,11 @@ export function useTrackManager() {
   )
 
   const getTrackType = useCallback(
-    (trackIndex: number): MediaType | 'generic' => {
+    (trackIndex: number): MediaType | 'generic' | 'caption' => {
       const track = tracks[trackIndex]
+      if (!track) return 'generic'
+
+      if (track.type === 'caption' || track.clips.some((clip: Clip) => clip.type === 'caption')) return 'caption'
       if (track.type === 'video' || track.type === 'audio') return track.type
       if (track.clips.some((clip: Clip) => clip.type === 'video')) return 'video'
       if (track.clips.some((clip: Clip) => clip.type === 'audio')) return 'audio'
@@ -402,11 +473,155 @@ export function useTrackManager() {
     [findClipsBySrc, setTracks]
   )
 
+  const addCaptionClip = useCallback(
+    (
+      trackIndex: number,
+      text: string,
+      from: number,
+      durationInFrames: number,
+      options?: Partial<Pick<CaptionClip, 'color' | 'fontSize' | 'fontWeight' | 'textAlign' | 'positionY'>>
+    ): string => {
+      const clipId = uuidv4()
+
+      setTracks(prevTracks => {
+        if (trackIndex < 0 || trackIndex >= prevTracks.length) {
+          console.warn(`Track index ${trackIndex} is out of bounds`)
+          return prevTracks
+        }
+
+        const updatedTracks = [...prevTracks]
+        const track = updatedTracks[trackIndex]
+        const newClip: CaptionClip = {
+          id: clipId,
+          type: 'caption',
+          from,
+          durationInFrames,
+          text,
+          color: options?.color || '#ffffff',
+          fontSize: options?.fontSize || 56,
+          fontWeight: options?.fontWeight || 900,
+          textAlign: options?.textAlign || 'center',
+          positionY: options?.positionY || 80
+        }
+
+        const updatedClips = [...track.clips, newClip]
+
+        updatedTracks[trackIndex] = {
+          ...track,
+          clips: updatedClips,
+          type: 'caption'
+        }
+
+        return updatedTracks
+      })
+
+      return clipId
+    },
+    [setTracks]
+  )
+
+  const createCaptionTrack = useCallback(
+    (name: string = 'Captions'): number => {
+      let newTrackIndex = 0
+
+      setTracks(prevTracks => {
+        const newTrack: Track = {
+          name,
+          clips: [],
+          volume: 1,
+          type: 'caption'
+        }
+        const updatedTracks = [...prevTracks, newTrack]
+        newTrackIndex = updatedTracks.length - 1
+        return updatedTracks
+      })
+
+      return newTrackIndex
+    },
+    [setTracks]
+  )
+
+  const createCaptionsFromWords = useCallback(
+    (trackIndex: number, words: { word: string; start: number; end: number }[], fps: number = 30): void => {
+      if (!words || words.length === 0) return
+
+      setTracks(prevTracks => {
+        if (trackIndex < 0 || trackIndex >= prevTracks.length) {
+          console.warn(`Track index ${trackIndex} is out of bounds`)
+          return prevTracks
+        }
+
+        const updatedTracks = [...prevTracks]
+        const track = updatedTracks[trackIndex]
+
+        // Create individual caption clips for each word
+        const captionClips: CaptionClip[] = words.map(word => ({
+          id: uuidv4(),
+          type: 'caption',
+          from: Math.round(word.start * fps),
+          durationInFrames: Math.round((word.end - word.start) * fps),
+          text: word.word,
+          color: '#ffffff',
+          fontSize: 56,
+          fontWeight: 900,
+          textAlign: 'center',
+          positionY: 80
+        }))
+
+        updatedTracks[trackIndex] = {
+          ...track,
+          clips: captionClips,
+          type: 'caption'
+        }
+
+        return updatedTracks
+      })
+    },
+    [setTracks]
+  )
+
+  const replaceAllCaptionTracks = useCallback(
+    (words: { word: string; start: number; end: number }[], fps: number = 30): void => {
+      if (!words || words.length === 0) return
+
+      setTracks(prevTracks => {
+        // Remove all existing caption tracks
+        const tracksWithoutCaptions = prevTracks.filter(track => track.type !== 'caption')
+
+        // Create individual caption clips for each word
+        const captionClips: CaptionClip[] = words.map(word => ({
+          id: uuidv4(),
+          type: 'caption',
+          from: Math.round(word.start * fps),
+          durationInFrames: Math.round((word.end - word.start) * fps),
+          text: word.word,
+          color: '#ffffff',
+          fontSize: 56,
+          fontWeight: 900,
+          textAlign: 'center',
+          positionY: 80
+        }))
+
+        // Create new caption track at the end
+        const newCaptionTrack: Track = {
+          name: 'Captions',
+          clips: captionClips,
+          volume: 1,
+          type: 'caption'
+        }
+
+        return [...tracksWithoutCaptions, newCaptionTrack]
+      })
+    },
+    [setTracks]
+  )
+
   return {
     // Track management
     tracks,
     getAllTracks,
     createTrack,
+    createCaptionTrack,
     removeTrack,
     selectTrack,
     renameTrack,
@@ -415,6 +630,7 @@ export function useTrackManager() {
     // Clip management
     addVideoClip,
     addAudioClip,
+    addCaptionClip,
     addClipToBeginning,
     addClipToEnd,
     removeClip,
@@ -423,6 +639,10 @@ export function useTrackManager() {
     calculateClipStartPosition,
     findClipsBySrc,
     loadTranscriptForSrc,
+    createCaptionsFromWords,
+    replaceAllCaptionTracks,
+    hasCaptionTracks,
+    autoUpdateCaptionsIfExist,
 
     // Video controls
     setVideoRenderOption,
