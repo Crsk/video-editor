@@ -1,18 +1,12 @@
 import { useState, useCallback } from 'react'
 import { useTranscript } from './hooks/use-transcript'
-import { useCaptionTrackManager } from './captions/hooks/use-caption-track-manager'
-import { useCaptionVTT } from './captions/hooks/use-caption-vtt'
-import { CaptionAnimationControls } from './captions/caption-animation-controls'
 import WordSelectionDemo from './word-selection/word-selection-demo'
 import { SelectionRange, Word } from './word-selection/types'
-import { Button } from '~/components/ui/button'
+import { CaptionsSettings } from './captions-settings'
 
 export const Transcript = () => {
   const { text, currentTime, seekToWord } = useTranscript()
-  const { replaceAllCaptionTracks } = useCaptionTrackManager()
-  const { downloadVTT } = useCaptionVTT()
   const [savedSelections, setSavedSelections] = useState<SelectionRange[]>([])
-
   const mappedWords: Word[] = text.map(word => ({
     text: word.word,
     metadata: {
@@ -43,57 +37,12 @@ export const Transcript = () => {
     [seekToWord]
   )
 
-  const handleCreateCaptionTrack = useCallback(() => {
-    if (text.length === 0) {
-      console.warn('No transcript available to create captions')
-      return
-    }
-
-    const words = text.map(word => ({
-      word: word.word,
-      start: word.start,
-      end: word.end
-    }))
-
-    replaceAllCaptionTracks(words)
-  }, [text, replaceAllCaptionTracks])
-
-  const handleDownloadVTT = useCallback(() => {
-    if (text.length === 0) {
-      console.warn('No transcript available to download VTT')
-      return
-    }
-
-    const words = text.map(word => ({
-      word: word.word,
-      start: word.start,
-      end: word.end
-    }))
-
-    downloadVTT(words, 'captions.vtt')
-  }, [text, downloadVTT])
-
   return (
     <div className="p-4 w-full max-w-4xl overflow-y-auto">
       <div className="mb-4 flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Transcript</h3>
-        {text.length > 0 && (
-          <div className="flex gap-2">
-            <Button onClick={handleCreateCaptionTrack} variant="outline" size="sm" className="z-1000">
-              Add Captions
-            </Button>
-            <Button onClick={handleDownloadVTT} variant="outline" size="sm" className="z-1000">
-              Download Captions
-            </Button>
-          </div>
-        )}
+        <h3 className="text-lg font-semibold">Captions</h3>
+        <CaptionsSettings />
       </div>
-
-      {text.length > 0 && (
-        <div className="mb-6">
-          <CaptionAnimationControls />
-        </div>
-      )}
 
       <WordSelectionDemo
         words={mappedWords}

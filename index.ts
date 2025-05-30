@@ -26,7 +26,6 @@ import { ZoomPlusControl } from '~/components/video-editor/controls/zoom-plus-co
 import { useTranscript } from '~/components/video-editor/hooks/use-transcript'
 
 // Caption animation components
-import { CaptionAnimationControls } from '~/components/video-editor/captions/caption-animation-controls'
 import { useCaptionAnimation } from '~/components/video-editor/captions/hooks/use-caption-animation'
 import { useCaptionAnimationContext } from '~/components/video-editor/context/caption-animation-provider'
 import {
@@ -47,9 +46,6 @@ export { VideoLoopControl }
 export { PlayPauseControl }
 export { ZoomMinusControl }
 export { ZoomPlusControl }
-
-// Caption Animation
-export { CaptionAnimationControls }
 
 // Types
 export { type Track }
