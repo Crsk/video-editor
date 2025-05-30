@@ -25,6 +25,16 @@ import { ZoomMinusControl } from '~/components/video-editor/controls/zoom-minus-
 import { ZoomPlusControl } from '~/components/video-editor/controls/zoom-plus-control'
 import { useTranscript } from '~/components/video-editor/hooks/use-transcript'
 
+// Caption animation components
+import { CaptionAnimationControls } from '~/components/video-editor/captions/caption-animation-controls'
+import { useCaptionAnimation } from '~/components/video-editor/captions/hooks/use-caption-animation'
+import { useCaptionAnimationContext } from '~/components/video-editor/context/caption-animation-provider'
+import {
+  type CaptionAnimationType,
+  type CaptionAnimationValues,
+  type CaptionAnimationConfig
+} from '~/components/video-editor/types/caption.types'
+
 // Core components
 export { VideoEditorProvider }
 export { VideoPlayer }
@@ -38,6 +48,9 @@ export { PlayPauseControl }
 export { ZoomMinusControl }
 export { ZoomPlusControl }
 
+// Caption Animation
+export { CaptionAnimationControls }
+
 // Types
 export { type Track }
 export { type TimelineStyle }
@@ -45,6 +58,9 @@ export { type CompositionData }
 export { type CompositionTrack }
 export { type CompositionClip }
 export { type Clip }
+export { type CaptionAnimationType }
+export { type CaptionAnimationValues }
+export { type CaptionAnimationConfig }
 
 // Hooks
 export { useCompositionData }
@@ -54,3 +70,5 @@ export { useAudioUpload }
 export { useVideoTransform }
 export { useEvents }
 export { useTranscript }
+export { useCaptionAnimation }
+export { useCaptionAnimationContext }

@@ -19,7 +19,7 @@ export const AnimatedCaptions = ({ words }: AnimatedCaptionsProps) => {
 
   const wordDuration = currentWord.end - currentWord.start
   const wordDurationFrames = Math.round(wordDuration * fps)
-  const { scale, opacity, bounce } = useCaptionAnimation(wordDurationFrames, animationConfig)
+  const { scale, opacity, bounce, rotation } = useCaptionAnimation(wordDurationFrames, animationConfig)
 
   return (
     <AbsoluteFill
@@ -37,7 +37,7 @@ export const AnimatedCaptions = ({ words }: AnimatedCaptionsProps) => {
           color: defaultStyle.color,
           textAlign: defaultStyle.textAlign,
           textShadow: defaultStyle.textShadow,
-          transform: `scale(${scale}) translateY(${bounce}px)`,
+          transform: `scale(${scale}) translateY(${bounce}px) rotate(${rotation}deg)`,
           opacity,
           padding: defaultStyle.padding,
           fontFamily: defaultStyle.fontFamily,

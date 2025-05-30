@@ -12,7 +12,7 @@ interface CaptionRendererProps {
 
 export const CaptionRenderer: React.FC<CaptionRendererProps> = ({ clip, customStyle }) => {
   const { createCaptionStyle, animationConfig } = useCaptionConfig()
-  const { scale, opacity, bounce } = useCaptionAnimation(clip.durationInFrames, animationConfig)
+  const { scale, opacity, bounce, rotation } = useCaptionAnimation(clip.durationInFrames, animationConfig)
 
   const style = createCaptionStyle({
     color: clip.color,
@@ -38,7 +38,7 @@ export const CaptionRenderer: React.FC<CaptionRendererProps> = ({ clip, customSt
     position: 'absolute',
     bottom: style.positionY !== undefined ? `${style.positionY}px` : '80px',
     left: '50%',
-    transform: `translateX(-50%) scale(${scale}) translateY(${bounce}px)`,
+    transform: `translateX(-50%) scale(${scale}) translateY(${bounce}px) rotate(${rotation}deg)`,
     whiteSpace: style.whiteSpace
   }
 

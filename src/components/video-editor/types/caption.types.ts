@@ -19,9 +19,19 @@ export type CaptionAnimationConfig = {
   mass: number
 }
 
+export type CaptionAnimationType = 'bounce' | 'wave'
+
+export interface CaptionAnimationValues {
+  scale: number
+  opacity: number
+  bounce: number
+  rotation: number
+}
+
 export type CaptionConfig = {
   defaultStyle: CaptionStyle
   animation: CaptionAnimationConfig
+  animationType: CaptionAnimationType
   fps: number
 }
 

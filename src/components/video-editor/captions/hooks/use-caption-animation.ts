@@ -1,12 +1,8 @@
 import { useMemo } from 'react'
-import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion'
-import { CaptionAnimationConfig } from '../../types/caption.types'
-
-interface CaptionAnimationValues {
-  scale: number
-  opacity: number
-  bounce: number
-}
+import { useCurrentFrame, useVideoConfig } from 'remotion'
+import { CaptionAnimationConfig, CaptionAnimationValues } from '../../types/caption.types'
+import { animationFunctions } from '../animations/animation-functions'
+import { useCaptionAnimationContext } from '../../context/caption-animation-provider'
 
 export const useCaptionAnimation = (
   durationInFrames: number,
@@ -14,6 +10,7 @@ export const useCaptionAnimation = (
 ): CaptionAnimationValues => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
+  const { animationType } = useCaptionAnimationContext()
 
   const config = useMemo(
     () => ({
@@ -25,32 +22,25 @@ export const useCaptionAnimation = (
   )
 
   const animationValues = useMemo(() => {
-    const relativeFrame = frame
-    const wordProgress = relativeFrame / durationInFrames
+    const animationFunction = animationFunctions[animationType]
 
-    const entranceAnimation = spring({
-      frame: relativeFrame,
+    if (!animationFunction) {
+      // Fallback to bounce animation if animation type not found
+      return animationFunctions.bounce({
+        frame,
+        durationInFrames,
+        fps,
+        config
+      })
+    }
+
+    return animationFunction({
+      frame,
+      durationInFrames,
       fps,
       config
     })
-
-    const scale = interpolate(entranceAnimation, [0, 1], [0.8, 1], {
-      extrapolateLeft: 'clamp',
-      extrapolateRight: 'clamp'
-    })
-
-    const opacity = interpolate(wordProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0], {
-      extrapolateLeft: 'clamp',
-      extrapolateRight: 'clamp'
-    })
-
-    const bounce = interpolate(entranceAnimation, [0, 0.5, 1], [0, -5, 0], {
-      extrapolateLeft: 'clamp',
-      extrapolateRight: 'clamp'
-    })
-
-    return { scale, opacity, bounce }
-  }, [frame, durationInFrames, fps, config])
+  }, [frame, durationInFrames, fps, config, animationType])
 
   return animationValues
 }

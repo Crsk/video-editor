@@ -6,6 +6,7 @@ import { applyGravityToTrack } from './gravity'
 import { RemotionTimelineProvider } from '../timeline/context/remotion-timeline-context'
 import { EventsProvider } from './events/events-context'
 import { TranscriptProvider } from './transcript-context'
+import { CaptionAnimationProvider } from './caption-animation-provider'
 import { v4 as uuidv4 } from 'uuid'
 
 interface EditorContextState {
@@ -538,7 +539,9 @@ export const VideoEditorProvider: FC<VideoEditorProviderProps> = ({
     <EditorContext.Provider value={contextValue}>
       <EventsProvider>
         <TranscriptProvider>
-          <RemotionTimelineProvider>{children}</RemotionTimelineProvider>
+          <CaptionAnimationProvider>
+            <RemotionTimelineProvider>{children}</RemotionTimelineProvider>
+          </CaptionAnimationProvider>
         </TranscriptProvider>
       </EventsProvider>
     </EditorContext.Provider>

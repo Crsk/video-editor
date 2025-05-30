@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { useTranscript } from './hooks/use-transcript'
 import { useCaptionTrackManager } from './captions/hooks/use-caption-track-manager'
 import { useCaptionVTT } from './captions/hooks/use-caption-vtt'
+import { CaptionAnimationControls } from './captions/caption-animation-controls'
 import WordSelectionDemo from './word-selection/word-selection-demo'
 import { SelectionRange, Word } from './word-selection/types'
 import { Button } from '~/components/ui/button'
@@ -87,6 +88,13 @@ export const Transcript = () => {
           </div>
         )}
       </div>
+
+      {text.length > 0 && (
+        <div className="mb-6">
+          <CaptionAnimationControls />
+        </div>
+      )}
+
       <WordSelectionDemo
         words={mappedWords}
         onWordClick={handleWordClick}
