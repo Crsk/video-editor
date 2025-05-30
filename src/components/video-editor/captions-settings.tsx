@@ -18,46 +18,18 @@ import { useCaptionVTT } from './captions/hooks/use-caption-vtt'
 import { useTranscript } from './context/transcript-context'
 
 const ANIMATION_OPTIONS: Array<{ value: CaptionAnimationType; label: string; description: string }> = [
-  {
-    value: 'bounce',
-    label: 'Bounce',
-    description: 'Classic bounce entrance with smooth scaling'
-  },
-  {
-    value: 'wave',
-    label: 'Wave',
-    description: 'Waves with dynamic scale and rotation based on duration'
-  },
-  {
-    value: 'shake',
-    label: 'Shake',
-    description: 'High-frequency trembling effect with subtle rotation'
-  },
-  {
-    value: 'zoom',
-    label: 'Zoom',
-    description: 'Dramatic zoom from tiny to large with spring physics'
-  },
-  {
-    value: 'swing',
-    label: 'Swing',
-    description: 'Pendulum swing motion with dampening over time'
-  },
-  {
-    value: 'elastic',
-    label: 'Elastic',
-    description: 'Overshoot entrance with elastic bounce settlement'
-  },
-  {
-    value: 'glitch',
-    label: 'Glitch',
-    description: 'Chaos and mega distortions'
-  }
+  { value: 'subtle', label: 'Subtle', description: 'Subtle zoom-in' },
+  { value: 'wave', label: 'Wave', description: 'Wavy spin' },
+  { value: 'shake', label: 'Shake', description: 'Quick tremble' },
+  { value: 'zoom', label: 'Zoom', description: 'Fast zoom-in' },
+  { value: 'swing', label: 'Swing', description: 'Pendulum sway' },
+  { value: 'elastic', label: 'Elastic', description: 'Elastic pop' },
+  { value: 'glitch', label: 'Glitch', description: 'Distorted chaos' }
 ]
 
 export const CaptionsSettings = () => {
   const { downloadVTT } = useCaptionVTT()
-  const { animationType, setAnimationType } = useCaptionAnimationContext()
+  const { animationType, setAnimationType, setPreviewAnimationType } = useCaptionAnimationContext()
   const currentAnimationOption = ANIMATION_OPTIONS.find(option => option.value === animationType)
   const { text } = useTranscript()
   const captionsAvailable = useMemo(() => text.length > 0, [text])
@@ -76,6 +48,17 @@ export const CaptionsSettings = () => {
 
     downloadVTT(words, 'captions.vtt')
   }, [text, downloadVTT])
+
+  const handleAnimationHover = useCallback(
+    (animationType: CaptionAnimationType) => {
+      setPreviewAnimationType(animationType)
+    },
+    [setPreviewAnimationType]
+  )
+
+  const handleAnimationHoverEnd = useCallback(() => {
+    setPreviewAnimationType(null)
+  }, [setPreviewAnimationType])
 
   return (
     <>
@@ -97,8 +80,14 @@ export const CaptionsSettings = () => {
                         key={option.value}
                         checked={currentAnimationOption?.value === option.value}
                         onCheckedChange={() => setAnimationType(option.value)}
+                        onMouseEnter={() => handleAnimationHover(option.value)}
+                        onMouseLeave={handleAnimationHoverEnd}
+                        className="cursor-pointer"
                       >
-                        {option.label}
+                        <div className="flex flex-col">
+                          <span className="font-medium">{option.label}</span>
+                          <span className="text-xs text-muted-foreground">{option.description}</span>
+                        </div>
                       </DropdownMenuCheckboxItem>
                     ))}
                   </DropdownMenuSubContent>

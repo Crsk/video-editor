@@ -10,7 +10,7 @@ export const useCaptionAnimation = (
 ): CaptionAnimationValues => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
-  const { animationType } = useCaptionAnimationContext()
+  const { effectiveAnimationType } = useCaptionAnimationContext()
 
   const config = useMemo(
     () => ({
@@ -22,11 +22,11 @@ export const useCaptionAnimation = (
   )
 
   const animationValues = useMemo(() => {
-    const animationFunction = animationFunctions[animationType]
+    const animationFunction = animationFunctions[effectiveAnimationType]
 
     if (!animationFunction) {
-      // Fallback to bounce animation if animation type not found
-      return animationFunctions.bounce({
+      // Fallback to subtle animation if animation type not found
+      return animationFunctions.subtle({
         frame,
         durationInFrames,
         fps,
@@ -40,7 +40,7 @@ export const useCaptionAnimation = (
       fps,
       config
     })
-  }, [frame, durationInFrames, fps, config, animationType])
+  }, [frame, durationInFrames, fps, config, effectiveAnimationType])
 
   return animationValues
 }

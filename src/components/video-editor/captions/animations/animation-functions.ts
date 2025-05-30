@@ -10,7 +10,7 @@ export interface AnimationParams {
 
 export type AnimationFunction = (params: AnimationParams) => CaptionAnimationValues
 
-export const bounceAnimation: AnimationFunction = ({ frame, durationInFrames, fps, config }) => {
+export const subtleAnimation: AnimationFunction = ({ frame, durationInFrames, fps, config }) => {
   const relativeFrame = frame
   const wordProgress = relativeFrame / durationInFrames
 
@@ -194,7 +194,7 @@ export const glitchAnimation: AnimationFunction = ({ frame, durationInFrames }) 
 }
 
 export const animationFunctions: Record<CaptionAnimationType, AnimationFunction> = {
-  bounce: bounceAnimation,
+  subtle: subtleAnimation,
   wave: waveAnimation,
   shake: shakeAnimation,
   zoom: zoomAnimation,

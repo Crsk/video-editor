@@ -33,7 +33,7 @@ export const useCaptionConfig = (customConfig?: Partial<CaptionConfig>) => {
         ...DEFAULT_ANIMATION_CONFIG,
         ...customConfig?.animation
       },
-      animationType: customConfig?.animationType || 'bounce',
+      animationType: customConfig?.animationType || 'subtle',
       fps: customConfig?.fps || 30
     }),
     [customConfig]
