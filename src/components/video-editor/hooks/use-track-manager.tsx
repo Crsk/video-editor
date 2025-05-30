@@ -1,8 +1,9 @@
 import { useCallback } from 'react'
 import { useEditor } from '../context/video-editor-provider'
-import { Clip, MediaType, Track, VideoClip, CaptionClip } from '../types'
+import type { Clip, MediaType, Track, VideoClip } from '../types'
 import { v4 as uuidv4 } from 'uuid'
 import { applyGravityToTrack } from '../context/gravity'
+import { useCaptionTrackManager } from '../captions/hooks/use-caption-track-manager'
 
 const FPS = 30
 
@@ -16,6 +17,8 @@ export function useTrackManager() {
     handleSplitClip,
     currentTime
   } = useEditor()
+
+  const captionTrackManager = useCaptionTrackManager()
 
   const createTrack = useCallback(
     (name: string, volume = 1): number => {
@@ -37,64 +40,14 @@ export function useTrackManager() {
     [setTracks]
   )
 
-  const hasCaptionTracks = useCallback((): boolean => {
-    return tracks.some(track => track.type === 'caption')
-  }, [tracks])
-
-  const autoUpdateCaptionsIfExist = useCallback((): void => {
-    if (!hasCaptionTracks()) return
-
-    const allWords: { word: string; start: number; end: number }[] = []
-
-    tracks.forEach(track => {
-      track.clips.forEach(clip => {
-        if (clip.type === 'video' && (clip as VideoClip).words) {
-          const videoClip = clip as VideoClip
-          const clipStartInSeconds = videoClip.from / 30
-          const clipOffset = (videoClip.offset || 0) / 30
-
-          videoClip.words?.forEach(word => {
-            allWords.push({
-              word: word.word,
-              start: clipStartInSeconds + (word.start - clipOffset),
-              end: clipStartInSeconds + (word.end - clipOffset)
-            })
-          })
-        }
-      })
-    })
-
-    allWords.sort((a, b) => a.start - b.start)
-
-    if (allWords.length > 0) {
-      setTracks(prevTracks => {
-        // Remove all existing caption tracks
-        const tracksWithoutCaptions = prevTracks.filter(track => track.type !== 'caption')
-
-        const captionClips: CaptionClip[] = allWords.map(word => ({
-          id: uuidv4(),
-          type: 'caption',
-          from: Math.round(word.start * 30),
-          durationInFrames: Math.round((word.end - word.start) * 30),
-          text: word.word,
-          color: '#ffffff',
-          fontSize: 56,
-          fontWeight: 900,
-          textAlign: 'center',
-          positionY: 80
-        }))
-
-        const newCaptionTrack: Track = {
-          name: 'Captions',
-          clips: captionClips,
-          volume: 1,
-          type: 'caption'
-        }
-
-        return [...tracksWithoutCaptions, newCaptionTrack]
-      })
-    }
-  }, [tracks, hasCaptionTracks, setTracks])
+  const {
+    hasCaptionTracks,
+    autoUpdateCaptionsFromVideoTracks: autoUpdateCaptionsIfExist,
+    createCaptionTrack,
+    addCaptionClip,
+    createCaptionsFromWords,
+    replaceAllCaptionTracks
+  } = captionTrackManager
 
   const removeTrack = useCallback(
     (trackIndex: number): void => {
@@ -471,149 +424,6 @@ export function useTrackManager() {
       })
     },
     [findClipsBySrc, setTracks]
-  )
-
-  const addCaptionClip = useCallback(
-    (
-      trackIndex: number,
-      text: string,
-      from: number,
-      durationInFrames: number,
-      options?: Partial<Pick<CaptionClip, 'color' | 'fontSize' | 'fontWeight' | 'textAlign' | 'positionY'>>
-    ): string => {
-      const clipId = uuidv4()
-
-      setTracks(prevTracks => {
-        if (trackIndex < 0 || trackIndex >= prevTracks.length) {
-          console.warn(`Track index ${trackIndex} is out of bounds`)
-          return prevTracks
-        }
-
-        const updatedTracks = [...prevTracks]
-        const track = updatedTracks[trackIndex]
-        const newClip: CaptionClip = {
-          id: clipId,
-          type: 'caption',
-          from,
-          durationInFrames,
-          text,
-          color: options?.color || '#ffffff',
-          fontSize: options?.fontSize || 56,
-          fontWeight: options?.fontWeight || 900,
-          textAlign: options?.textAlign || 'center',
-          positionY: options?.positionY || 80
-        }
-
-        const updatedClips = [...track.clips, newClip]
-
-        updatedTracks[trackIndex] = {
-          ...track,
-          clips: updatedClips,
-          type: 'caption'
-        }
-
-        return updatedTracks
-      })
-
-      return clipId
-    },
-    [setTracks]
-  )
-
-  const createCaptionTrack = useCallback(
-    (name: string = 'Captions'): number => {
-      let newTrackIndex = 0
-
-      setTracks(prevTracks => {
-        const newTrack: Track = {
-          name,
-          clips: [],
-          volume: 1,
-          type: 'caption'
-        }
-        const updatedTracks = [...prevTracks, newTrack]
-        newTrackIndex = updatedTracks.length - 1
-        return updatedTracks
-      })
-
-      return newTrackIndex
-    },
-    [setTracks]
-  )
-
-  const createCaptionsFromWords = useCallback(
-    (trackIndex: number, words: { word: string; start: number; end: number }[], fps: number = 30): void => {
-      if (!words || words.length === 0) return
-
-      setTracks(prevTracks => {
-        if (trackIndex < 0 || trackIndex >= prevTracks.length) {
-          console.warn(`Track index ${trackIndex} is out of bounds`)
-          return prevTracks
-        }
-
-        const updatedTracks = [...prevTracks]
-        const track = updatedTracks[trackIndex]
-
-        // Create individual caption clips for each word
-        const captionClips: CaptionClip[] = words.map(word => ({
-          id: uuidv4(),
-          type: 'caption',
-          from: Math.round(word.start * fps),
-          durationInFrames: Math.round((word.end - word.start) * fps),
-          text: word.word,
-          color: '#ffffff',
-          fontSize: 56,
-          fontWeight: 900,
-          textAlign: 'center',
-          positionY: 80
-        }))
-
-        updatedTracks[trackIndex] = {
-          ...track,
-          clips: captionClips,
-          type: 'caption'
-        }
-
-        return updatedTracks
-      })
-    },
-    [setTracks]
-  )
-
-  const replaceAllCaptionTracks = useCallback(
-    (words: { word: string; start: number; end: number }[], fps: number = 30): void => {
-      if (!words || words.length === 0) return
-
-      setTracks(prevTracks => {
-        // Remove all existing caption tracks
-        const tracksWithoutCaptions = prevTracks.filter(track => track.type !== 'caption')
-
-        // Create individual caption clips for each word
-        const captionClips: CaptionClip[] = words.map(word => ({
-          id: uuidv4(),
-          type: 'caption',
-          from: Math.round(word.start * fps),
-          durationInFrames: Math.round((word.end - word.start) * fps),
-          text: word.word,
-          color: '#ffffff',
-          fontSize: 56,
-          fontWeight: 900,
-          textAlign: 'center',
-          positionY: 80
-        }))
-
-        // Create new caption track at the end
-        const newCaptionTrack: Track = {
-          name: 'Captions',
-          clips: captionClips,
-          volume: 1,
-          type: 'caption'
-        }
-
-        return [...tracksWithoutCaptions, newCaptionTrack]
-      })
-    },
-    [setTracks]
   )
 
   return {

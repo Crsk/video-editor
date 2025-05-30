@@ -1,71 +1,15 @@
 import { useState, useCallback } from 'react'
 import { useTranscript } from './hooks/use-transcript'
-import { useTrackManager } from './hooks/use-track-manager'
+import { useCaptionTrackManager } from './captions/hooks/use-caption-track-manager'
+import { useCaptionVTT } from './captions/hooks/use-caption-vtt'
 import WordSelectionDemo from './word-selection/word-selection-demo'
 import { SelectionRange, Word } from './word-selection/types'
 import { Button } from '~/components/ui/button'
 
-export function formatVTTTime(totalSeconds: number): string {
-  const hours = Math.floor(totalSeconds / 3600)
-  const minutes = Math.floor((totalSeconds % 3600) / 60)
-  const seconds = Math.floor(totalSeconds % 60)
-  const milliseconds = Math.floor((totalSeconds - Math.floor(totalSeconds)) * 1000)
-
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(
-    2,
-    '0'
-  )}.${String(milliseconds).padStart(3, '0')}`
-}
-
-export const wordsToVTT = (
-  wordsArray: { word: string; start: number; end: number }[],
-  options: { maxWordsPerCue?: number; maxCueDurationS?: number } = {}
-) => {
-  if (!wordsArray || wordsArray.length === 0) {
-    return 'WEBVTT\n\n'
-  }
-
-  const { maxWordsPerCue = 15, maxCueDurationS = 7 } = options
-
-  let vttContent = 'WEBVTT\n\n'
-  let currentCueWords: string[] = []
-  let cueStartTime: number = 0
-
-  for (let i = 0; i < wordsArray.length; i++) {
-    const wordInfo = wordsArray[i]
-
-    const sanitizedWord = wordInfo.word.trim().replace(/\n/g, ' ').replace(/-->/g, '->')
-    if (!sanitizedWord) continue
-
-    if (currentCueWords.length === 0) {
-      cueStartTime = wordInfo.start
-    }
-
-    const timedWord = `<${formatVTTTime(wordInfo.start)}>${sanitizedWord}`
-    currentCueWords.push(timedWord)
-
-    const isLastWordOverall = i === wordsArray.length - 1
-    const currentCueOverallDuration = wordInfo.end - cueStartTime
-
-    if (
-      isLastWordOverall ||
-      currentCueWords.length >= maxWordsPerCue ||
-      (currentCueOverallDuration >= maxCueDurationS && currentCueWords.length > 0)
-    ) {
-      const cueEndTime = wordInfo.end
-      vttContent += `${formatVTTTime(cueStartTime)} --> ${formatVTTTime(cueEndTime)}\n`
-      vttContent += currentCueWords.join(' ') + '\n\n'
-
-      currentCueWords = []
-      cueStartTime = 0
-    }
-  }
-  return vttContent
-}
-
 export const Transcript = () => {
   const { text, currentTime, seekToWord } = useTranscript()
-  const { replaceAllCaptionTracks } = useTrackManager()
+  const { replaceAllCaptionTracks } = useCaptionTrackManager()
+  const { downloadVTT } = useCaptionVTT()
   const [savedSelections, setSavedSelections] = useState<SelectionRange[]>([])
 
   const mappedWords: Word[] = text.map(word => ({
@@ -113,14 +57,34 @@ export const Transcript = () => {
     replaceAllCaptionTracks(words)
   }, [text, replaceAllCaptionTracks])
 
+  const handleDownloadVTT = useCallback(() => {
+    if (text.length === 0) {
+      console.warn('No transcript available to download VTT')
+      return
+    }
+
+    const words = text.map(word => ({
+      word: word.word,
+      start: word.start,
+      end: word.end
+    }))
+
+    downloadVTT(words, 'captions.vtt')
+  }, [text, downloadVTT])
+
   return (
     <div className="p-4 w-full max-w-4xl overflow-y-auto">
       <div className="mb-4 flex justify-between items-center">
         <h3 className="text-lg font-semibold">Transcript</h3>
         {text.length > 0 && (
-          <Button onClick={handleCreateCaptionTrack} variant="outline" size="sm" className="z-1000">
-            Add Captions
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleCreateCaptionTrack} variant="outline" size="sm" className="z-1000">
+              Add Captions
+            </Button>
+            <Button onClick={handleDownloadVTT} variant="outline" size="sm" className="z-1000">
+              Download Captions
+            </Button>
+          </div>
         )}
       </div>
       <WordSelectionDemo
