@@ -13,6 +13,31 @@ const ANIMATION_OPTIONS: Array<{ value: CaptionAnimationType; label: string; des
     value: 'wave',
     label: 'Wave',
     description: 'Waves with dynamic scale and rotation based on duration'
+  },
+  {
+    value: 'shake',
+    label: 'Shake',
+    description: 'High-frequency trembling effect with subtle rotation'
+  },
+  {
+    value: 'zoom',
+    label: 'Zoom',
+    description: 'Dramatic zoom from tiny to large with spring physics'
+  },
+  {
+    value: 'swing',
+    label: 'Swing',
+    description: 'Pendulum swing motion with dampening over time'
+  },
+  {
+    value: 'elastic',
+    label: 'Elastic',
+    description: 'Overshoot entrance with elastic bounce settlement'
+  },
+  {
+    value: 'glitch',
+    label: 'Glitch',
+    description: 'Chaos and mega distortions'
   }
 ]
 

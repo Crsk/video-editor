@@ -19,7 +19,7 @@ export type CaptionAnimationConfig = {
   mass: number
 }
 
-export type CaptionAnimationType = 'bounce' | 'wave'
+export type CaptionAnimationType = 'bounce' | 'wave' | 'shake' | 'zoom' | 'swing' | 'elastic' | 'glitch'
 
 export interface CaptionAnimationValues {
   scale: number
