@@ -31,7 +31,8 @@ import { useCaptionAnimationContext } from '~/components/video-editor/context/ca
 import {
   type CaptionAnimationType,
   type CaptionAnimationValues,
-  type CaptionAnimationConfig
+  type CaptionAnimationConfig,
+  type CaptionPosition
 } from '~/components/video-editor/types/caption.types'
 
 // Core components
@@ -57,6 +58,7 @@ export { type Clip }
 export { type CaptionAnimationType }
 export { type CaptionAnimationValues }
 export { type CaptionAnimationConfig }
+export { type CaptionPosition }
 
 // Hooks
 export { useCompositionData }

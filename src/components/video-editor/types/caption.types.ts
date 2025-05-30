@@ -1,8 +1,11 @@
+export type CaptionPosition = 'top' | 'center' | 'bottom'
+
 export type CaptionStyle = {
   color: string
   fontSize: number
   fontWeight: number
   textAlign: 'left' | 'center' | 'right'
+  position: CaptionPosition
   positionY: number
   fontFamily?: string
   letterSpacing?: string

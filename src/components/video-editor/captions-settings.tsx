@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react'
-import { CaptionAnimationType } from './types/caption.types'
+import { CaptionAnimationType, CaptionPosition } from './types/caption.types'
 import { Button } from '~/components/ui/button'
 import {
   DropdownMenu,
@@ -27,10 +27,18 @@ const ANIMATION_OPTIONS: Array<{ value: CaptionAnimationType; label: string; des
   { value: 'glitch', label: 'Glitch', description: 'Distorted chaos' }
 ]
 
+const POSITION_OPTIONS: Array<{ value: CaptionPosition; label: string }> = [
+  { value: 'top', label: 'Top' },
+  { value: 'center', label: 'Center' },
+  { value: 'bottom', label: 'Bottom' }
+]
+
 export const CaptionsSettings = () => {
   const { downloadVTT } = useCaptionVTT()
-  const { animationType, setAnimationType, setPreviewAnimationType } = useCaptionAnimationContext()
+  const { animationType, setAnimationType, setPreviewAnimationType, position, setPosition, setPreviewPosition } =
+    useCaptionAnimationContext()
   const currentAnimationOption = ANIMATION_OPTIONS.find(option => option.value === animationType)
+  const currentPositionOption = POSITION_OPTIONS.find(option => option.value === position)
   const { text } = useTranscript()
   const captionsAvailable = useMemo(() => text.length > 0, [text])
 
@@ -60,6 +68,17 @@ export const CaptionsSettings = () => {
     setPreviewAnimationType(null)
   }, [setPreviewAnimationType])
 
+  const handlePositionHover = useCallback(
+    (position: CaptionPosition) => {
+      setPreviewPosition(position)
+    },
+    [setPreviewPosition]
+  )
+
+  const handlePositionHoverEnd = useCallback(() => {
+    setPreviewPosition(null)
+  }, [setPreviewPosition])
+
   return (
     <>
       {captionsAvailable && (
@@ -71,6 +90,25 @@ export const CaptionsSettings = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="start">
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>Position</DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent>
+                    {POSITION_OPTIONS.map(option => (
+                      <DropdownMenuCheckboxItem
+                        key={option.value}
+                        checked={currentPositionOption?.value === option.value}
+                        onCheckedChange={() => setPosition(option.value)}
+                        onMouseEnter={() => handlePositionHover(option.value)}
+                        onMouseLeave={handlePositionHoverEnd}
+                        className="cursor-pointer"
+                      >
+                        <span className="font-medium">{option.label}</span>
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>Animation</DropdownMenuSubTrigger>
                 <DropdownMenuPortal>

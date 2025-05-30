@@ -21,6 +21,7 @@ export const useCaptionManager = () => {
         fontSize: style.fontSize,
         fontWeight: style.fontWeight,
         textAlign: style.textAlign,
+        position: style.position,
         positionY: style.positionY
       }
     },
@@ -50,6 +51,7 @@ export const useCaptionManager = () => {
       fontSize: styleUpdates.fontSize ?? clip.fontSize,
       fontWeight: styleUpdates.fontWeight ?? clip.fontWeight,
       textAlign: styleUpdates.textAlign ?? clip.textAlign,
+      position: styleUpdates.position ?? clip.position,
       positionY: styleUpdates.positionY ?? clip.positionY
     }
   }, [])

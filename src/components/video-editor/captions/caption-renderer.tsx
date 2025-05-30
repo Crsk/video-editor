@@ -4,6 +4,7 @@ import { CaptionClip } from '../types'
 import { CaptionStyle } from '../types/caption.types'
 import { useCaptionAnimation } from './hooks/use-caption-animation'
 import { useCaptionConfig } from './hooks/use-caption-config'
+import { useCaptionAnimationContext } from '../context/caption-animation-provider'
 
 interface CaptionRendererProps {
   clip: CaptionClip
@@ -13,6 +14,7 @@ interface CaptionRendererProps {
 export const CaptionRenderer: React.FC<CaptionRendererProps> = ({ clip, customStyle }) => {
   const { createCaptionStyle, animationConfig } = useCaptionConfig()
   const { scale, opacity, bounce, rotation } = useCaptionAnimation(clip.durationInFrames, animationConfig)
+  const { effectivePosition } = useCaptionAnimationContext()
 
   const style = createCaptionStyle({
     color: clip.color,
@@ -20,8 +22,35 @@ export const CaptionRenderer: React.FC<CaptionRendererProps> = ({ clip, customSt
     fontWeight: clip.fontWeight,
     textAlign: clip.textAlign,
     positionY: clip.positionY,
+    position: effectivePosition,
     ...customStyle
   })
+
+  const getPositionStyles = (position: string) => {
+    switch (position) {
+      case 'top':
+        return {
+          top: '80px',
+          bottom: 'auto',
+          alignItems: 'flex-start'
+        }
+      case 'center':
+        return {
+          top: '50%',
+          bottom: 'auto',
+          alignItems: 'center'
+        }
+      case 'bottom':
+      default:
+        return {
+          top: 'auto',
+          bottom: style.positionY !== undefined ? `${style.positionY}px` : '80px',
+          alignItems: 'flex-end'
+        }
+    }
+  }
+
+  const positionStyles = getPositionStyles(style.position)
 
   const renderStyle: React.CSSProperties = {
     fontSize: style.fontSize,
@@ -36,17 +65,19 @@ export const CaptionRenderer: React.FC<CaptionRendererProps> = ({ clip, customSt
     textTransform: style.textTransform,
     maxWidth: style.maxWidth,
     position: 'absolute',
-    bottom: style.positionY !== undefined ? `${style.positionY}px` : '80px',
     left: '50%',
-    transform: `translateX(-50%) scale(${scale}) translateY(${bounce}px) rotate(${rotation}deg)`,
-    whiteSpace: style.whiteSpace
+    transform: `translateX(-50%) scale(${scale}) translateY(${bounce}px) rotate(${rotation}deg)${
+      style.position === 'center' ? ' translateY(-50%)' : ''
+    }`,
+    whiteSpace: style.whiteSpace,
+    ...positionStyles
   }
 
   return (
     <AbsoluteFill
       style={{
         display: 'flex',
-        alignItems: 'center',
+        alignItems: positionStyles.alignItems,
         justifyContent: 'center',
         zIndex: 1000,
         left: 0,

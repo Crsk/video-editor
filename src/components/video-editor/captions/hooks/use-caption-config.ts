@@ -6,6 +6,7 @@ export const DEFAULT_CAPTION_STYLE: CaptionStyle = {
   fontSize: 56,
   fontWeight: 900,
   textAlign: 'center',
+  position: 'bottom',
   positionY: 80,
   fontFamily: 'system-ui, -apple-system, sans-serif',
   letterSpacing: '0.02em',

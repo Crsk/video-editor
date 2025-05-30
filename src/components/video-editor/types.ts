@@ -41,6 +41,7 @@ export type CaptionClip = BaseClip & {
   fontSize?: number
   fontWeight?: number
   textAlign?: 'left' | 'center' | 'right'
+  position?: 'top' | 'center' | 'bottom'
   positionY?: number
 }
 
