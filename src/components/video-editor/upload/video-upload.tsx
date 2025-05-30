@@ -84,7 +84,7 @@ export const VideoUpload = () => {
     if (wordsExist) {
       loadTranscriptForSrc({ src, words })
 
-      setTimeout(() => autoUpdateCaptionsIfExist, 100) // Small delay to ensure transcript is loaded first
+      setTimeout(autoUpdateCaptionsIfExist, 100)
     }
   }, [mediaLoaded, loadTranscriptForSrc, autoUpdateCaptionsIfExist])
 

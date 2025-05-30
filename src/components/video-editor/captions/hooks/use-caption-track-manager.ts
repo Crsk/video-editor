@@ -108,8 +108,6 @@ export const useCaptionTrackManager = () => {
   )
 
   const autoUpdateCaptionsFromVideoTracks = useCallback((): void => {
-    if (!hasCaptionTracks()) return
-
     const allWords: WordTimestamp[] = []
 
     tracks.forEach(track => {
@@ -134,9 +132,11 @@ export const useCaptionTrackManager = () => {
     allWords.sort((a, b) => a.start - b.start)
 
     if (allWords.length > 0) {
+      if (!hasCaptionTracks()) createCaptionTrack('Captions')
+
       replaceAllCaptionTracks(allWords)
     }
-  }, [tracks, hasCaptionTracks, calculateWordTiming, replaceAllCaptionTracks])
+  }, [tracks, hasCaptionTracks, createCaptionTrack, calculateWordTiming, replaceAllCaptionTracks])
 
   const removeCaptionTracks = useCallback((): void => {
     setTracks(prevTracks => prevTracks.filter(track => track.type !== 'caption'))

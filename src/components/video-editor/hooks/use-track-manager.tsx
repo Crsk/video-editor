@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useEditor } from '../context/video-editor-provider'
 import type { Clip, MediaType, Track, VideoClip } from '../types'
 import { v4 as uuidv4 } from 'uuid'
@@ -20,6 +20,25 @@ export function useTrackManager() {
 
   const captionTrackManager = useCaptionTrackManager()
 
+  const {
+    hasCaptionTracks,
+    autoUpdateCaptionsFromVideoTracks: autoUpdateCaptionsIfExist,
+    createCaptionTrack,
+    addCaptionClip,
+    createCaptionsFromWords,
+    replaceAllCaptionTracks
+  } = captionTrackManager
+
+  useEffect(() => {
+    const hasVideoWithWords = tracks.some(track =>
+      track.clips.some(
+        clip => clip.type === 'video' && (clip as VideoClip).words && (clip as VideoClip).words!.length > 0
+      )
+    )
+
+    if (hasVideoWithWords && !hasCaptionTracks()) setTimeout(autoUpdateCaptionsIfExist, 100)
+  }, [tracks, hasCaptionTracks, autoUpdateCaptionsIfExist])
+
   const createTrack = useCallback(
     (name: string, volume = 1): number => {
       let newTrackIndex = 0
@@ -39,15 +58,6 @@ export function useTrackManager() {
     },
     [setTracks]
   )
-
-  const {
-    hasCaptionTracks,
-    autoUpdateCaptionsFromVideoTracks: autoUpdateCaptionsIfExist,
-    createCaptionTrack,
-    addCaptionClip,
-    createCaptionsFromWords,
-    replaceAllCaptionTracks
-  } = captionTrackManager
 
   const removeTrack = useCallback(
     (trackIndex: number): void => {
@@ -120,9 +130,11 @@ export function useTrackManager() {
         return updatedTracks
       })
 
+      setTimeout(autoUpdateCaptionsIfExist, 200)
+
       return clipId
     },
-    [setTracks, calculateClipStartPosition]
+    [setTracks, calculateClipStartPosition, autoUpdateCaptionsIfExist]
   )
 
   const addAudioClip = useCallback(
@@ -180,7 +192,7 @@ export function useTrackManager() {
         return updatedTracks
       })
 
-      setTimeout(() => autoUpdateCaptionsIfExist, 100)
+      setTimeout(autoUpdateCaptionsIfExist, 100)
     },
     [setTracks, autoUpdateCaptionsIfExist]
   )
@@ -422,8 +434,10 @@ export function useTrackManager() {
 
         return updatedTracks
       })
+
+      setTimeout(autoUpdateCaptionsIfExist, 100)
     },
-    [findClipsBySrc, setTracks]
+    [findClipsBySrc, setTracks, autoUpdateCaptionsIfExist]
   )
 
   return {

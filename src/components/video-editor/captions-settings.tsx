@@ -14,7 +14,6 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { MoreVerticalIcon } from 'lucide-react'
 import { useCaptionAnimationContext } from './context/caption-animation-provider'
-import { useCaptionTrackManager } from './captions/hooks/use-caption-track-manager'
 import { useCaptionVTT } from './captions/hooks/use-caption-vtt'
 import { useTranscript } from './context/transcript-context'
 
@@ -57,26 +56,11 @@ const ANIMATION_OPTIONS: Array<{ value: CaptionAnimationType; label: string; des
 ]
 
 export const CaptionsSettings = () => {
-  const { replaceAllCaptionTracks } = useCaptionTrackManager()
   const { downloadVTT } = useCaptionVTT()
   const { animationType, setAnimationType } = useCaptionAnimationContext()
   const currentAnimationOption = ANIMATION_OPTIONS.find(option => option.value === animationType)
   const { text } = useTranscript()
   const captionsAvailable = useMemo(() => text.length > 0, [text])
-  const handleCreateCaptionTrack = useCallback(() => {
-    if (text.length === 0) {
-      console.warn('No transcript available to create captions')
-      return
-    }
-
-    const words = text.map(word => ({
-      word: word.word,
-      start: word.start,
-      end: word.end
-    }))
-
-    replaceAllCaptionTracks(words)
-  }, [text, replaceAllCaptionTracks])
 
   const handleDownloadVTT = useCallback(() => {
     if (text.length === 0) {
@@ -104,7 +88,6 @@ export const CaptionsSettings = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="start">
-              <DropdownMenuItem onClick={handleCreateCaptionTrack}>Add Captions</DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>Animation</DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
