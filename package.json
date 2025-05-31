@@ -1,7 +1,7 @@
 {
   "name": "@crsk/video-editor",
   "private": false,
-  "version": "0.1.106",
+  "version": "0.1.107",
   "type": "module",
   "types": "./dist/index.d.ts",
   "files": [
