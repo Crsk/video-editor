@@ -1,6 +1,9 @@
-# Video Editor
-⚠️ Heads up: this package is early work in progress. Things might break, change often and not work at all.
+React Video Editor
 
-ATM to see how it works and how to use it, better to clone the repo then run `npm i && cd video-editor && npm run dev`
+This project is a proof of concept experiment
 
-DEMO: https://youtu.be/oiNEddMIbIY
+Video editor demo: https://youtu.be/L3feqPd5HNM
+Example backend: https://github.com/Crsk/video-editor-backend
+Example implementation: https://github.com/Crsk/video-editor-example
+Use Case Demo: https://youtu.be/vN19vBhu3VA
+Original person (no AI clone avatar) version: https://www.youtube.com/watch?v=XIMsPPMAohE
